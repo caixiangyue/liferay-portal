@@ -50,6 +50,7 @@ public class MultiVMCache2kPortalCacheManager
 		setPortalCacheManagerName(PortalCacheManagerNames.MULTI_VM);
 
 		setMpiOnly(true);
+
 		Thread currentThread = Thread.currentThread();
 
 		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
@@ -57,17 +58,25 @@ public class MultiVMCache2kPortalCacheManager
 		Class<?> clazz = getClass();
 
 		ClassLoaderUtil.setContextClassLoader(
-				AggregateClassLoader.getAggregateClassLoader(
-					contextClassLoader, clazz.getClassLoader()));
-		initialize();
+			AggregateClassLoader.getAggregateClassLoader(
+				contextClassLoader, clazz.getClassLoader()));
+
+		try {
+			initialize();
+		}
+		finally {
+			ClassLoaderUtil.setContextClassLoader(contextClassLoader);
+		}
 	}
 
 	@Deactivate
 	protected void deactivate() {
+		destroy();
 	}
 
 	@Reference(unbind = "-")
 	protected void setMBeanServer(MBeanServer mBeanServer) {
+		this.mBeanServer = mBeanServer;
 	}
 
 	@Reference(unbind = "-")

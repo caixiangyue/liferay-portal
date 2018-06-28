@@ -15,7 +15,6 @@
 package com.liferay.portal.cache.cache2k.internal.event;
 
 import com.liferay.portal.cache.PortalCacheListenerFactory;
-import com.liferay.portal.cache.PortalCacheReplicator;
 import com.liferay.portal.cache.PortalCacheReplicatorFactory;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheException;
@@ -39,7 +38,7 @@ public class Cache2kPortalCacheListenerFactory
 	public <K extends Serializable, V> PortalCacheListener<K, V> create(
 		Properties properties) {
 
-		return null;
+		return new DummyPortalCacheListener<>();
 	}
 
 	protected ClassLoader getClassLoader() {
@@ -51,13 +50,14 @@ public class Cache2kPortalCacheListenerFactory
 	@Reference(unbind = "-")
 	protected void setPortalCacheReplicatorFactory(
 		PortalCacheReplicatorFactory portalCacheReplicatorFactory) {
+
+		_portalCacheReplicatorFactory = portalCacheReplicatorFactory;
 	}
 
 	private PortalCacheReplicatorFactory _portalCacheReplicatorFactory;
 
-	private class EhcachePortalCacheReplicator
-		<K extends Serializable, V extends Serializable>
-			implements PortalCacheReplicator<K, V> {
+	private class DummyPortalCacheListener<K extends Serializable, V>
+		implements PortalCacheListener<K, V> {
 
 		@Override
 		public void dispose() {
