@@ -58,9 +58,8 @@ public class MultiVMCache2kPortalCacheManager
 
 		ClassLoaderUtil.setContextClassLoader(
 				AggregateClassLoader.getAggregateClassLoader(
-						contextClassLoader, clazz.getClassLoader()));
+					contextClassLoader, clazz.getClassLoader()));
 		initialize();
-
 	}
 
 	@Deactivate
@@ -69,7 +68,6 @@ public class MultiVMCache2kPortalCacheManager
 
 	@Reference(unbind = "-")
 	protected void setMBeanServer(MBeanServer mBeanServer) {
-
 	}
 
 	@Reference(unbind = "-")
@@ -77,22 +75,18 @@ public class MultiVMCache2kPortalCacheManager
 		PortalCacheBootstrapLoaderFactory portalCacheBootstrapLoaderFactory) {
 
 		this.portalCacheBootstrapLoaderFactory =
-				portalCacheBootstrapLoaderFactory;
+			portalCacheBootstrapLoaderFactory;
 	}
 
 	@Reference(unbind = "-")
 	protected void setPortalCacheListenerFactory(
 		PortalCacheListenerFactory portalCacheListenerFactory) {
-
-
 	}
 
 	@Reference(unbind = "-")
 	protected void setPortalCacheManagerListenerFactory(
 		PortalCacheManagerListenerFactory<PortalCacheManager<K, V>>
 			portalCacheManagerListenerFactory) {
-
-
 	}
 
 	@Reference(unbind = "-")

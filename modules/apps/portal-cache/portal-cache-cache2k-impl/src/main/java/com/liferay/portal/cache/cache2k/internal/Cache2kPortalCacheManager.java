@@ -20,94 +20,96 @@ import com.liferay.portal.cache.configuration.PortalCacheManagerConfiguration;
 import com.liferay.portal.kernel.cache.PortalCache;
 import com.liferay.portal.kernel.util.Props;
 
+import java.io.Serializable;
+
+import java.net.URL;
+
+import java.util.Collections;
+import java.util.Properties;
+
+import javax.management.MBeanServer;
+
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
 import org.cache2k.CacheManager;
 import org.cache2k.spi.Cache2kCoreProvider;
 import org.cache2k.spi.SingleProviderResolver;
 
-import javax.management.MBeanServer;
-
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Properties;
-
 /**
  * @author Xiangyue Cai
  */
 public class Cache2kPortalCacheManager<K extends Serializable, V>
-        extends BasePortalCacheManager<K, V> {
+	extends BasePortalCacheManager<K, V> {
 
-    @Override
-    public void reconfigurePortalCaches(URL configurationURL) {
+	@Override
+	public void reconfigurePortalCaches(URL configurationURL) {
+	}
 
-    }
+	@Override
+	protected PortalCache<K, V> createPortalCache(
+		PortalCacheConfiguration portalCacheConfiguration) {
 
-    @Override
-    protected PortalCache<K, V> createPortalCache(
-            PortalCacheConfiguration portalCacheConfiguration) {
-        String portalCacheName = portalCacheConfiguration.getPortalCacheName();
+		String portalCacheName = portalCacheConfiguration.getPortalCacheName();
 
-        Cache2kBuilder<String, String> b = null;
+		Cache2kBuilder<String, String> b = null;
 
-        synchronized (_cacheManager) {
-            b = new Cache2kBuilder<String, String>(){}
-            .manager(CacheManager.getInstance(_cacheManager.getName()))
-                    .name(portalCacheName);
-        }
+		synchronized (_cacheManager) {
+			b = new Cache2kBuilder<String, String>() {
+			}
+			.manager(CacheManager.getInstance(_cacheManager.getName()))
+				.name(portalCacheName);
+		}
 
-        Cache<String, String> c = b.build();
+		Cache<String, String> c = b.build();
 
-        return new Cache2kPortalCache<>(this, c);
-    }
+		return new Cache2kPortalCache<>(this, c);
+	}
 
-    @Override
-    protected void doClearAll() {
-        if(_cacheManager != null){
-            _cacheManager.clear();
-        }
-    }
+	@Override
+	protected void doClearAll() {
+		if (_cacheManager != null) {
+			_cacheManager.clear();
+		}
+	}
 
-    @Override
-    protected void doDestroy() {
-        _provider.close();
-    }
+	@Override
+	protected void doDestroy() {
+		_provider.close();
+	}
 
-    @Override
-    protected void doRemovePortalCache(String portalCacheName) {
-        _cacheManager.getCache(portalCacheName).clear();
+	@Override
+	protected void doRemovePortalCache(String portalCacheName) {
+		_cacheManager.getCache(portalCacheName).clear();
+	}
 
-    }
+	@Override
+	protected PortalCacheManagerConfiguration
+	getPortalCacheManagerConfiguration() {
 
-    @Override
-    protected PortalCacheManagerConfiguration
-    getPortalCacheManagerConfiguration() {
-        return new PortalCacheManagerConfiguration(
-                null,new PortalCacheConfiguration(
-                        "test",Collections.<Properties>emptySet(),
-                new Properties()),null);
-    }
+		return new PortalCacheManagerConfiguration(
+				null, new PortalCacheConfiguration(
+						"test", Collections.<Properties>emptySet(),
+				new Properties()), null);
+	}
 
-    @Override
-    protected void initPortalCacheManager() {
-        _provider = SingleProviderResolver.resolveMandatory(
-                Cache2kCoreProvider.class);
-        _cacheManager = _provider.getManager(
-                _provider.getDefaultClassLoader(),getPortalCacheManagerName());
-    }
+	@Override
+	protected void initPortalCacheManager() {
+		_provider = SingleProviderResolver.resolveMandatory(
+			Cache2kCoreProvider.class);
+		_cacheManager = _provider.getManager(
+			_provider.getDefaultClassLoader(), getPortalCacheManagerName());
+	}
 
-    @Override
-    protected void removeConfigurableEhcachePortalCacheListeners(
-            PortalCache<K, V> portalCache) {
+	@Override
+	protected void removeConfigurableEhcachePortalCacheListeners(
+		PortalCache<K, V> portalCache) {
+	}
 
-    }
+	protected MBeanServer mBeanServer;
+	protected volatile Props props;
 
-    protected MBeanServer mBeanServer;
+	private CacheManager _cacheManager;
+	private PortalCacheManagerConfiguration _portalCacheManagerConfiguration;
+	private Cache2kCoreProvider _provider;
 
-    protected volatile Props props;
-
-    private CacheManager _cacheManager;
-    private Cache2kCoreProvider _provider;
-    private PortalCacheManagerConfiguration _portalCacheManagerConfiguration;
 }

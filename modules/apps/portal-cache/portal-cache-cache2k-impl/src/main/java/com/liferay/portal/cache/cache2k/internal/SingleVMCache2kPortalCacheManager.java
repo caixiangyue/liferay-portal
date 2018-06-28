@@ -60,24 +60,22 @@ public class SingleVMCache2kPortalCacheManager<K extends Serializable, V>
 	}
 
 	@Reference(unbind = "-")
-	protected void setPortalCacheListenerFactory(
-			PortalCacheListenerFactory portalCacheListenerFactory) {
+	protected void setPortalCacheBootstrapLoaderFactory(
+		PortalCacheBootstrapLoaderFactory portalCacheBootstrapLoaderFactory) {
 
+		this.portalCacheBootstrapLoaderFactory =
+			portalCacheBootstrapLoaderFactory;
 	}
 
 	@Reference(unbind = "-")
-	protected void setPortalCacheBootstrapLoaderFactory(
-			PortalCacheBootstrapLoaderFactory
-					portalCacheBootstrapLoaderFactory) {
-		this.portalCacheBootstrapLoaderFactory =
-				portalCacheBootstrapLoaderFactory;
+	protected void setPortalCacheListenerFactory(
+		PortalCacheListenerFactory portalCacheListenerFactory) {
 	}
 
 	@Reference(unbind = "-")
 	protected void setPortalCacheManagerListenerFactory(
-			PortalCacheManagerListenerFactory<PortalCacheManager<K, V>>
-					portalCacheManagerListenerFactory) {
-
+		PortalCacheManagerListenerFactory<PortalCacheManager<K, V>>
+			portalCacheManagerListenerFactory) {
 	}
 
 	@Reference(unbind = "-")

@@ -17,96 +17,98 @@ package com.liferay.portal.cache.cache2k.internal;
 import com.liferay.portal.cache.BasePortalCache;
 import com.liferay.portal.kernel.cache.PortalCacheManager;
 
-import org.cache2k.Cache;
-
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.cache2k.Cache;
 
 /**
  * @author Xiangyue Cai
  */
 public class Cache2kPortalCache<K extends Serializable, V>
-        extends BasePortalCache<K, V>{
+	extends BasePortalCache<K, V> {
 
-    public Cache2kPortalCache(
-            PortalCacheManager<K, V> portalCacheManager,Cache cache) {
-        super(portalCacheManager);
+	public Cache2kPortalCache(
+		PortalCacheManager<K, V> portalCacheManager, Cache cache) {
 
-        this.cache = cache;
-    }
+		super(portalCacheManager);
 
-    public Cache getCache2k() {
-        return cache;
-    }
+		this.cache = cache;
+	}
 
-    @Override
-    public List<K> getKeys() {
-        List<K> keys = new ArrayList<>();
+	public Cache getCache2k() {
+		return cache;
+	}
 
-        Iterator i = cache.keys().iterator();
-        while(i.hasNext()){
-            keys.add((K) i.next());
-        }
+	@Override
+	public List<K> getKeys() {
+		List<K> keys = new ArrayList<>();
 
-        return keys;
-    }
+		Iterator i = cache.keys().iterator();
+		while (i.hasNext()) {
+			keys.add((K)i.next());
+		}
 
-    @Override
-    public String getPortalCacheName() {
-        return cache.getName();
-    }
+		return keys;
+	}
 
-    @Override
-    public void removeAll() {
-        cache.clear();
+	@Override
+	public String getPortalCacheName() {
+		return cache.getName();
+	}
 
-    }
+	@Override
+	public void removeAll() {
+		cache.clear();
+	}
 
-    @Override
-    protected V doGet(K key) {
-        return (V)cache.get(key);
-    }
+	@Override
+	protected V doGet(K key) {
+		return (V)cache.get(key);
+	}
 
-    @Override
-    protected void doPut(K key, V value, int timeToLive) {
-        cache.put(key,value);
-    }
+	@Override
+	protected void doPut(K key, V value, int timeToLive) {
+		cache.put(key, value);
+	}
 
-    @Override
-    protected V doPutIfAbsent(K key, V value, int timeToLive) {
-        cache.put(key,value);
+	@Override
+	protected V doPutIfAbsent(K key, V value, int timeToLive) {
+		cache.put(key, value);
 
-        return (V)cache.get(key);
-    }
+		return (V)cache.get(key);
+	}
 
-    @Override
-    protected void doRemove(K key) {
-        cache.remove(key);
-    }
+	@Override
+	protected void doRemove(K key) {
+		cache.remove(key);
+	}
 
-    @Override
-    protected boolean doRemove(K key, V value) {
-        cache.remove(key);
+	@Override
+	protected boolean doRemove(K key, V value) {
+		cache.remove(key);
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    protected V doReplace(K key, V value, int timeToLive) {
-        V res = (V)cache.get(key);
-        cache.replace(key,value);
+	@Override
+	protected V doReplace(K key, V value, int timeToLive) {
+		V res = (V)cache.get(key);
+		cache.replace(key, value);
 
-        return res;
-    }
+		return res;
+	}
 
-    @Override
-    protected boolean doReplace(K key, V oldValue, V newValue, int timeToLive) {
-        cache.replace(key,newValue);
+	@Override
+	protected boolean doReplace(K key, V oldValue, V newValue, int timeToLive) {
+		cache.replace(key, newValue);
 
-        return true;
-    }
+		return true;
+	}
 
-    protected volatile Cache cache;
+	protected volatile Cache cache;
+
 }

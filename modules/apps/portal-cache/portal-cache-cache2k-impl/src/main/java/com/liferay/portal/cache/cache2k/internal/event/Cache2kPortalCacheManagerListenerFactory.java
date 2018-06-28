@@ -32,8 +32,10 @@ public class Cache2kPortalCacheManagerListenerFactory
 
 	@Override
 	public PortalCacheManagerListener create(
-			Cache2kPortalCacheManager<?, ?> portalCacheManager,
-			Properties properties) {
+		Cache2kPortalCacheManager<?, ?> portalCacheManager,
+		Properties properties) {
+
 		return null;
 	}
+
 }

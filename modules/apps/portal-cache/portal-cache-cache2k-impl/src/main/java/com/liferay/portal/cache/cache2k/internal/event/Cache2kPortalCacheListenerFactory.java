@@ -33,11 +33,12 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true, service = PortalCacheListenerFactory.class)
 public class Cache2kPortalCacheListenerFactory
-		implements PortalCacheListenerFactory {
+	implements PortalCacheListenerFactory {
 
 	@Override
 	public <K extends Serializable, V> PortalCacheListener<K, V> create(
-			Properties properties) {
+		Properties properties) {
+
 		return null;
 	}
 
@@ -50,62 +51,53 @@ public class Cache2kPortalCacheListenerFactory
 	@Reference(unbind = "-")
 	protected void setPortalCacheReplicatorFactory(
 		PortalCacheReplicatorFactory portalCacheReplicatorFactory) {
-
 	}
+
+	private PortalCacheReplicatorFactory _portalCacheReplicatorFactory;
 
 	private class EhcachePortalCacheReplicator
 		<K extends Serializable, V extends Serializable>
-			implements PortalCacheReplicator<K, V>{
-
+			implements PortalCacheReplicator<K, V> {
 
 		@Override
 		public void dispose() {
-
 		}
 
 		@Override
 		public void notifyEntryEvicted(
 				PortalCache<K, V> portalCache, K key, V value, int timeToLive)
-				throws PortalCacheException {
-
+			throws PortalCacheException {
 		}
 
 		@Override
 		public void notifyEntryExpired(
 				PortalCache<K, V> portalCache, K key, V value, int timeToLive)
-				throws PortalCacheException {
-
+			throws PortalCacheException {
 		}
 
 		@Override
 		public void notifyEntryPut(
 				PortalCache<K, V> portalCache, K key, V value, int timeToLive)
-				throws PortalCacheException {
-
+			throws PortalCacheException {
 		}
 
 		@Override
 		public void notifyEntryRemoved(
 				PortalCache<K, V> portalCache, K key, V value, int timeToLive)
-				throws PortalCacheException {
-
+			throws PortalCacheException {
 		}
 
 		@Override
-		public void notifyEntryUpdated
-				(PortalCache<K, V> portalCache, K key, V value, int timeToLive)
-				throws PortalCacheException {
-
+		public void notifyEntryUpdated(
+				PortalCache<K, V> portalCache, K key, V value, int timeToLive)
+			throws PortalCacheException {
 		}
 
 		@Override
-		public void notifyRemoveAll(
-				PortalCache<K, V> portalCache)
-				throws PortalCacheException {
-
+		public void notifyRemoveAll(PortalCache<K, V> portalCache)
+			throws PortalCacheException {
 		}
+
 	}
-
-	private PortalCacheReplicatorFactory _portalCacheReplicatorFactory;
 
 }
