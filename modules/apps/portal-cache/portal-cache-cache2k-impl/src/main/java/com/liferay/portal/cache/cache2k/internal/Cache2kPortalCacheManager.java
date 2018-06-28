@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.net.URL;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.management.MBeanServer;
@@ -45,24 +46,33 @@ public class Cache2kPortalCacheManager<K extends Serializable, V>
 	public void reconfigurePortalCaches(URL configurationURL) {
 	}
 
+	protected Cache<K, V> createCache2kCache(String portalCacheName) {
+		Cache2kBuilder<K, V> cache2kBuilder = new Cache2kBuilder<K, V>() {};
+
+		return cache2kBuilder.manager(
+			CacheManager.getInstance(_cacheManager.getName())
+		).name(
+			portalCacheName
+		).build();
+	}
+
 	@Override
 	protected PortalCache<K, V> createPortalCache(
 		PortalCacheConfiguration portalCacheConfiguration) {
 
 		String portalCacheName = portalCacheConfiguration.getPortalCacheName();
 
-		Cache2kBuilder<String, String> b = null;
+		Cache<K, V> cache = null;
 
 		synchronized (_cacheManager) {
-			b = new Cache2kBuilder<String, String>() {
+			cache = _cacheManager.getCache(portalCacheName);
+
+			if (cache == null) {
+				cache = createCache2kCache(portalCacheName);
 			}
-			.manager(CacheManager.getInstance(_cacheManager.getName()))
-				.name(portalCacheName);
 		}
 
-		Cache<String, String> c = b.build();
-
-		return new Cache2kPortalCache<>(this, c);
+		return new Cache2kPortalCache<>(this, cache);
 	}
 
 	@Override
@@ -74,30 +84,47 @@ public class Cache2kPortalCacheManager<K extends Serializable, V>
 
 	@Override
 	protected void doDestroy() {
+		_cacheManager.close();
 		_provider.close();
 	}
 
 	@Override
 	protected void doRemovePortalCache(String portalCacheName) {
-		_cacheManager.getCache(portalCacheName).clear();
+		Iterable<Cache> actionCaches = _cacheManager.getActiveCaches();
+
+		Iterator<Cache> itr = actionCaches.iterator();
+
+		while (itr.hasNext()) {
+			Cache cache = itr.next();
+
+			if (portalCacheName.equals(cache.getName())) {
+				itr.remove();
+
+				break;
+			}
+		}
 	}
 
 	@Override
 	protected PortalCacheManagerConfiguration
-	getPortalCacheManagerConfiguration() {
+		getPortalCacheManagerConfiguration() {
 
-		return new PortalCacheManagerConfiguration(
-				null, new PortalCacheConfiguration(
-						"test", Collections.<Properties>emptySet(),
-				new Properties()), null);
+		return _portalCacheManagerConfiguration;
 	}
 
 	@Override
 	protected void initPortalCacheManager() {
 		_provider = SingleProviderResolver.resolveMandatory(
 			Cache2kCoreProvider.class);
+
 		_cacheManager = _provider.getManager(
 			_provider.getDefaultClassLoader(), getPortalCacheManagerName());
+
+		_portalCacheManagerConfiguration = new PortalCacheManagerConfiguration(
+			null,
+			new PortalCacheConfiguration(
+				null, Collections.emptySet(), new Properties()),
+			null);
 	}
 
 	@Override
