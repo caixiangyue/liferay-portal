@@ -20,7 +20,6 @@ import com.liferay.portal.kernel.cache.PortalCacheManager;
 import java.io.Serializable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.cache2k.Cache;
@@ -39,17 +38,12 @@ public class Cache2kPortalCache<K extends Serializable, V>
 		this.cache = cache;
 	}
 
-	public Cache getCache2k() {
-		return cache;
-	}
-
 	@Override
 	public List<K> getKeys() {
 		List<K> keys = new ArrayList<>();
 
-		Iterator i = cache.keys().iterator();
-		while (i.hasNext()) {
-			keys.add((K)i.next());
+		for (K key : cache.keys()) {
+			keys.add(key);
 		}
 
 		return keys;
@@ -67,7 +61,7 @@ public class Cache2kPortalCache<K extends Serializable, V>
 
 	@Override
 	protected V doGet(K key) {
-		return (V)cache.get(key);
+		return cache.get(key);
 	}
 
 	@Override
@@ -77,9 +71,22 @@ public class Cache2kPortalCache<K extends Serializable, V>
 
 	@Override
 	protected V doPutIfAbsent(K key, V value, int timeToLive) {
-		cache.put(key, value);
 
-		return (V)cache.get(key);
+		// TODO: check Cache2k JavaDoc for computeIfAbsent return value (V)
+
+		// return cache.computeIfAbsent(key, () -> value);
+
+		// TODO: check Cache2k JavaDoc for putIfAbsent return value (boolean)
+
+		V oldValue = cache.get(key);
+
+		boolean put = cache.putIfAbsent(key, value);
+
+		if (put) {
+			return null;
+		}
+
+		return oldValue;
 	}
 
 	@Override
@@ -89,26 +96,33 @@ public class Cache2kPortalCache<K extends Serializable, V>
 
 	@Override
 	protected boolean doRemove(K key, V value) {
-		cache.remove(key);
 
-		return true;
+		// TODO: check Cache2k JavaDoc;
+		// doRemove(K, V) may mean remove only when both key and value equals
+
+		return cache.removeIfEquals(key, value);
 	}
 
 	@Override
 	protected V doReplace(K key, V value, int timeToLive) {
-		V res = (V)cache.get(key);
-		cache.replace(key, value);
 
-		return res;
+		// TODO: check Cache2k JavaDoc for peekAndReplace return value
+
+		return cache.peekAndReplace(key, value);
 	}
 
 	@Override
 	protected boolean doReplace(K key, V oldValue, V newValue, int timeToLive) {
-		cache.replace(key, newValue);
 
-		return true;
+		// TODO: check Cache2k JavaDoc for replace return value (boolean)
+
+		if (oldValue.equals(cache.get(key))) {
+			return cache.replace(key, newValue);
+		}
+
+		return false;
 	}
 
-	protected volatile Cache cache;
+	protected volatile Cache<K, V> cache;
 
 }
