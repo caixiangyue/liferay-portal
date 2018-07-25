@@ -30,18 +30,23 @@ import freemarker.ext.beans.MapModel;
 import freemarker.ext.beans.ResourceBundleModel;
 import freemarker.ext.beans.StringModel;
 
+import freemarker.ext.util.ModelFactory;
+import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleScalar;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModel;
 
 import java.lang.reflect.Field;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,11 +55,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 
 /**
  * @author Xiangyue Cai
  */
-public class LiferayObjectWrapperTest {
+public class LiferayObjectWrapperTest extends PowerMockito {
 
 	@ClassRule
 	@Rule
@@ -79,7 +85,7 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testHandleUnknownTypeAllowedDate() {
-		Date date = Mockito.mock(Date.class);
+		Date date = mock(Date.class);
 
 		TemplateModel result = _liferayObjectWrapper.handleUnknownType(date);
 
@@ -181,14 +187,49 @@ public class LiferayObjectWrapperTest {
 	}
 
 	@Test
-	public void testWrapAllowedInteger() throws Exception {
+	public void testWrapUnknowType() throws Exception {
+		ModelFactory originalStringModelFactory =
+			ReflectionTestUtil.getFieldValue(
+				_liferayObjectWrapper, "_STRING_MODEL_FACTORY");
+
+		AtomicInteger count = new AtomicInteger(0);
+
+		InvocationHandler invocationHandler = (proxy, method, args) -> {
+			String methodName = method.getName();
+
+			if (methodName.equals("create")) {
+				count.incrementAndGet();
+
+				return originalStringModelFactory.create(
+					args[0], (ObjectWrapper)args[1]);
+			}
+
+			return null;
+		};
+
+		ModelFactory proxyStringModelFactory = null;
+
+		ReflectionTestUtil.setFieldValue(
+			_liferayObjectWrapper, "_STRING_MODEL_FACTORY",
+			proxyStringModelFactory);
+
 		Integer integer = 0;
 
-		_liferayObjectWrapper.handleUnknownType(integer);
+		// Unknown type not handled
 
 		TemplateModel result = _liferayObjectWrapper.wrap(integer);
 
-		Assert.assertTrue(result instanceof TemplateModel);
+		Assert.assertTrue(result instanceof StringModel);
+
+		Assert.assertEquals(0, count.get());
+
+		// Unknown type handled
+
+		_liferayObjectWrapper.handleUnknownType(integer);
+
+		Assert.assertTrue(result instanceof StringModel);
+
+		Assert.assertEquals(1, count.get());
 	}
 
 	@Test
@@ -242,7 +283,7 @@ public class LiferayObjectWrapperTest {
 
 		TemplateModel result = _liferayObjectWrapper.wrap(templateModel);
 
-		Assert.assertTrue(result instanceof TemplateModel);
+		Assert.assertSame(templateModel, result);
 	}
 
 	private LiferayObjectWrapper _liferayObjectWrapper;
