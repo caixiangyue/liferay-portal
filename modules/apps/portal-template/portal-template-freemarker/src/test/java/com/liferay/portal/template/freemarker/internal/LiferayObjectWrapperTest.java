@@ -71,69 +71,68 @@ public class LiferayObjectWrapperTest {
 	public void testHandleUnknownTypeAllowedCollection() {
 		ObjectCollection objectCollection = new ObjectCollection();
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(
 			objectCollection);
 
-		Assert.assertTrue(returnResult instanceof SimpleSequence);
+		Assert.assertTrue(result instanceof SimpleSequence);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedDate() {
-		Date objectDate = Mockito.mock(Date.class);
+		Date date = Mockito.mock(Date.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
-			objectDate);
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(date);
 
-		Assert.assertTrue(returnResult instanceof StringModel);
+		Assert.assertTrue(result instanceof StringModel);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedEnumeration() {
 		Enumeration enumeration = Mockito.mock(Enumeration.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(
 			enumeration);
 
-		Assert.assertTrue(returnResult instanceof EnumerationModel);
+		Assert.assertTrue(result instanceof EnumerationModel);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedMap() {
 		Map map = Mockito.mock(Map.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(map);
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(map);
 
-		Assert.assertTrue(returnResult instanceof MapModel);
+		Assert.assertTrue(result instanceof MapModel);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedNode() {
 		DefaultNode defaultNode = Mockito.mock(DefaultNode.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(
 			defaultNode);
 
-		Assert.assertNull(returnResult);
+		Assert.assertNull(result);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedResourceBundle() {
 		ResourceBundle resourceBundle = Mockito.mock(ResourceBundle.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(
 			resourceBundle);
 
-		Assert.assertTrue(returnResult instanceof ResourceBundleModel);
+		Assert.assertTrue(result instanceof ResourceBundleModel);
 	}
 
 	@Test
 	public void testHandleUnknownTypeAllowedTemplateNode() {
 		TemplateNode templateNode = Mockito.mock(TemplateNode.class);
 
-		Object returnResult = _liferayObjectWrapper.handleUnknownType(
+		TemplateModel result = _liferayObjectWrapper.handleUnknownType(
 			templateNode);
 
-		Assert.assertTrue(returnResult instanceof LiferayTemplateModel);
+		Assert.assertTrue(result instanceof LiferayTemplateModel);
 	}
 
 	@AdviseWith(adviceClasses = ReflectionUtilAdvice.class)
@@ -176,74 +175,74 @@ public class LiferayObjectWrapperTest {
 	public void testWrapAllowedCollection() throws Exception {
 		ObjectCollection objectCollection = new ObjectCollection();
 
-		Object returnResult = _liferayObjectWrapper.wrap(objectCollection);
+		TemplateModel result = _liferayObjectWrapper.wrap(objectCollection);
 
-		Assert.assertTrue(returnResult instanceof SimpleSequence);
+		Assert.assertTrue(result instanceof SimpleSequence);
 	}
 
 	@Test
 	public void testWrapAllowedInteger() throws Exception {
-		Integer objectNewType = 0;
+		Integer integer = 0;
 
-		_liferayObjectWrapper.handleUnknownType(objectNewType);
+		_liferayObjectWrapper.handleUnknownType(integer);
 
-		Object returnResult = _liferayObjectWrapper.wrap(objectNewType);
+		TemplateModel result = _liferayObjectWrapper.wrap(integer);
 
-		Assert.assertTrue(returnResult instanceof TemplateModel);
+		Assert.assertTrue(result instanceof TemplateModel);
 	}
 
 	@Test
 	public void testWrapAllowedMap() throws Exception {
 		ObjectMap objectMap = Mockito.mock(ObjectMap.class);
 
-		Object returnResult = _liferayObjectWrapper.wrap(objectMap);
+		TemplateModel result = _liferayObjectWrapper.wrap(objectMap);
 
-		Assert.assertTrue(returnResult instanceof MapModel);
+		Assert.assertTrue(result instanceof MapModel);
 	}
 
 	@Test
 	public void testWrapAllowedNode() throws Exception {
 		TemplateNode templateNode = Mockito.mock(TemplateNode.class);
 
-		Object returnResult = _liferayObjectWrapper.wrap(templateNode);
+		TemplateModel result = _liferayObjectWrapper.wrap(templateNode);
 
-		Assert.assertTrue(returnResult instanceof LiferayTemplateModel);
+		Assert.assertTrue(result instanceof LiferayTemplateModel);
 	}
 
 	@Test
 	public void testWrapAllowedNull() throws Exception {
 		Object object = null;
 
-		TemplateModel returnResult = _liferayObjectWrapper.wrap(object);
+		TemplateModel result = _liferayObjectWrapper.wrap(object);
 
-		Assert.assertNull(returnResult);
+		Assert.assertNull(result);
 	}
 
 	@Test
 	public void testWrapAllowedString() throws Exception {
 		String objectTemplateString = "";
 
-		Object returnResult = _liferayObjectWrapper.wrap(objectTemplateString);
+		TemplateModel result = _liferayObjectWrapper.wrap(objectTemplateString);
 
-		Assert.assertTrue(returnResult instanceof SimpleScalar);
+		Assert.assertTrue(result instanceof SimpleScalar);
 	}
 
 	@Test
 	public void testWrapAllowedStringModel() throws Exception {
 		ObjectEmpty objectEmpty = new ObjectEmpty();
 
-		Object returnResult = _liferayObjectWrapper.wrap(objectEmpty);
+		TemplateModel result = _liferayObjectWrapper.wrap(objectEmpty);
 
-		Assert.assertTrue(returnResult instanceof StringModel);
+		Assert.assertTrue(result instanceof StringModel);
 	}
 
 	@Test
 	public void testWrapAllowedTemplateModel() throws Exception {
 		TemplateModel templateModel = Mockito.mock(TemplateModel.class);
 
-		Object returnResult = _liferayObjectWrapper.wrap(templateModel);
+		TemplateModel result = _liferayObjectWrapper.wrap(templateModel);
 
-		Assert.assertTrue(returnResult instanceof TemplateModel);
+		Assert.assertTrue(result instanceof TemplateModel);
 	}
 
 	private LiferayObjectWrapper _liferayObjectWrapper;
