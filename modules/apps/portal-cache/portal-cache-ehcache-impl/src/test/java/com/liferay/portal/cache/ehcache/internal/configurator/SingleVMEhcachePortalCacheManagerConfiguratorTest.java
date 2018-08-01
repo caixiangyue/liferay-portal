@@ -18,9 +18,6 @@ import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -42,16 +39,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Props props = (Props)ProxyUtil.newProxyInstance(
 			Props.class.getClassLoader(), new Class<?>[] {Props.class},
-			new InvocationHandler() {
-
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
-
-					return null;
-				}
-
-			});
+			(proxy, method, args) -> null);
 
 		singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
 
