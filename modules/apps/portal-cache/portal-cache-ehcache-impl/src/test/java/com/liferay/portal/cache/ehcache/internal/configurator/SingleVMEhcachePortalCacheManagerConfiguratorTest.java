@@ -43,8 +43,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
 
-		Assert.assertNotNull(
-			singleVMEhcachePortalCacheManagerConfigurator.props);
+		Assert.assertSame(
+			props, singleVMEhcachePortalCacheManagerConfigurator.props);
 	}
 
 }
