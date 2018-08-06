@@ -219,6 +219,8 @@ public class MultiVMEhcachePortalCacheManagerConfigurator
 	@Reference(unbind = "-")
 	protected void setProps(Props props) {
 		this.props = props;
+
+		System.out.println("hello");
 	}
 
 	protected boolean clusterEnabled;
