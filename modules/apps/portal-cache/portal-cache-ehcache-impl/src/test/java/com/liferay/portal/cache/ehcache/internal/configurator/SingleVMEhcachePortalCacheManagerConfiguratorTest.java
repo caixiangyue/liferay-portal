@@ -15,33 +15,32 @@
 package com.liferay.portal.cache.ehcache.internal.configurator;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.cache.configuration.PortalCacheConfiguration;
+import com.liferay.portal.cache.configuration.PortalCacheManagerConfiguration;
 import com.liferay.portal.cache.ehcache.internal.EhcacheConstants;
 import com.liferay.portal.cache.ehcache.internal.EhcachePortalCacheConfiguration;
+import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
-import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+
 import java.net.URL;
 
-import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
-import com.liferay.portal.test.rule.AdviseWith;
-import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
-import org.junit.*;
-import com.liferay.portal.cache.configuration.PortalCacheConfiguration;
-import com.liferay.portal.cache.configuration.PortalCacheManagerConfiguration;
-import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
-import com.liferay.portal.kernel.util.ObjectValuePair;
+import java.util.*;
+
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.CacheConfiguration.CacheEventListenerFactoryConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.FactoryConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 
-import java.util.*;
+import org.junit.*;
 
 /**
  * @author Xiangyue Cai
@@ -62,67 +61,20 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		};
 
 	@Before
-	public void setUp(){
-		_singleVMEhcachePortalCacheManagerConfigurator = new SingleVMEhcachePortalCacheManagerConfigurator();
-	}
-	@Test
-	public void testSetProps() {
-
-		Props props = (Props)ProxyUtil.newProxyInstance(
-			Props.class.getClassLoader(), new Class<?>[] {Props.class},
-			new InvocationHandler() {
-
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args)
-					throws Throwable {
-
-					return null;
-				}
-
-			});
-
-		_singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
-
-		Assert.assertNotNull(
-			_singleVMEhcachePortalCacheManagerConfigurator.props);
+	public void setUp() {
+		_singleVMEhcachePortalCacheManagerConfigurator =
+			new SingleVMEhcachePortalCacheManagerConfigurator();
 	}
 
 	@Test
-	public void testGetConfigurationObjectValuePair(){
-		try {
-			_singleVMEhcachePortalCacheManagerConfigurator.getConfigurationObjectValuePair("", null, true);
-			Assert.fail("no exception thrown!");
-		}
-		catch (Exception e){
-			Assert.assertTrue(e instanceof NullPointerException);
-		}
-
-		URL configFileURL =
-				BaseEhcachePortalCacheManagerConfigurator.class.getResource(
-						_defaultConfigFile);
-
-		ObjectValuePair<Configuration, PortalCacheManagerConfiguration> objectValuePair =
-				_singleVMEhcachePortalCacheManagerConfigurator.getConfigurationObjectValuePair(
-						PortalCacheManagerNames.SINGLE_VM,configFileURL,true);
-
-		Configuration configuration = objectValuePair.getKey();
-
-		Assert.assertEquals(PortalCacheManagerNames.SINGLE_VM,configuration.getName());
-
-		PortalCacheManagerConfiguration portalCacheManagerConfiguration = objectValuePair.getValue();
-
-		Assert.assertEquals(PortalCacheConfiguration.PORTAL_CACHE_NAME_DEFAULT,
-				portalCacheManagerConfiguration.getDefaultPortalCacheConfiguration().getPortalCacheName());
-	}
-
-	@Test
-	public void testClearListenerConfigurationsWithCacheConfiguration(){
-
+	public void testClearListenerConfigurationsWithCacheConfiguration() {
 		CacheConfiguration cacheConfiguration = null;
+
 		try {
-			_singleVMEhcachePortalCacheManagerConfigurator.clearListenerConfigrations(cacheConfiguration);
+			_singleVMEhcachePortalCacheManagerConfigurator.clearListenerConfigrations(
+				cacheConfiguration);
 		}
-		catch (NullPointerException npe){
+		catch (NullPointerException npe) {
 			Assert.fail("Should not throw exception!");
 		}
 
@@ -132,20 +84,21 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				cacheEventListenerFactoryConfiguration =
 				new CacheEventListenerFactoryConfiguration();
 
-		cacheConfiguration.addCacheEventListenerFactory(cacheEventListenerFactoryConfiguration);
+		cacheConfiguration.addCacheEventListenerFactory(
+			cacheEventListenerFactoryConfiguration);
 		_singleVMEhcachePortalCacheManagerConfigurator.
-				clearListenerConfigrations(cacheConfiguration);
+			clearListenerConfigrations(cacheConfiguration);
 		List<?> factoryConfigurations =
-				cacheConfiguration.getCacheEventListenerConfigurations();
+			cacheConfiguration.getCacheEventListenerConfigurations();
 		Assert.assertTrue(factoryConfigurations.isEmpty());
-
 	}
 
 	@Test
 	public void testClearListenerConfigurationsWithConfiguration() {
 		Configuration configuration = new Configuration();
 
-		FactoryConfiguration<?> factoryConfiguration = new FactoryConfiguration();
+		FactoryConfiguration<?> factoryConfiguration =
+			new FactoryConfiguration();
 
 		configuration.addCacheManagerPeerListenerFactory(factoryConfiguration);
 
@@ -154,14 +107,15 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		configuration.addCacheManagerEventListenerFactory(factoryConfiguration);
 
 		List<?> listenerFactoryConfigurations =
-				configuration.getCacheManagerPeerListenerFactoryConfigurations();
+			configuration.getCacheManagerPeerListenerFactoryConfigurations();
 
 		List<?> providerFactoryConfigurations =
-				configuration.getCacheManagerPeerProviderFactoryConfiguration();
-		_singleVMEhcachePortalCacheManagerConfigurator.clearListenerConfigrations(configuration);
+			configuration.getCacheManagerPeerProviderFactoryConfiguration();
+		_singleVMEhcachePortalCacheManagerConfigurator.clearListenerConfigrations(
+			configuration);
 
 		Map<String, CacheConfiguration> cacheConfigurations =
-				configuration.getCacheConfigurations();
+			configuration.getCacheConfigurations();
 
 		Assert.assertTrue(listenerFactoryConfigurations.isEmpty());
 
@@ -174,52 +128,106 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertTrue(cacheConfigurations.isEmpty());
 	}
 
+	@Test
+	public void testGetConfigurationObjectValuePair() {
+		try {
+			_singleVMEhcachePortalCacheManagerConfigurator.getConfigurationObjectValuePair(
+				"", null, true);
+			Assert.fail("no exception thrown!");
+		}
+		catch (Exception e) {
+			Assert.assertTrue(e instanceof NullPointerException);
+		}
+
+		URL configFileURL =
+				BaseEhcachePortalCacheManagerConfigurator.class.getResource(
+					_defaultConfigFile);
+
+		ObjectValuePair<Configuration, PortalCacheManagerConfiguration> objectValuePair =
+				_singleVMEhcachePortalCacheManagerConfigurator.getConfigurationObjectValuePair(
+					PortalCacheManagerNames.SINGLE_VM, configFileURL, true);
+
+		Configuration configuration = objectValuePair.getKey();
+
+		Assert.assertEquals(
+			PortalCacheManagerNames.SINGLE_VM, configuration.getName());
+
+		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
+			objectValuePair.getValue();
+
+		Assert.assertEquals(PortalCacheConfiguration.PORTAL_CACHE_NAME_DEFAULT,
+			portalCacheManagerConfiguration.getDefaultPortalCacheConfiguration().getPortalCacheName());
+	}
 
 	@Test
-	public void testIsRequireSerialization(){
+	public void testIsRequireSerialization() {
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
 		cacheConfiguration.setOverflowToDisk(true);
-		Boolean isRequireSerialization = _singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(cacheConfiguration);
+		Boolean isRequireSerialization =
+			_singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
+				cacheConfiguration);
+
 		Assert.assertTrue(isRequireSerialization);
 
 		cacheConfiguration.setOverflowToDisk(false);
 		cacheConfiguration.setOverflowToOffHeap(true);
-		isRequireSerialization = _singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(cacheConfiguration);
+		isRequireSerialization =
+			_singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
+				cacheConfiguration);
 		Assert.assertTrue(isRequireSerialization);
 
 		cacheConfiguration.setOverflowToDisk(false);
 		cacheConfiguration.setOverflowToOffHeap(false);
 		cacheConfiguration.setDiskPersistent(true);
-		isRequireSerialization = _singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(cacheConfiguration);
+		isRequireSerialization =
+			_singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
+				cacheConfiguration);
 		Assert.assertTrue(isRequireSerialization);
 
+		CacheConfiguration testPersistenceCacheConfiguration =
+			new CacheConfiguration();
+		PersistenceConfiguration persistenceConfiguration =
+			new PersistenceConfiguration();
 
-		CacheConfiguration testPersistenceCacheConfiguration = new CacheConfiguration();
-		PersistenceConfiguration persistenceConfiguration = new PersistenceConfiguration();
-		persistenceConfiguration.setStrategy(String.valueOf(Strategy.DISTRIBUTED));
-		testPersistenceCacheConfiguration.addPersistence(persistenceConfiguration);
-		isRequireSerialization = _singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(testPersistenceCacheConfiguration);
+		persistenceConfiguration.setStrategy(
+			String.valueOf(Strategy.DISTRIBUTED));
+		testPersistenceCacheConfiguration.addPersistence(
+			persistenceConfiguration);
+		isRequireSerialization =
+			_singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
+				testPersistenceCacheConfiguration);
 		Assert.assertTrue(isRequireSerialization);
 
 		persistenceConfiguration.setStrategy(String.valueOf(Strategy.NONE));
-		testPersistenceCacheConfiguration.addPersistence(persistenceConfiguration);
-		isRequireSerialization = _singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(testPersistenceCacheConfiguration);
+		testPersistenceCacheConfiguration.addPersistence(
+			persistenceConfiguration);
+		isRequireSerialization =
+			_singleVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
+				testPersistenceCacheConfiguration);
 		Assert.assertFalse(isRequireSerialization);
-
 	}
 
 	@Test
-	public void testParseCacheEventListenerConfigurations(){
-		Set<Properties> emptySet =  _singleVMEhcachePortalCacheManagerConfigurator.parseCacheEventListenerConfigurations(null, true);
+	public void testParseCacheEventListenerConfigurations() {
+		Set<Properties> emptySet =
+			_singleVMEhcachePortalCacheManagerConfigurator.parseCacheEventListenerConfigurations(
+				null, true);
 		Assert.assertTrue(emptySet.isEmpty());
 
-		CacheEventListenerFactoryConfiguration cacheEventListenerFactoryConfiguration = new CacheEventListenerFactoryConfiguration();
-		cacheEventListenerFactoryConfiguration.setProperties(PropsKeys.EHCACHE_REPLICATOR_PROPERTIES);
-		cacheEventListenerFactoryConfiguration.setPropertySeparator(StringPool.COMMA);
-		cacheEventListenerFactoryConfiguration.setClass(this.getClass().getName());
-		List<CacheEventListenerFactoryConfiguration> cacheEventListenerFactoryConfigurationList = new ArrayList<>();
-		cacheEventListenerFactoryConfigurationList.add(cacheEventListenerFactoryConfiguration);
+		CacheEventListenerFactoryConfiguration cacheEventListenerFactoryConfiguration =
+			new CacheEventListenerFactoryConfiguration();
+
+		cacheEventListenerFactoryConfiguration.setProperties(
+			PropsKeys.EHCACHE_REPLICATOR_PROPERTIES);
+		cacheEventListenerFactoryConfiguration.setPropertySeparator(
+			StringPool.COMMA);
+		cacheEventListenerFactoryConfiguration.setClass(
+			this.getClass().getName());
+		List<CacheEventListenerFactoryConfiguration> cacheEventListenerFactoryConfigurationList =
+			new ArrayList<>();
+		cacheEventListenerFactoryConfigurationList.add(
+			cacheEventListenerFactoryConfiguration);
 		Set<Properties> portalCacheListenerPropertiesSet =
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseCacheEventListenerConfigurations(
@@ -227,61 +235,72 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		for (Properties properties : portalCacheListenerPropertiesSet) {
 			String factoryClassName = properties.getProperty(EhcacheConstants.
-					CACHE_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
-			Assert.assertEquals(this.getClass().getName(),factoryClassName);
+				CACHE_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
+
+			Assert.assertEquals(this.getClass().getName(), factoryClassName);
 		}
 	}
 
 	@Test
-	public void testParseCacheListenerConfigurations(){
+	public void testParseCacheListenerConfigurations() {
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
+
 		cacheConfiguration.setName(_testCacheName);
 		EhcachePortalCacheConfiguration ehcachePortalCacheConfiguration =
 				(EhcachePortalCacheConfiguration) _singleVMEhcachePortalCacheManagerConfigurator.
-					parseCacheListenerConfigurations(cacheConfiguration,true);
-		Set<Properties> portalCacheListenerPropertiesSet = ehcachePortalCacheConfiguration.getPortalCacheListenerPropertiesSet();
+					parseCacheListenerConfigurations(cacheConfiguration, true);
 
-		Assert.assertEquals(ehcachePortalCacheConfiguration.getPortalCacheName(),_testCacheName);
+		Set<Properties> portalCacheListenerPropertiesSet =
+			ehcachePortalCacheConfiguration.getPortalCacheListenerPropertiesSet();
+
+		Assert.assertEquals(
+			ehcachePortalCacheConfiguration.getPortalCacheName(),
+			_testCacheName);
 
 		Assert.assertTrue(portalCacheListenerPropertiesSet.isEmpty());
 
-		Assert.assertFalse(ehcachePortalCacheConfiguration.isRequireSerialization());
+		Assert.assertFalse(
+			ehcachePortalCacheConfiguration.isRequireSerialization());
 	}
 
 	@Test
-	public void testParseCacheManagerEventListenerConfigurations(){
+	public void testParseCacheManagerEventListenerConfigurations() {
 		Set<Properties> emptySet =
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseCacheManagerEventListenerConfigurations(null);
 		Assert.assertTrue(emptySet.isEmpty());
-		FactoryConfiguration<?> factoryConfiguration = new FactoryConfiguration<>();
+		FactoryConfiguration<?> factoryConfiguration =
+			new FactoryConfiguration<>();
 		factoryConfiguration.setClass(this.getClass().getName());
 		Set<Properties> propertiesSet = _singleVMEhcachePortalCacheManagerConfigurator.
 			parseCacheManagerEventListenerConfigurations(factoryConfiguration);
+
 		for (Properties properties : propertiesSet) {
 			String factoryClassName = properties.getProperty(EhcacheConstants.
-					CACHE_MANAGER_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
-			Assert.assertEquals(this.getClass().getName(),factoryClassName);
-		}
+				CACHE_MANAGER_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
 
+			Assert.assertEquals(this.getClass().getName(), factoryClassName);
+		}
 	}
 
 	@Test
-	public void testParseListenerConfigurations(){
-
+	public void testParseListenerConfigurations() {
 		Configuration configuration = new Configuration();
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
+
 		cacheConfiguration.setName(_testCacheName);
 		configuration.addCache(cacheConfiguration);
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
-				_singleVMEhcachePortalCacheManagerConfigurator.parseListenerConfigurations(configuration,true);
+				_singleVMEhcachePortalCacheManagerConfigurator.parseListenerConfigurations(
+					configuration, true);
+
 		PortalCacheConfiguration portalCacheConfiguration =
 			portalCacheManagerConfiguration.
 				getPortalCacheConfiguration(_testCacheName);
 
-		Assert.assertEquals(portalCacheConfiguration.getPortalCacheName(),_testCacheName);
-
+		Assert.assertEquals(
+			portalCacheConfiguration.getPortalCacheName(), _testCacheName);
 
 		Set<Properties> cacheManagerListenerPropertiesSet =
 			portalCacheManagerConfiguration.
@@ -295,15 +314,42 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	}
 
 	@Test
-	public void testParseProperties(){
+	public void testParseProperties() {
+		Properties properties =
+			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
+				null, null);
 
-		Properties properties = _singleVMEhcachePortalCacheManagerConfigurator.parseProperties(null,null);
 		Assert.assertTrue(properties.isEmpty());
-
 	}
 
+	@Test
+	public void testSetProps() {
+		Props props = (Props)ProxyUtil.newProxyInstance(
+			Props.class.getClassLoader(), new Class<?>[] {Props.class},
+			new InvocationHandler() {
 
-	private SingleVMEhcachePortalCacheManagerConfigurator _singleVMEhcachePortalCacheManagerConfigurator;
-	private final String _defaultConfigFile = "/ehcache/liferay-single-vm.xml";
-	private final String _testCacheName = "testCacheName";
+				@Override
+				public Object invoke(Object proxy, Method method, Object[] args)
+					throws Throwable {
+
+					int a = 1;
+					
+					return null;
+				}
+
+			});
+
+		_singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
+
+		Assert.assertNotNull(
+			_singleVMEhcachePortalCacheManagerConfigurator.props);
+	}
+
+	private static final String _defaultConfigFile =
+		"/ehcache/liferay-single-vm.xml";
+	private static final String _testCacheName = "testCacheName";
+
+	private SingleVMEhcachePortalCacheManagerConfigurator
+		_singleVMEhcachePortalCacheManagerConfigurator;
+
 }
