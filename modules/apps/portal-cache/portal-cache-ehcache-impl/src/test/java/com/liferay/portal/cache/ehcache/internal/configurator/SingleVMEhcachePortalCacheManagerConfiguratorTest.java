@@ -258,8 +258,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 					cacheEventListenerFactoryConfigurationList, false);
 
 		for (Properties properties : portalCacheListenerPropertiesSet) {
-			String factoryClassName =
-				properties.getProperty(EhcacheConstants.
+			String factoryClassName = properties.getProperty(
+				EhcacheConstants.
 					CACHE_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
 
 			Assert.assertEquals(getClass().getName(), factoryClassName);
