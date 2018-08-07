@@ -76,15 +76,15 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testClearListenerConfigurationsWithCacheConfiguration() {
+
+		// Test clearListenerConfigurations(null)
+
 		CacheConfiguration cacheConfiguration = null;
 
-		try {
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				clearListenerConfigrations(cacheConfiguration);
-		}
-		catch (NullPointerException npe) {
-			Assert.fail("Should not throw exception!");
-		}
+		_singleVMEhcachePortalCacheManagerConfigurator.
+			clearListenerConfigrations(cacheConfiguration);
+
+		// Test cleanListenerConfigurations(CacheConfiguration)
 
 		cacheConfiguration = new CacheConfiguration();
 
