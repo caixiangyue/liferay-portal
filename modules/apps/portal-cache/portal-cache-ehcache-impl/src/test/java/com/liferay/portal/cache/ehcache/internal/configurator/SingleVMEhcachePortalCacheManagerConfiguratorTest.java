@@ -383,8 +383,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		_singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
 
-		Assert.assertNotNull(
-			_singleVMEhcachePortalCacheManagerConfigurator.props);
+		Assert.assertSame(
+			props, _singleVMEhcachePortalCacheManagerConfigurator.props);
 	}
 
 	private static final String _TEST_CACHE_NAME = "testCacheName";
