@@ -1100,8 +1100,24 @@ war.path=${app.server.portal.dir}/</echo>
 			<update-gradle-properties />
 
 			<if>
+				<contains string="${env.CI_TEST_SUITE}" substring="poshi" />
+				<then>
+					<propertycopy from="test.poshi.runner.local.release[${env.CI_TEST_SUITE}]" name="test.poshi.runner.local.release" override="true" />
+				</then>
+			</if>
+
+			<if>
 				<equals arg1="${test.poshi.runner.local.release}" arg2="true" />
 				<then>
+					<if>
+						<not>
+							<available file="tools/sdk" />
+						</not>
+						<then>
+							<antcall inheritAll="false" target="setup-sdk" />
+						</then>
+					</if>
+
 					<gradle-execute dir="${test.poshi.runner.src.dir}" task="deploy" />
 				</then>
 			</if>
@@ -4610,7 +4626,7 @@ go]]></replacevalue>
 
 		<gradle-execute dir="${portal.dir}/modules" task="cleanVersionOverride">
 			<arg value="-b" />
-			<arg value="util.gradle" />
+			<arg value="releng.gradle" />
 			<arg value="-PgitRepoPath=${module.dir}" />
 		</gradle-execute>
 	</target>
@@ -6419,20 +6435,6 @@ custom.sql.function.isnotnull=CONVERT(VARCHAR,?) IS NOT NULL</echo>
 				<echo append="true" file="portal-impl/src/portal-ext.properties">
 
 hot.deploy.dependency.management.enabled=false</echo>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="index.on.startup" />
-
-		<if>
-			<equals arg1="${index.on.startup}" arg2="false" />
-			<then>
-				<replace
-					file="portal-impl/src/portal-ext.properties"
-				>
-					<replacetoken>index.on.startup=true</replacetoken>
-					<replacevalue>index.on.startup=false</replacevalue>
-				</replace>
 			</then>
 		</if>
 

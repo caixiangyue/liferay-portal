@@ -454,58 +454,6 @@ public class ModulesStructureTest {
 	}
 
 	@Test
-	public void testScanMarkerFiles() throws IOException {
-		final Set<String> fileNames = new HashSet<>();
-
-		Files.walkFileTree(
-			_modulesDirPath,
-			new SimpleFileVisitor<Path>() {
-
-				@Override
-				public FileVisitResult visitFile(
-						Path path, BasicFileAttributes basicFileAttributes)
-					throws IOException {
-
-					String fileName = String.valueOf(path.getFileName());
-
-					if (StringUtil.startsWith(fileName, ".lfrbuild-")) {
-						fileNames.add(fileName);
-
-						if (_nonemptyMarkerFileNames.contains(fileName)) {
-							String content = ModulesStructureTestUtil.read(
-								path);
-
-							Assert.assertEquals(
-								"Forbidden leading or trailing whitespaces " +
-									"in " + path,
-								content.trim(), content);
-						}
-						else {
-							Assert.assertEquals(
-								"Marker file " + path + " must be empty", 0,
-								basicFileAttributes.size());
-						}
-					}
-
-					return FileVisitResult.CONTINUE;
-				}
-
-			});
-
-		Path readmePath = _modulesDirPath.resolve("README.markdown");
-
-		String readme = ModulesStructureTestUtil.read(readmePath);
-
-		for (String fileName : fileNames) {
-			Assert.assertTrue(
-				StringBundler.concat(
-					"Please document the \"", fileName, "\" marker file in ",
-					String.valueOf(readmePath)),
-				readme.contains("`" + fileName + "`"));
-		}
-	}
-
-	@Test
 	public void testScanReadmeFiles() throws IOException {
 		Files.walkFileTree(
 			_modulesDirPath,
@@ -1070,11 +1018,11 @@ public class ModulesStructureTest {
 
 				repositoryPrivateUsername = value;
 			}
-			else if (!key.equals(_GIT_REPO_GRADLE_JIRA_PROJECT_KEYS)) {
+			else {
 				Matcher matcher = gradlePropertiesPattern.matcher(key);
 
 				if (!_gitRepoGradlePropertiesKeys.contains(key) &&
-					!matcher.matches()) {
+					!key.endsWith(".version") && !matcher.matches()) {
 
 					StringBundler sb = new StringBundler(
 						(_gitRepoGradlePropertiesKeys.size() + 5) * 3 + 8);
@@ -1088,7 +1036,6 @@ public class ModulesStructureTest {
 					List<String> allowedKeys = new ArrayList<>(
 						_gitRepoGradlePropertiesKeys);
 
-					allowedKeys.add(_GIT_REPO_GRADLE_JIRA_PROJECT_KEYS);
 					allowedKeys.add(_GIT_REPO_GRADLE_PROJECT_GROUP_KEY);
 					allowedKeys.add(_GIT_REPO_GRADLE_PROJECT_PATH_PREFIX_KEY);
 
@@ -1109,7 +1056,8 @@ public class ModulesStructureTest {
 						sb.append("\", ");
 					}
 
-					sb.append("and keys matching the pattern \"");
+					sb.append(", keys ending with \".version\", and keys ");
+					sb.append("matching the pattern \"");
 					sb.append(gradlePropertiesPattern.pattern());
 					sb.append("\".");
 
@@ -1402,9 +1350,6 @@ public class ModulesStructureTest {
 
 	private static final String _GIT_REPO_FILE_NAME = ".gitrepo";
 
-	private static final String _GIT_REPO_GRADLE_JIRA_PROJECT_KEYS =
-		"jira.project.keys";
-
 	private static final String _GIT_REPO_GRADLE_PROJECT_GROUP_KEY =
 		"project.group";
 
@@ -1441,8 +1386,7 @@ public class ModulesStructureTest {
 	private static final Set<String> _gitRepoGradlePropertiesKeys =
 		SetUtil.fromList(
 			Arrays.asList(
-				"com.liferay.portal.tools.service.builder.version",
-				"com.liferay.source.formatter.version", "org.gradle.parallel",
+				"jira.project.keys", "org.gradle.parallel",
 				"pom.scm.connection", "pom.scm.developerConnection",
 				"pom.scm.url"));
 	private static final List<String> _gradleConfigurations = Arrays.asList(
@@ -1450,7 +1394,5 @@ public class ModulesStructureTest {
 		"testRuntime", "testIntegrationCompile", "testIntegrationRuntime");
 	private static boolean _masterBranch;
 	private static Path _modulesDirPath;
-	private static final Set<String> _nonemptyMarkerFileNames =
-		Collections.singleton(".lfrbuild-lowest-major-version");
 
 }

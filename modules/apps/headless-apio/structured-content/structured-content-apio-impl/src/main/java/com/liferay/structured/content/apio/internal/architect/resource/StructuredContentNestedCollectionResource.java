@@ -28,7 +28,6 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.model.AssetTagModel;
 import com.liferay.asset.kernel.model.DDMFormValuesReader;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.category.apio.architect.identifier.CategoryIdentifier;
@@ -41,7 +40,6 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
-import com.liferay.journal.model.JournalArticleModel;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.journal.util.JournalContent;
 import com.liferay.media.object.apio.architect.identifier.MediaObjectIdentifier;
@@ -49,18 +47,17 @@ import com.liferay.person.apio.architect.identifier.PersonIdentifier;
 import com.liferay.portal.apio.identifier.ClassNameClassPK;
 import com.liferay.portal.apio.permission.HasPermission;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.structure.apio.architect.identifier.ContentStructureIdentifier;
 import com.liferay.structured.content.apio.architect.identifier.StructuredContentIdentifier;
+import com.liferay.structured.content.apio.architect.util.StructuredContentUtil;
 import com.liferay.structured.content.apio.internal.architect.form.StructuredContentCreatorForm;
 import com.liferay.structured.content.apio.internal.architect.form.StructuredContentUpdaterForm;
 import com.liferay.structured.content.apio.internal.model.JournalArticleWrapper;
@@ -167,12 +164,32 @@ public class StructuredContentNestedCollectionResource
 				"ContentFieldValue"
 			).addLinkedModel(
 				"mediaObject", MediaObjectIdentifier.class,
-				this::_getFileEntryId
+				ddmFormFieldValue -> Try.fromFallible(
+					ddmFormFieldValue::getValue
+				).map(
+					value -> value.getString(LocaleUtil.getDefault())
+				).map(
+					string -> StructuredContentUtil.getFileEntryId(
+						string, _dlAppService)
+				).orElse(
+					null
+				)
 			).addLinkedModel(
 				"structuredContent", StructuredContentIdentifier.class,
 				this::_getStructuredContentId
 			).addLocalizedStringByLocale(
 				"value", this::_getLocalizedString
+			).addNested(
+				"geo", this::_getGeoJSONObject,
+				geoBuilder -> geoBuilder.types(
+					"GeoCoordinates"
+				).addNumber(
+					"latitude", jsonObject -> jsonObject.getDouble("latitude")
+				).addNumber(
+					"longitude", jsonObject -> jsonObject.getDouble("longitude")
+				).build()
+			).addRelativeURL(
+				"link", this::_getLink
 			).addString(
 				"name", DDMFormFieldValue::getName
 			).build()
@@ -232,33 +249,6 @@ public class StructuredContentNestedCollectionResource
 			journalArticle.getArticleResourceUuid(), new ServiceContext());
 	}
 
-	private FileEntry _getFileEntry(JSONObject jsonObject)
-		throws PortalException {
-
-		String uuid = jsonObject.getString("uuid");
-		long groupId = jsonObject.getLong("groupId");
-
-		return _dlAppService.getFileEntryByUuidAndGroupId(uuid, groupId);
-	}
-
-	private Long _getFileEntryId(DDMFormFieldValue ddmFormFieldValue) {
-		return Try.fromFallible(
-			ddmFormFieldValue::getValue
-		).map(
-			value -> value.getString(LocaleUtil.getDefault())
-		).filter(
-			this::_isJSONObject
-		).map(
-			JSONFactoryUtil::createJSONObject
-		).map(
-			this::_getFileEntry
-		).map(
-			FileEntry::getFileEntryId
-		).orElse(
-			null
-		);
-	}
-
 	private List<DDMFormFieldValue> _getFormFieldValues(
 		List<DDMFormFieldValue> ddmFormFieldValues) {
 
@@ -279,6 +269,22 @@ public class StructuredContentNestedCollectionResource
 		return nestedDDMFormFieldValues;
 	}
 
+	private JSONObject _getGeoJSONObject(DDMFormFieldValue ddmFormFieldValue) {
+		return Try.fromFallible(
+			ddmFormFieldValue::getValue
+		).map(
+			value -> value.getString(LocaleUtil.getDefault())
+		).filter(
+			StructuredContentUtil::isJSONObject
+		).filter(
+			string -> string.contains("latitude")
+		).map(
+			JSONFactoryUtil::createJSONObject
+		).orElse(
+			null
+		);
+	}
+
 	private JournalArticle _getJournalArticle(JSONObject jsonObject)
 		throws PortalException {
 
@@ -294,7 +300,7 @@ public class StructuredContentNestedCollectionResource
 			JournalArticle.class.getName(),
 			journalArticle.getResourcePrimKey());
 
-		return ListUtil.toList(assetTags, AssetTagModel::getName);
+		return ListUtil.toList(assetTags, AssetTag::getName);
 	}
 
 	private List<DDMFormFieldValue> _getJournalArticleDDMFormFieldValues(
@@ -339,6 +345,37 @@ public class StructuredContentNestedCollectionResource
 		return new JournalArticleWrapper(journalArticle, themeDisplay);
 	}
 
+	private String _getLayoutLink(JSONObject jsonObject)
+		throws PortalException {
+
+		long groupId = jsonObject.getLong("groupId");
+		boolean privateLayout = jsonObject.getBoolean("privateLayout");
+		long layoutId = jsonObject.getLong("layoutId");
+
+		Layout layoutByUuidAndGroupId = _layoutLocalService.getLayout(
+			groupId, privateLayout, layoutId);
+
+		return layoutByUuidAndGroupId.getFriendlyURL();
+	}
+
+	private String _getLink(DDMFormFieldValue ddmFormFieldValue) {
+		return Try.fromFallible(
+			ddmFormFieldValue::getValue
+		).map(
+			value -> value.getString(LocaleUtil.getDefault())
+		).filter(
+			StructuredContentUtil::isJSONObject
+		).filter(
+			string -> string.contains("layoutId")
+		).map(
+			JSONFactoryUtil::createJSONObject
+		).map(
+			this::_getLayoutLink
+		).orElse(
+			null
+		);
+	}
+
 	private String _getLocalizedString(
 		DDMFormFieldValue ddmFormFieldValue, Locale locale) {
 
@@ -347,7 +384,7 @@ public class StructuredContentNestedCollectionResource
 		).map(
 			value -> value.getString(locale)
 		).filter(
-			valueString -> !_isJSONObject(valueString)
+			valueString -> !StructuredContentUtil.isJSONObject(valueString)
 		).orElse(
 			null
 		);
@@ -417,35 +454,16 @@ public class StructuredContentNestedCollectionResource
 		).map(
 			value -> value.getString(LocaleUtil.getDefault())
 		).filter(
-			this::_isJSONObject
+			StructuredContentUtil::isJSONObject
 		).map(
 			JSONFactoryUtil::createJSONObject
 		).map(
 			this::_getJournalArticle
 		).map(
-			JournalArticleModel::getId
+			JournalArticle::getId
 		).orElse(
 			null
 		);
-	}
-
-	private boolean _isJSONObject(String json) {
-		try {
-			if (json.startsWith("{") &&
-				(JSONFactoryUtil.createJSONObject(json) != null)) {
-
-				return true;
-			}
-
-			return false;
-		}
-		catch (JSONException jsone) {
-			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to parse JSON", jsone);
-			}
-
-			return false;
-		}
 	}
 
 	private JournalArticleWrapper _updateJournalArticle(
@@ -472,9 +490,6 @@ public class StructuredContentNestedCollectionResource
 		return new JournalArticleWrapper(journalArticle, themeDisplay);
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		StructuredContentNestedCollectionResource.class);
-
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
 
@@ -491,5 +506,8 @@ public class StructuredContentNestedCollectionResource
 
 	@Reference
 	private JournalContent _journalContent;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 }

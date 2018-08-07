@@ -24,7 +24,6 @@ import com.liferay.apio.architect.resource.NestedCollectionResource;
 import com.liferay.apio.architect.routes.ItemRoutes;
 import com.liferay.apio.architect.routes.NestedCollectionRoutes;
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.model.AssetTagModel;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.category.apio.architect.identifier.CategoryIdentifier;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -97,7 +96,7 @@ public class MediaObjectNestedCollectionResource
 		).identifier(
 			FileEntry::getFileEntryId
 		).addBidirectionalModel(
-			"folder", "mediaObjects", FolderIdentifier.class,
+			"folder", "documents", FolderIdentifier.class,
 			FileEntry::getFolderId
 		).addRelativeURL(
 			"contentStream", this::_getFileEntryPreviewURL
@@ -105,8 +104,6 @@ public class MediaObjectNestedCollectionResource
 			"dateCreated", FileEntry::getCreateDate
 		).addDate(
 			"dateModified", FileEntry::getModifiedDate
-		).addDate(
-			"datePublished", FileEntry::getLastPublishDate
 		).addLinkedModel(
 			"creator", PersonIdentifier.class, FileEntry::getUserId
 		).addNumber(
@@ -149,7 +146,7 @@ public class MediaObjectNestedCollectionResource
 		List<AssetTag> assetTags = _assetTagLocalService.getTags(
 			DLFileEntry.class.getName(), fileEntry.getFileEntryId());
 
-		return ListUtil.toList(assetTags, AssetTagModel::getName);
+		return ListUtil.toList(assetTags, AssetTag::getName);
 	}
 
 	private PageItems<FileEntry> _getPageItems(

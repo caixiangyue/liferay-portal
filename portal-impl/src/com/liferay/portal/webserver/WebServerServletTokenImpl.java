@@ -16,7 +16,6 @@ package com.liferay.portal.webserver;
 
 import com.liferay.portal.kernel.cache.MultiVMPoolUtil;
 import com.liferay.portal.kernel.cache.PortalCache;
-import com.liferay.portal.kernel.security.pacl.DoPrivileged;
 import com.liferay.portal.kernel.webserver.WebServerServletToken;
 import com.liferay.portal.servlet.filters.cache.CacheUtil;
 
@@ -24,23 +23,20 @@ import com.liferay.portal.servlet.filters.cache.CacheUtil;
  * @author Brian Wing Shun Chan
  * @since  6.1, replaced com.liferay.portal.servlet.ImageServletTokenImpl
  */
-@DoPrivileged
 public class WebServerServletTokenImpl implements WebServerServletToken {
-
-	public void afterPropertiesSet() {
-		_portalCache = MultiVMPoolUtil.getPortalCache(_CACHE_NAME);
-	}
 
 	@Override
 	public String getToken(long imageId) {
+		PortalCache<Long, String> portalCache = PortalCacheHolder._portalCache;
+
 		Long key = imageId;
 
-		String token = _portalCache.get(key);
+		String token = portalCache.get(key);
 
 		if (token == null) {
 			token = _createToken();
 
-			_portalCache.put(key, token);
+			portalCache.put(key, token);
 		}
 
 		return token;
@@ -48,7 +44,9 @@ public class WebServerServletTokenImpl implements WebServerServletToken {
 
 	@Override
 	public void resetToken(long imageId) {
-		_portalCache.remove(imageId);
+		PortalCache<Long, String> portalCache = PortalCacheHolder._portalCache;
+
+		portalCache.remove(imageId);
 
 		// Layout cache
 
@@ -62,6 +60,11 @@ public class WebServerServletTokenImpl implements WebServerServletToken {
 	private static final String _CACHE_NAME =
 		WebServerServletToken.class.getName();
 
-	private PortalCache<Long, String> _portalCache;
+	private static class PortalCacheHolder {
+
+		private static final PortalCache<Long, String> _portalCache =
+			MultiVMPoolUtil.getPortalCache(_CACHE_NAME);
+
+	}
 
 }

@@ -49,6 +49,7 @@ import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessorRegistryUtil;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.xml.DocUtil;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
@@ -85,7 +86,6 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ReleaseInfo;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.UnicodeProperties;
@@ -103,6 +103,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -224,6 +225,10 @@ public class PortletExportControllerImpl implements PortletExportController {
 			document.formattedString());
 	}
 
+	/**
+	 * @deprecated As of Judson (7.1.x)
+	 */
+	@Deprecated
 	@Override
 	public void exportExpandoTables(PortletDataContext portletDataContext)
 		throws Exception {
@@ -645,8 +650,8 @@ public class PortletExportControllerImpl implements PortletExportController {
 			return;
 		}
 
-		PortletDataHandler portletDataHandler =
-			portlet.getPortletDataHandlerInstance();
+		PortletDataHandler portletDataHandler = _getPortletDataHandler(
+			portletDataContext, portlet);
 
 		if ((portletDataHandler == null) ||
 			portletDataHandler.isDataPortletInstanceLevel()) {
@@ -709,25 +714,8 @@ public class PortletExportControllerImpl implements PortletExportController {
 		String data = null;
 
 		try {
-			if (ExportImportThreadLocal.isPortletStagingInProcess() &&
-				ExportImportDateUtil.isRangeFromLastPublishDate(
-					portletDataContext)) {
-
-				String changesetPortletId = ChangesetPortletKeys.CHANGESET;
-
-				Portlet changesetPortlet = _portletLocalService.getPortletById(
-					changesetPortletId);
-
-				PortletDataHandler changesetPortletPortletDataHandlerInstance =
-					changesetPortlet.getPortletDataHandlerInstance();
-
-				data = changesetPortletPortletDataHandlerInstance.exportData(
-					portletDataContext, portletId, jxPortletPreferences);
-			}
-			else {
-				data = portletDataHandler.exportData(
-					portletDataContext, portletId, jxPortletPreferences);
-			}
+			data = portletDataHandler.exportData(
+				portletDataContext, portletId, jxPortletPreferences);
 		}
 		finally {
 			portletDataContext.setGroupId(groupId);
@@ -956,7 +944,6 @@ public class PortletExportControllerImpl implements PortletExportController {
 			exportPortletControlsMap.get(PortletDataHandlerKeys.PORTLET_SETUP));
 
 		exportAssetLinks(portletDataContext);
-		exportExpandoTables(portletDataContext);
 		exportLocks(portletDataContext);
 
 		portletDataContext.addDeletionSystemEventStagedModelTypes(
@@ -1406,6 +1393,41 @@ public class PortletExportControllerImpl implements PortletExportController {
 	@Reference(unbind = "-")
 	protected void setUserLocalService(UserLocalService userLocalService) {
 		_userLocalService = userLocalService;
+	}
+
+	private PortletDataHandler _getPortletDataHandler(
+		PortletDataContext portletDataContext, Portlet portlet) {
+
+		Optional<Portlet> portletOptional = _replacePortlet(
+			portletDataContext, portlet);
+
+		return portletOptional.map(
+			Portlet::getPortletDataHandlerInstance).orElse(null);
+	}
+
+	private Optional<Portlet> _replacePortlet(
+		PortletDataContext portletDataContext, Portlet portlet) {
+
+		if (ExportImportDateUtil.isRangeFromLastPublishDate(
+				portletDataContext)) {
+
+			String changesetPortletId = ChangesetPortletKeys.CHANGESET;
+
+			if (ExportImportThreadLocal.isPortletStagingInProcess()) {
+				Portlet changesetPortlet = _portletLocalService.getPortletById(
+					changesetPortletId);
+
+				return Optional.of(changesetPortlet);
+			}
+
+			if (ExportImportThreadLocal.isLayoutStagingInProcess() &&
+				!changesetPortletId.equals(portlet.getPortletId())) {
+
+				return Optional.empty();
+			}
+		}
+
+		return Optional.of(portlet);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -1,10 +1,4 @@
 <definition>
-	<command name="addTagFacet">
-		<execute function="AssertClick#assertPartialTextClickAt" locator1="SearchResults#USER_FACET_TAGS" value1="${tagName}">
-			<var name="key_tagName" value="${tagName}" />
-		</execute>
-	</command>
-
 	<command name="configureScope">
 		<execute macro="ClassicSearch#gotoOptions">
 			<var name="portletOption" value="Configuration" />
@@ -45,9 +39,9 @@
 		<if>
 			<isset var="portletOption" />
 			<then>
-				<var name="key_menuItem" value="${portletOption}" />
-
-				<execute function="Click" locator1="MenuItem#ANY_MENU_ITEM" />
+				<execute macro="MenuItem#click">
+					<var name="menuItem" value="${portletOption}" />
+				</execute>
 			</then>
 		</if>
 	</command>
@@ -63,8 +57,8 @@
 
 		<execute function="Click" locator1="Search#SEARCH_PORTLET_OPTIONS_WRENCH" />
 
-		<execute function="AssertClick" locator1="MenuItem#ANY_MENU_ITEM" value1="Configuration">
-			<var name="key_menuItem" value="Configuration" />
+		<execute macro="MenuItem#click">
+			<var name="menuItem" value="Configuration" />
 		</execute>
 
 		<execute function="SelectFrame" locator1="IFrame#CONFIGURATION" />
@@ -82,6 +76,21 @@
 		<execute function="Type" locator1="Search#CLASSIC_SEARCH_BAR" value1="${searchTerm}" />
 
 		<execute function="KeyPress" locator1="Search#CLASSIC_SEARCH_BAR" value1="\RETURN" />
+	</command>
+
+	<command name="selectScopeInput">
+		<if>
+			<or>
+				<equals arg1="${searchScope}" arg2="Everything" />
+				<equals arg1="${searchScope}" arg2="This Site" />
+			</or>
+			<then>
+				<execute function="Select" locator1="Search#EMBEDDED_SEARCH_BAR_SCOPE_SELECT" value1="${searchScope}" />
+			</then>
+			<else>
+				<fail message="Invalid search scope. Must be (Everything|This Site)." />
+			</else>
+		</if>
 	</command>
 
 	<command name="unscopeAssetFacetPG">
@@ -107,18 +116,6 @@
 		<execute function="AssertTextEquals" locator1="Portlet#H3_HEADER" value1="${searchAssetTitle}" />
 	</command>
 
-	<command name="viewSearchAssetTitle">
-		<var name="key_searchAssetTitle" value="${searchAssetTitle}" />
-
-		<execute function="AssertTextEquals" locator1="SearchResults#ASSET_ENTRY_TABLE_TITLE" value1="${searchAssetTitle}" />
-	</command>
-
-	<command name="viewSearchNoAssetTitle">
-		<var name="key_searchAssetTitle" value="${searchAssetTitle}" />
-
-		<execute function="AssertTextNotPresent" locator1="SearchResults#ASSET_ENTRY_TABLE_TITLE" value1="${searchAssetTitle}" />
-	</command>
-
 	<command name="viewSearchNoPG">
 		<var name="key_searchAssetTitle" value="${searchAssetTitle}" />
 
@@ -141,20 +138,6 @@
 	</command>
 
 	<command name="viewSearchResultPG">
-		<var name="key_searchAssetTitle" value="${searchAssetTitle}" />
-
-		<execute function="AssertTextEquals#assertPartialText" locator1="SearchResults#ASSET_ENTRY_TABLE_TITLE" value1="${searchAssetTitle}" />
-		<execute function="AssertTextEquals#assertPartialText" locator1="SearchResults#ASSET_ENTRY_TABLE_TYPE" value1="${searchAssetType}" />
-
-		<if>
-			<isset var="searchAssetSummary" />
-			<then>
-				<execute function="AssertTextEquals#assertPartialText" locator1="SearchResults#ASSET_ENTRY_TABLE_SUMMARY" value1="${searchAssetSummary}" />
-			</then>
-		</if>
-	</command>
-
-	<command name="viewSearchResultsPG">
 		<var name="key_searchAssetTitle" value="${searchAssetTitle}" />
 		<var name="key_searchAssetType" value="${searchAssetType}" />
 
@@ -187,10 +170,5 @@
 			<var name="searchAssetTitle" value="${searchAssetTitle}" />
 			<var name="searchAssetType" value="${searchAssetType}" />
 		</execute>
-	</command>
-
-	<command name="viewUserSearchResultPG">
-		<execute function="AssertTextEquals" locator1="Home#USER_NAME_HEADER" value1="${userName}" />
-		<execute function="AssertTextEquals" locator1="Home#PAGE_1" value1="${pageName}" />
 	</command>
 </definition>
