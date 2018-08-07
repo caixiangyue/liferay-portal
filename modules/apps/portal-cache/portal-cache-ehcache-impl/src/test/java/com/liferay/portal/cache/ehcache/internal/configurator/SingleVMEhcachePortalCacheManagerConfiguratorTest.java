@@ -97,6 +97,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(cacheConfiguration);
+
 		List<?> factoryConfigurations =
 			cacheConfiguration.getCacheEventListenerConfigurations();
 
@@ -121,6 +122,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		List<?> providerFactoryConfigurations =
 			configuration.getCacheManagerPeerProviderFactoryConfiguration();
+
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(configuration);
 
@@ -188,7 +190,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertTrue(requireSerialization);
 
 		cacheConfiguration.setOverflowToDisk(false);
-
 		cacheConfiguration.setOverflowToOffHeap(true);
 
 		requireSerialization =
