@@ -184,30 +184,24 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		cacheConfiguration.setOverflowToDisk(true);
 
-		Boolean requireSerialization =
+		Assert.assertTrue(
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration);
-
-		Assert.assertTrue(requireSerialization);
+				isRequireSerialization(cacheConfiguration));
 
 		cacheConfiguration.setOverflowToDisk(false);
 		cacheConfiguration.setOverflowToOffHeap(true);
 
-		requireSerialization =
+		Assert.assertTrue(
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration);
-
-		Assert.assertTrue(requireSerialization);
+				isRequireSerialization(cacheConfiguration));
 
 		cacheConfiguration.setOverflowToDisk(false);
 		cacheConfiguration.setOverflowToOffHeap(false);
 		cacheConfiguration.setDiskPersistent(true);
 
-		requireSerialization =
+		Assert.assertTrue(
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration);
-
-		Assert.assertTrue(requireSerialization);
+				isRequireSerialization(cacheConfiguration));
 
 		CacheConfiguration testPersistenceCacheConfiguration =
 			new CacheConfiguration();
@@ -220,22 +214,18 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		testPersistenceCacheConfiguration.addPersistence(
 			persistenceConfiguration);
 
-		requireSerialization =
+		Assert.assertTrue(
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(testPersistenceCacheConfiguration);
-
-		Assert.assertTrue(requireSerialization);
+				isRequireSerialization(cacheConfiguration));
 
 		persistenceConfiguration.setStrategy(String.valueOf(Strategy.NONE));
 
 		testPersistenceCacheConfiguration.addPersistence(
 			persistenceConfiguration);
 
-		requireSerialization =
+		Assert.assertFalse(
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(testPersistenceCacheConfiguration);
-
-		Assert.assertFalse(requireSerialization);
+				isRequireSerialization(cacheConfiguration));
 	}
 
 	@Test
