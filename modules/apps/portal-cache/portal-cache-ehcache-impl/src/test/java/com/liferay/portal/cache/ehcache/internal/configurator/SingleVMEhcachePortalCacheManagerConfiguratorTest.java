@@ -142,6 +142,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		try {
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				getConfigurationObjectValuePair("", null, true);
+
 			Assert.fail("no exception thrown!");
 		}
 		catch (Exception e) {
@@ -168,10 +169,13 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
 			objectValuePair.getValue();
 
+		PortalCacheConfiguration portalCacheConfiguration =
+			portalCacheManagerConfiguration.
+				getDefaultPortalCacheConfiguration();
+
 		Assert.assertEquals(
 			PortalCacheConfiguration.PORTAL_CACHE_NAME_DEFAULT,
-			portalCacheManagerConfiguration.
-				getDefaultPortalCacheConfiguration().getPortalCacheName());
+			portalCacheConfiguration.getPortalCacheName());
 	}
 
 	@Test
