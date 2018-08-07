@@ -293,23 +293,23 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseCacheManagerEventListenerConfigurations() {
-		Set<Properties> emptySet =
+		Set<Properties> cacheManagerEventListenerConfigurations =
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseCacheManagerEventListenerConfigurations(null);
 
-		Assert.assertTrue(emptySet.isEmpty());
+		Assert.assertTrue(cacheManagerEventListenerConfigurations.isEmpty());
 
 		FactoryConfiguration<?> factoryConfiguration =
 			new FactoryConfiguration<>();
 
 		factoryConfiguration.setClass(getClass().getName());
 
-		Set<Properties> propertiesSet =
+		cacheManagerEventListenerConfigurations =
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseCacheManagerEventListenerConfigurations(
 					factoryConfiguration);
 
-		for (Properties properties : propertiesSet) {
+		for (Properties properties : cacheManagerEventListenerConfigurations) {
 			String factoryClassName =
 				properties.getProperty(EhcacheConstants.
 					CACHE_MANAGER_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
@@ -320,10 +320,11 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseListenerConfigurations() {
-		Configuration configuration = new Configuration();
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
 		cacheConfiguration.setName(_TEST_CACHE_NAME);
+
+		Configuration configuration = new Configuration();
 
 		configuration.addCache(cacheConfiguration);
 
