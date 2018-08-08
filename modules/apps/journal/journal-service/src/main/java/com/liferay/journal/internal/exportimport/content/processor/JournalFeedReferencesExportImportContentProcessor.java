@@ -26,6 +26,7 @@ import com.liferay.journal.model.JournalFeed;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalFeedLocalService;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -38,7 +39,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
@@ -220,8 +220,9 @@ public class JournalFeedReferencesExportImportContentProcessor
 
 				String path = ExportImportPathUtil.getModelPath(journalFeed);
 
-				StringBundler exportedReferenceSB = new StringBundler(3);
+				StringBundler exportedReferenceSB = new StringBundler(4);
 
+				exportedReferenceSB.append(Portal.FRIENDLY_URL_SEPARATOR);
 				exportedReferenceSB.append("[$journalfeed-reference=");
 				exportedReferenceSB.append(path);
 				exportedReferenceSB.append("$]");
@@ -290,7 +291,11 @@ public class JournalFeedReferencesExportImportContentProcessor
 					groupId, className, classPK);
 			}
 
-			if (!content.contains("[$journalfeed-reference=" + path + "$]")) {
+			String exportedReference = StringBundler.concat(
+				Portal.FRIENDLY_URL_SEPARATOR, "[$journalfeed-reference=", path,
+				"$]");
+
+			if (!content.contains(exportedReference)) {
 				continue;
 			}
 
@@ -328,10 +333,6 @@ public class JournalFeedReferencesExportImportContentProcessor
 			long journalFeedId = MapUtil.getLong(
 				journalFeedIds, classPK, classPK);
 
-			int beginPos = content.indexOf("[$journalfeed-reference=" + path);
-
-			int endPos = content.indexOf("$]", beginPos) + 2;
-
 			JournalFeed importedJournalFeed = null;
 
 			try {
@@ -346,37 +347,12 @@ public class JournalFeedReferencesExportImportContentProcessor
 					_log.warn(pe.getMessage());
 				}
 
-				if (content.startsWith("[#journalfeed-reference=", endPos)) {
-					int prefixPos =
-						endPos + "[#journalfeed-reference=".length();
-
-					int postfixPos = content.indexOf("#]", prefixPos);
-
-					String originalReference = content.substring(
-						prefixPos, postfixPos);
-
-					String exportedReference = content.substring(
-						beginPos, postfixPos + 2);
-
-					content = StringUtil.replace(
-						content, exportedReference, originalReference);
-				}
-
 				continue;
 			}
 
 			String url = StringBundler.concat(
-				_JOURNAL_FEED_FRIENDLY_URL,
-				String.valueOf(importedJournalFeed.getGroupId()), "/",
-				importedJournalFeed.getFeedId());
-
-			String exportedReference = "[$journalfeed-reference=" + path + "$]";
-
-			if (content.startsWith("[#journalfeed-reference=", endPos)) {
-				endPos = content.indexOf("#]", beginPos) + 2;
-
-				exportedReference = content.substring(beginPos, endPos);
-			}
+				_JOURNAL_FEED_FRIENDLY_URL, importedJournalFeed.getGroupId(),
+				"/", importedJournalFeed.getFeedId());
 
 			content = StringUtil.replace(content, exportedReference, url);
 		}

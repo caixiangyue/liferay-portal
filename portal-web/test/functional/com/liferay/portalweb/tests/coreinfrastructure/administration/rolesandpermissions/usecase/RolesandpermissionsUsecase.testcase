@@ -10,7 +10,7 @@
 	</set-up>
 
 	<tear-down>
-		<var method="TestPropsUtil#get('test.portal.instance')" name="testPortalInstance" />
+		<var method="PropsUtil#get('test.portal.instance')" name="testPortalInstance" />
 
 		<if>
 			<equals arg1="${testPortalInstance}" arg2="true" />
@@ -262,6 +262,7 @@
 	</command>
 
 	<command name="GroupScopePermissionCheck" priority="4">
+		<property name="osgi.app.includes" value="bookmarks" />
 		<property name="test.name.skip.portal.instance" value="RolesandpermissionsUsecase#GroupScopePermissionCheck" />
 
 		<execute macro="TestCase#getSiteName">
@@ -710,7 +711,7 @@
 			<var name="siteName" value="Organization Name" />
 		</execute>
 
-		<execute macro=" ClassicSearch#search">
+		<execute macro="ClassicSearch#search">
 			<var name="searchTerm" value="Test Document" />
 		</execute>
 
@@ -743,7 +744,7 @@
 
 		<execute function="AssertTextEquals" locator1="Message#EMPTY_INFO" value1="There are no documents or media files in this folder." />
 
-		<execute macro=" ClassicSearch#search">
+		<execute macro="ClassicSearch#search">
 			<var name="searchTerm" value="Test Document" />
 		</execute>
 
@@ -770,7 +771,7 @@
 			<var name="dmDocumentTitle" value="Test Document" />
 		</execute>
 
-		<execute macro=" ClassicSearch#search">
+		<execute macro="ClassicSearch#search">
 			<var name="searchTerm" value="Test Document" />
 		</execute>
 
@@ -1997,6 +1998,8 @@
 	</command>
 
 	<command name="SiteRoleBookmarksInlinePermissions" priority="4">
+		<property name="osgi.app.includes" value="bookmarks" />
+
 		<execute macro="TestCase#getSiteName">
 			<return name="siteName" />
 			<var name="siteName" value="${siteName}" />

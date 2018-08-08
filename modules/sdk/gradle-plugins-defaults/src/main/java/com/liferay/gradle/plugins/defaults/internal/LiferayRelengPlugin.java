@@ -743,6 +743,28 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 				@Override
 				public boolean isSatisfiedBy(Task task) {
+					Project project = task.getProject();
+
+					File projectDir = project.getProjectDir();
+
+					String result = GitUtil.getGitResult(
+						project, "ls-files",
+						FileUtil.getAbsolutePath(projectDir));
+
+					if (Validator.isNotNull(result)) {
+						return true;
+					}
+
+					return false;
+				}
+
+			});
+
+		task.onlyIf(
+			new Spec<Task>() {
+
+				@Override
+				public boolean isSatisfiedBy(Task task) {
 					String ignoreProjectRegex =
 						GradleUtil.getTaskPrefixedProperty(
 							task, "ignore.project.regex");
@@ -951,6 +973,16 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 			for (Dependency dependency : configuration.getDependencies()) {
 				if (dependency instanceof ProjectDependency) {
+					return true;
+				}
+
+				if (!name.startsWith("compile")) {
+					continue;
+				}
+
+				String version = dependency.getVersion();
+
+				if ((version != null) && version.equals("default")) {
 					return true;
 				}
 			}

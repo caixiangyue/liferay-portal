@@ -4151,7 +4151,7 @@ the `buildChangeLog` task.
 ## 5.4.90 - 2018-07-23
 
 ### Changed
-- [LPS-82976]: Change marker file name from `.lfrbuild-portal-all` to
+- [LPS-82976]: Change the marker file name `.lfrbuild-portal-all` to
 `.lfrbuild-portal-deprecated`.
 
 ## 5.4.91 - 2018-07-24
@@ -4181,27 +4181,122 @@ file.
 - [LPS-83705]: Update the [Liferay Gradle Plugins] dependency to version
 3.12.88.
 
-## 5.4.95 - 2018-07-25
+## 5.4.95 - 2018-07-27
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.89.
+
+## 5.4.96 - 2018-07-27
 
 ### Changed
 - [LPS-83920]: Skip replacements of the `updateFileVersions` task for projects
 in the `aspectj` directory.
 
-## 5.4.96 - 2018-07-27
-
-### Added
-- [LPS-83929]: Add the ability to exclude certain projects from executing the
-`writeArtifactPublishCommands` task by setting the property
-`writeArtifactPublishCommands.ignore.project.regex`.
-
 ## 5.4.97 - 2018-07-27
+
+### Changed
+- [LPS-78938]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.90.
+
+## 5.4.98 - 2018-07-27
 
 ### Added
 - [LPS-83920]: Skip replacements of the `updateFileVersions` task if a
 `.lfrbuild-releng-skip-update-file-versions` marker file is found in a parent
 directory.
+- [LPS-83929]: Add the ability to exclude certain projects from executing the
+`writeArtifactPublishCommands` task by setting the property
+`writeArtifactPublishCommands.ignore.project.regex`.
 
+## 5.4.99 - 2018-07-30
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.91.
+
+## 5.4.100 - 2018-07-31
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.92.
+
+## 5.4.101 - 2018-08-01
+
+### Changed
+- [LPS-84039]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.93.
+
+## 5.4.102 - 2018-08-01
+
+### Fixed
+- [LPS-84027]: Fix error when using the [Gradle Dependency Management] plugin in
+OSGi modules.
+
+## 5.4.103 - 2018-08-01
+
+### Added
+- [LPS-84027]: Add support for the `SPRING_BOOT_JAVA_OPTS` environment variable.
+
+## 5.4.104 - 2018-08-01
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.94.
+
+## 5.5.0 - 2018-08-01
+
+### Added
+- [LPS-83168]: Embed `pom.properties` and `pom.xml` when publishing OSGi modules
+to Maven.
+- [LPS-84055]: Automatically exclude Git ignored projects from executing the
+`writeArtifactPublishCommands` task.
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.95.
+
+## 5.5.1 - 2018-08-02
+
+### Changed
+- [LPS-74544]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.96.
+
+## 5.5.2 - 2018-08-02
+
+### Changed
+- [LPS-76475]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.97.
+
+### Fixed
+- [LPS-84055]: The `printDependentArtifact` task should print the project
+directory when it has a dependency with version `default`.
+
+## 5.5.3 - 2018-08-05
+
+### Changed
+- [LPS-83705]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.98.
+
+## 5.5.4 - 2018-08-06
+
+### Changed
+- [LPS-78033]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.99.
+
+## 5.5.5 - 2018-08-06
+
+### Changed
+- [LPS-84119]: Update the [Liferay Gradle Plugins] dependency to version
+3.12.100.
+
+## 5.5.6 - 2018-08-06
+
+### Fixed
+- [LPS-84055]: The `printDependentArtifact` task should print the project
+directory when it has a `compile*` dependency with the version `default`..
 [Find Security Bugs]: https://github.com/liferay/liferay-portal/tree/master/modules/third-party/com-h3xstream-findsecbugs
+[Gradle Dependency Management]: https://github.com/spring-gradle-plugins/dependency-management-plugin
 [Gradle License Report]: https://github.com/jk1/Gradle-License-Report
 [Liferay CDN]: https://repository-cdn.liferay.com/nexus/content/groups/public
 [Liferay Gradle Plugins]: https://github.com/liferay/liferay-portal/tree/master/modules/sdk/gradle-plugins
@@ -4507,6 +4602,7 @@ directory.
 [LPS-76226]: https://issues.liferay.com/browse/LPS-76226
 [LPS-76256]: https://issues.liferay.com/browse/LPS-76256
 [LPS-76326]: https://issues.liferay.com/browse/LPS-76326
+[LPS-76475]: https://issues.liferay.com/browse/LPS-76475
 [LPS-76601]: https://issues.liferay.com/browse/LPS-76601
 [LPS-76623]: https://issues.liferay.com/browse/LPS-76623
 [LPS-76626]: https://issues.liferay.com/browse/LPS-76626
@@ -4569,6 +4665,7 @@ directory.
 [LPS-78854]: https://issues.liferay.com/browse/LPS-78854
 [LPS-78901]: https://issues.liferay.com/browse/LPS-78901
 [LPS-78911]: https://issues.liferay.com/browse/LPS-78911
+[LPS-78938]: https://issues.liferay.com/browse/LPS-78938
 [LPS-78971]: https://issues.liferay.com/browse/LPS-78971
 [LPS-79131]: https://issues.liferay.com/browse/LPS-79131
 [LPS-79191]: https://issues.liferay.com/browse/LPS-79191
@@ -4639,6 +4736,7 @@ directory.
 [LPS-82976]: https://issues.liferay.com/browse/LPS-82976
 [LPS-83067]: https://issues.liferay.com/browse/LPS-83067
 [LPS-83104]: https://issues.liferay.com/browse/LPS-83104
+[LPS-83168]: https://issues.liferay.com/browse/LPS-83168
 [LPS-83220]: https://issues.liferay.com/browse/LPS-83220
 [LPS-83300]: https://issues.liferay.com/browse/LPS-83300
 [LPS-83483]: https://issues.liferay.com/browse/LPS-83483
@@ -4648,6 +4746,10 @@ directory.
 [LPS-83761]: https://issues.liferay.com/browse/LPS-83761
 [LPS-83920]: https://issues.liferay.com/browse/LPS-83920
 [LPS-83929]: https://issues.liferay.com/browse/LPS-83929
+[LPS-84027]: https://issues.liferay.com/browse/LPS-84027
+[LPS-84039]: https://issues.liferay.com/browse/LPS-84039
+[LPS-84055]: https://issues.liferay.com/browse/LPS-84055
+[LPS-84119]: https://issues.liferay.com/browse/LPS-84119
 [LRDOCS-2594]: https://issues.liferay.com/browse/LRDOCS-2594
 [LRDOCS-2841]: https://issues.liferay.com/browse/LRDOCS-2841
 [LRDOCS-2981]: https://issues.liferay.com/browse/LRDOCS-2981

@@ -40,6 +40,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -60,7 +61,9 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * See https://github.com/tensorflow/tensorflow/blob/master/tensorflow/java/src/main/java/org/tensorflow/examples/LabelImage.java
+ * See the <a
+ * href="https://github.com/tensorflow/tensorflow/blob/master/tensorflow/java/src/main/java/org/tensorflow/examples/LabelImage.java">org.tensorflow.examples.LabelImage</a>
+ * class for more information.
  *
  * @author Alejandro Tardín
  */
@@ -127,7 +130,9 @@ public class InceptionImageLabeler {
 
 				sb.append(File.pathSeparator);
 
-				Files.copy(inputStream, targetPath);
+				Files.copy(
+					inputStream, targetPath,
+					StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
 
