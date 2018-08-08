@@ -55,7 +55,8 @@ import org.w3c.dom.Node;
 /**
  * @author Xiangyue Cai
  */
-public class LiferayObjectWrapperTest {
+public class
+LiferayObjectWrapperTest {
 
 	@ClassRule
 	@Rule
@@ -247,13 +248,13 @@ public class LiferayObjectWrapperTest {
 
 		// Instance of TemplateNode class starting with com.liferay.
 
-		TemplateModel newTemplateModel = liferayObjectWrapper.wrap(
+		TemplateModel templateModel = liferayObjectWrapper.wrap(
 			new TemplateNode(null, "testName", "", "", null));
 
-		Assert.assertTrue(newTemplateModel instanceof LiferayTemplateModel);
+		Assert.assertTrue(templateModel instanceof LiferayTemplateModel);
 
 		LiferayTemplateModel liferayTemplateModel =
-			(LiferayTemplateModel)newTemplateModel;
+			(LiferayTemplateModel)templateModel;
 
 		TemplateModel nameTemplateModel = liferayTemplateModel.get("name");
 
@@ -268,11 +269,11 @@ public class LiferayObjectWrapperTest {
 
 		testLiferayCollection.add(testElement);
 
-		newTemplateModel = liferayObjectWrapper.wrap(testLiferayCollection);
+		templateModel = liferayObjectWrapper.wrap(testLiferayCollection);
 
-		Assert.assertTrue(newTemplateModel instanceof SimpleSequence);
+		Assert.assertTrue(templateModel instanceof SimpleSequence);
 
-		SimpleSequence simpleSequence = (SimpleSequence)newTemplateModel;
+		SimpleSequence simpleSequence = (SimpleSequence)templateModel;
 
 		TemplateModel elementTemplateModel = simpleSequence.get(0);
 
@@ -287,11 +288,11 @@ public class LiferayObjectWrapperTest {
 
 		testLiferayMap.put(testKey, testValue);
 
-		newTemplateModel = liferayObjectWrapper.wrap(testLiferayMap);
+		templateModel = liferayObjectWrapper.wrap(testLiferayMap);
 
-		Assert.assertTrue(newTemplateModel instanceof MapModel);
+		Assert.assertTrue(templateModel instanceof MapModel);
 
-		MapModel mapModel = (MapModel)newTemplateModel;
+		MapModel mapModel = (MapModel)templateModel;
 
 		TemplateModel testValueModel = mapModel.get(testKey);
 
@@ -301,20 +302,20 @@ public class LiferayObjectWrapperTest {
 
 		TestLiferayObject testLiferayObject = new TestLiferayObject();
 
-		newTemplateModel = liferayObjectWrapper.wrap(testLiferayObject);
+		templateModel = liferayObjectWrapper.wrap(testLiferayObject);
 
-		Assert.assertTrue(newTemplateModel instanceof StringModel);
+		Assert.assertTrue(templateModel instanceof StringModel);
 
-		StringModel stringModel = (StringModel)newTemplateModel;
+		StringModel stringModel = (StringModel)templateModel;
 
 		Assert.assertEquals(
 			testLiferayObject.toString(), stringModel.getAsString());
 
 		// null
 
-		newTemplateModel = liferayObjectWrapper.wrap(null);
+		templateModel = liferayObjectWrapper.wrap(null);
 
-		Assert.assertNull(newTemplateModel);
+		Assert.assertNull(templateModel);
 
 		// Instance of TemplateModel
 
@@ -324,7 +325,8 @@ public class LiferayObjectWrapperTest {
 				new Class<?>[] {TemplateModel.class},
 				(proxy, method, args) -> null);
 
-		newTemplateModel = liferayObjectWrapper.wrap(oldTemplateModel);
+		TemplateModel newTemplateModel = liferayObjectWrapper.wrap(
+			oldTemplateModel);
 
 		Assert.assertSame(oldTemplateModel, newTemplateModel);
 
@@ -349,11 +351,11 @@ public class LiferayObjectWrapperTest {
 
 		Assert.assertEquals(1, handleUnknowTypeCount.get());
 
-		newTemplateModel = liferayObjectWrapper.wrap(thread);
+		templateModel = liferayObjectWrapper.wrap(thread);
 
 		Assert.assertEquals(1, handleUnknowTypeCount.get());
 
-		stringModel = (StringModel)newTemplateModel;
+		stringModel = (StringModel)templateModel;
 
 		Assert.assertEquals(thread.toString(), stringModel.getAsString());
 	}
