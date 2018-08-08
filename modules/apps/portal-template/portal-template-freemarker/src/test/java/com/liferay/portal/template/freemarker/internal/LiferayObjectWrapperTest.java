@@ -14,6 +14,8 @@
 
 package com.liferay.portal.template.freemarker.internal;
 
+import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.templateparser.TemplateNode;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -55,8 +57,7 @@ import org.w3c.dom.Node;
 /**
  * @author Xiangyue Cai
  */
-public class
-LiferayObjectWrapperTest {
+public class LiferayObjectWrapperTest {
 
 	@ClassRule
 	@Rule
@@ -248,17 +249,14 @@ LiferayObjectWrapperTest {
 
 		// Instance of TemplateNode class starting with com.liferay.
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(
-			new TemplateNode(null, "testName", "", "", null));
+		_assertLiferayObjectWrapperAction(
+			new TemplateNode(null, "testName", "", "", null),
+			LiferayTemplateModel.class, liferayObjectWrapper::wrap,
+			templateModel -> {
+				TemplateModel nameTemplateModel = templateModel.get("name");
 
-		Assert.assertTrue(templateModel instanceof LiferayTemplateModel);
-
-		LiferayTemplateModel liferayTemplateModel =
-			(LiferayTemplateModel)templateModel;
-
-		TemplateModel nameTemplateModel = liferayTemplateModel.get("name");
-
-		Assert.assertEquals("testName", nameTemplateModel.toString());
+				Assert.assertEquals("testName", nameTemplateModel.toString());
+			});
 
 		// Instance of Collection class starting with com.liferay.
 
@@ -269,15 +267,15 @@ LiferayObjectWrapperTest {
 
 		testLiferayCollection.add(testElement);
 
-		templateModel = liferayObjectWrapper.wrap(testLiferayCollection);
+		_assertLiferayObjectWrapperAction(
+			testLiferayCollection, SimpleSequence.class,
+			liferayObjectWrapper::wrap,
+			templateModel -> {
+				TemplateModel elementTemplateModel = templateModel.get(0);
 
-		Assert.assertTrue(templateModel instanceof SimpleSequence);
-
-		SimpleSequence simpleSequence = (SimpleSequence)templateModel;
-
-		TemplateModel elementTemplateModel = simpleSequence.get(0);
-
-		Assert.assertEquals(testElement, elementTemplateModel.toString());
+				Assert.assertEquals(
+					testElement, elementTemplateModel.toString());
+			});
 
 		// Instance of Map class starting with com.liferay.
 
@@ -288,32 +286,26 @@ LiferayObjectWrapperTest {
 
 		testLiferayMap.put(testKey, testValue);
 
-		templateModel = liferayObjectWrapper.wrap(testLiferayMap);
+		_assertLiferayObjectWrapperAction(
+			testLiferayMap, MapModel.class, liferayObjectWrapper::wrap,
+			templateModel -> {
+				TemplateModel testValueModel = templateModel.get(testKey);
 
-		Assert.assertTrue(templateModel instanceof MapModel);
-
-		MapModel mapModel = (MapModel)templateModel;
-
-		TemplateModel testValueModel = mapModel.get(testKey);
-
-		Assert.assertEquals(testValue, testValueModel.toString());
+				Assert.assertEquals(testValue, testValueModel.toString());
+			});
 
 		// Instance of Unknown class starting with com.liferay.
 
 		TestLiferayObject testLiferayObject = new TestLiferayObject();
 
-		templateModel = liferayObjectWrapper.wrap(testLiferayObject);
-
-		Assert.assertTrue(templateModel instanceof StringModel);
-
-		StringModel stringModel = (StringModel)templateModel;
-
-		Assert.assertEquals(
-			testLiferayObject.toString(), stringModel.getAsString());
+		_assertLiferayObjectWrapperAction(
+			testLiferayObject, StringModel.class, liferayObjectWrapper::wrap,
+			templateModel -> Assert.assertEquals(
+				testLiferayObject.toString(), templateModel.getAsString()));
 
 		// null
 
-		templateModel = liferayObjectWrapper.wrap(null);
+		TemplateModel templateModel = liferayObjectWrapper.wrap(null);
 
 		Assert.assertNull(templateModel);
 
@@ -355,9 +347,28 @@ LiferayObjectWrapperTest {
 
 		Assert.assertEquals(1, handleUnknowTypeCount.get());
 
-		stringModel = (StringModel)templateModel;
+		StringModel stringModel = (StringModel)templateModel;
 
 		Assert.assertEquals(thread.toString(), stringModel.getAsString());
+	}
+
+	private <R> R _assertLiferayObjectWrapperAction(
+			Object object, Class<R> expectedClass,
+			UnsafeFunction<Object, TemplateModel, Exception> function,
+			UnsafeConsumer<R, Exception> consumer)
+		throws Exception {
+
+		TemplateModel templateModel = function.apply(object);
+
+		Class<?> templateModelClass = templateModel.getClass();
+
+		Assert.assertTrue(expectedClass.isAssignableFrom(templateModelClass));
+
+		R result = (R)templateModel;
+
+		consumer.accept(result);
+
+		return null;
 	}
 
 	private class TestLiferayCollection extends ArrayList<Object> {
