@@ -155,7 +155,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			Assert.assertTrue(e instanceof NullPointerException);
 		}
 
-		String defaultConfigFile = "/liferay-single-vm.xml";
+		String defaultConfigFile = "/ehcache/liferay-single-vm.xml";
 
 		URL configFileURL =
 			BaseEhcachePortalCacheManagerConfigurator.class.getResource(
