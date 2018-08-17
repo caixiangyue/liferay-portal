@@ -127,7 +127,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(configuration);
 
-		Assert.assertNull(configuration.getDefaultCacheConfiguration());
 		Assert.assertNull(factoryConfiguration.getFullyQualifiedClassPath());
 
 		List<?> listenerFactoryConfigurations =
@@ -139,11 +138,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			configuration.getCacheManagerPeerProviderFactoryConfiguration();
 
 		Assert.assertTrue(providerFactoryConfigurations.isEmpty());
-
-		Map<String, CacheConfiguration> cacheConfigurations =
-			configuration.getCacheConfigurations();
-
-		Assert.assertTrue(cacheConfigurations.isEmpty());
 	}
 
 	@Test
