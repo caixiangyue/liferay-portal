@@ -117,6 +117,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		FactoryConfiguration<?> factoryConfiguration =
 			new FactoryConfiguration();
 
+		factoryConfiguration.setClass(
+			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
+
 		configuration.addCacheManagerPeerListenerFactory(factoryConfiguration);
 		configuration.addCacheManagerPeerProviderFactory(factoryConfiguration);
 		configuration.addCacheManagerEventListenerFactory(factoryConfiguration);
