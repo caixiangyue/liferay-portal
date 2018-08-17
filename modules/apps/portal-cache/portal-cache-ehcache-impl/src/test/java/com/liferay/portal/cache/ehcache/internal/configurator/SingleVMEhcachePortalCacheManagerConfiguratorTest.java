@@ -96,18 +96,18 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		cacheConfiguration.addCacheEventListenerFactory(
 			cacheEventListenerFactoryConfiguration);
 
-		List<?> expectedFactoryConfigurations =
+		List<?> cacheEventListenerFactoryConfigurations =
 			cacheConfiguration.getCacheEventListenerConfigurations();
 
-		Assert.assertFalse(expectedFactoryConfigurations.isEmpty());
+		Assert.assertFalse(cacheEventListenerFactoryConfigurations.isEmpty());
 
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(cacheConfiguration);
 
-		List<?> actualFactoryConfigurations =
+		cacheEventListenerFactoryConfigurations =
 			cacheConfiguration.getCacheEventListenerConfigurations();
 
-		Assert.assertTrue(actualFactoryConfigurations.isEmpty());
+		Assert.assertTrue(cacheEventListenerFactoryConfigurations.isEmpty());
 	}
 
 	@Test
