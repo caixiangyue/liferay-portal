@@ -381,24 +381,28 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	public void testParseProperties() {
 		Properties properties =
 			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
-				null, null);
+				null, StringPool.COMMA);
 
 		Assert.assertTrue(properties.isEmpty());
 
+		String propertiesString = "key1=value1,key2=value2,key3=value3";
+
 		properties =
 			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
-				PropsKeys.EHCACHE_REPLICATOR_PROPERTIES, StringPool.PERIOD);
+				propertiesString, StringPool.COMMA);
 
-		Set<String> propertiesSet = properties.stringPropertyNames();
+		Assert.assertEquals(3, properties.size());
+		Assert.assertEquals("value1", properties.getProperty("key1"));
+		Assert.assertEquals("value2", properties.getProperty("key2"));
+		Assert.assertEquals("value3", properties.getProperty("key3"));
 
-		String[] actualPropertyNames = propertiesSet.toArray(new String[0]);
+		propertiesString = propertiesString.concat(StringPool.SPACE);
 
-		String[] expectedPropertyNames = StringUtil.split(
-			PropsKeys.EHCACHE_REPLICATOR_PROPERTIES, CharPool.PERIOD);
+		properties =
+			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
+				propertiesString, StringPool.COMMA);
 
-		ArrayUtil.reverse(expectedPropertyNames);
-
-		Assert.assertArrayEquals(expectedPropertyNames, actualPropertyNames);
+		Assert.assertEquals("value3", properties.getProperty("key3"));
 	}
 
 	@Test
