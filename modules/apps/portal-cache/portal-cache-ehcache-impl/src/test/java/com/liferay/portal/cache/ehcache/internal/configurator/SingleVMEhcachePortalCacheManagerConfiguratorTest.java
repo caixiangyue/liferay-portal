@@ -132,6 +132,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		configuration.setDefaultCacheConfiguration(cacheConfiguration);
 
+		cacheConfiguration = cacheConfiguration.clone();
+
 		cacheConfiguration.setName(_TEST_CACHE_NAME);
 
 		configuration.addCache(cacheConfiguration);
@@ -141,12 +143,12 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertNull(factoryConfiguration.getFullyQualifiedClassPath());
 
-		List<?> listenerFactoryConfigurations =
+		List<FactoryConfiguration> listenerFactoryConfigurations =
 			configuration.getCacheManagerPeerListenerFactoryConfigurations();
 
 		Assert.assertTrue(listenerFactoryConfigurations.isEmpty());
 
-		List<?> providerFactoryConfigurations =
+		List<FactoryConfiguration> providerFactoryConfigurations =
 			configuration.getCacheManagerPeerProviderFactoryConfiguration();
 
 		Assert.assertTrue(providerFactoryConfigurations.isEmpty());
@@ -199,26 +201,22 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Configuration configuration = objectValuePair.getKey();
 
 		Assert.assertEquals(
+			PortalCacheManagerNames.SINGLE_VM, configuration.getName());
+
+		Assert.assertEquals(
 			9999,
 			configuration.getDefaultCacheConfiguration().
 				getMaxElementsInMemory());
 
+		Map<String, CacheConfiguration> cacheConfigurations =
+			configuration.getCacheConfigurations();
+
 		CacheConfiguration cacheConfiguration =
-			configuration.getCacheConfigurations().get(
+			cacheConfigurations.get(
 				"com.liferay.portal.kernel.servlet.filters.invoker." +
 					"InvokerFilter");
 
 		Assert.assertEquals(10000, cacheConfiguration.getMaxElementsInMemory());
-
-		ConfigurationSource configurationSource =
-			configuration.getConfigurationSource();
-
-		Configuration tempConfiguration =
-			configurationSource.createConfiguration();
-
-		String ehcacheName = tempConfiguration.getName();
-
-		Assert.assertEquals("liferay-single-vm", ehcacheName);
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
 			objectValuePair.getValue();
