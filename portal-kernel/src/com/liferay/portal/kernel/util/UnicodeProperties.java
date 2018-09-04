@@ -192,11 +192,11 @@ public class UnicodeProperties extends HashMap<String, String> {
 		Iterator<Map.Entry<String, String>> iterator = entrySet().iterator();
 
 		while (iterator.hasNext()) {
-			Map.Entry<String, String> map = iterator.next();
+			Map.Entry<String, String> entry = iterator.next();
 
-			String key = map.getKey();
+			String key = entry.getKey();
 
-			String newValue = function.apply(key, map.getValue());
+			String newValue = function.apply(key, entry.getValue());
 
 			if (newValue == null) {
 				iterator.remove();
