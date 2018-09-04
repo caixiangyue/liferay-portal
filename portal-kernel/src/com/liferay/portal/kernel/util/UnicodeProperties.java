@@ -24,8 +24,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 /**
  * <p>
@@ -159,6 +161,50 @@ public class UnicodeProperties extends HashMap<String, String> {
 		}
 
 		return super.remove(key);
+	}
+
+	@Override
+	public String replace(String key, String value) {
+		if (value == null) {
+			return super.remove(key);
+		}
+
+		return super.replace(key, value);
+	}
+
+	@Override
+	public boolean replace(String key, String oldValue, String newValue) {
+		if (newValue == null) {
+			if (super.remove(key) != null) {
+				return true;
+			}
+
+			return false;
+		}
+
+		return super.replace(key, oldValue, newValue);
+	}
+
+	@Override
+	public void replaceAll(
+		BiFunction<? super String, ? super String, ? extends String> function) {
+
+		Iterator<Map.Entry<String, String>> iterator = entrySet().iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<String, String> entry = iterator.next();
+
+			String key = entry.getKey();
+
+			String newValue = function.apply(key, entry.getValue());
+
+			if (newValue == null) {
+				iterator.remove();
+			}
+			else {
+				super.put(key, newValue);
+			}
+		}
 	}
 
 	public String setProperty(String key, String value) {
