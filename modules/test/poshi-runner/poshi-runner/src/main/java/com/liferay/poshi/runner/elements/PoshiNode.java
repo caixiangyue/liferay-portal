@@ -40,8 +40,6 @@ public interface PoshiNode<A extends Node, B extends PoshiNode<A, B>>
 			return 1;
 		}
 
-		int line = 0;
-
 		List<PoshiNode> poshiNodes = parentPoshiElement.getPoshiNodes();
 
 		PoshiNode previousPoshiNode = null;
@@ -64,7 +62,7 @@ public interface PoshiNode<A extends Node, B extends PoshiNode<A, B>>
 
 				String poshiScript = poshiNode.getPoshiScript();
 
-				return line + previousPoshiNode.getPoshiScriptLineNumber() -
+				return previousPoshiNode.getPoshiScriptLineNumber() -
 					StringUtil.countStartingNewLines(previousPoshiScript) +
 						StringUtil.countStartingNewLines(poshiScript) +
 							StringUtil.count(previousPoshiScript, "\n");
@@ -73,7 +71,7 @@ public interface PoshiNode<A extends Node, B extends PoshiNode<A, B>>
 			previousPoshiNode = poshiNode;
 		}
 
-		line = parentPoshiElement.getPoshiScriptLineNumber();
+		int line = parentPoshiElement.getPoshiScriptLineNumber();
 
 		String parentPoshiScript = parentPoshiElement.getPoshiScript();
 
@@ -83,10 +81,12 @@ public interface PoshiNode<A extends Node, B extends PoshiNode<A, B>>
 			String blockName = parentPoshiElement.getBlockName(
 				parentPoshiScript);
 
-			line = line + StringUtil.count(blockName, "\n");
+			line =
+				line + StringUtil.count(blockName, "\n") +
+					StringUtil.countStartingNewLines(getPoshiScript());
 		}
 
-		return line + 1;
+		return line;
 	}
 
 	public void parsePoshiScript(String poshiScript);

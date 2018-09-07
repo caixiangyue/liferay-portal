@@ -44,6 +44,38 @@ public class PoshiElementFactoryTest {
 	}
 
 	@Test
+	public void testConditionalPoshiScriptLineNumbers() throws Exception {
+		PoshiElement rootPoshiElement = _getPoshiElement(
+			"ConditionalPoshiScript.macro");
+
+		PoshiElement commandElement = (PoshiElement)rootPoshiElement.element(
+			"command");
+
+		Element ifElement = commandElement.element("if");
+
+		AndPoshiElement andPoshiElement = (AndPoshiElement)ifElement.element(
+			"and");
+
+		Assert.assertEquals(3, andPoshiElement.getPoshiScriptLineNumber());
+
+		int[] expectedLineNumbers = {4, 6};
+
+		PoshiElement thenPoshiElement = (PoshiElement)ifElement.element("then");
+
+		int i = 0;
+
+		for (Node node : Dom4JUtil.toNodeList(thenPoshiElement.content())) {
+			PoshiElement childPoshiElement = (PoshiElement)node;
+
+			Assert.assertEquals(
+				expectedLineNumbers[i],
+				childPoshiElement.getPoshiScriptLineNumber());
+
+			i++;
+		}
+	}
+
+	@Test
 	public void testPoshiScriptLineNumbers() throws Exception {
 		PoshiElement rootPoshiElement = _getPoshiElement("PoshiScript.macro");
 

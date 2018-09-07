@@ -495,9 +495,8 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 		if (publicParameterMap == null) {
 			return Collections.emptyMap();
 		}
-		else {
-			return Collections.unmodifiableMap(publicParameterMap);
-		}
+
+		return Collections.unmodifiableMap(publicParameterMap);
 	}
 
 	@Override
@@ -525,9 +524,8 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 		if (session == null) {
 			return StringPool.BLANK;
 		}
-		else {
-			return session.getId();
-		}
+
+		return session.getId();
 	}
 
 	@Override
@@ -884,11 +882,14 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 			for (PublicRenderParameter publicRenderParameter :
 					publicRenderParameters) {
 
-				allRenderParameters.put(
-					publicRenderParameter.getIdentifier(),
-					publicRenderParametersMap.get(
-						PortletQNameUtil.getPublicRenderParameterName(
-							publicRenderParameter.getQName())));
+				String[] values = publicRenderParametersMap.get(
+					PortletQNameUtil.getPublicRenderParameterName(
+						publicRenderParameter.getQName()));
+
+				if (values != null) {
+					allRenderParameters.put(
+						publicRenderParameter.getIdentifier(), values);
+				}
 			}
 
 			Map<String, String[]> privateRenderParameters =
@@ -1001,10 +1002,8 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 		if ((portletMode == null) || Validator.isNull(portletMode.toString())) {
 			return true;
 		}
-		else {
-			return _portlet.hasPortletMode(
-				getResponseContentType(), portletMode);
-		}
+
+		return _portlet.hasPortletMode(getResponseContentType(), portletMode);
 	}
 
 	@Override
@@ -1042,10 +1041,9 @@ public abstract class PortletRequestImpl implements LiferayPortletRequest {
 				return RoleLocalServiceUtil.hasUserRole(
 					_remoteUserId, companyId, roleLink, true);
 			}
-			else {
-				return RoleLocalServiceUtil.hasUserRole(
-					_remoteUserId, companyId, role, true);
-			}
+
+			return RoleLocalServiceUtil.hasUserRole(
+				_remoteUserId, companyId, role, true);
 		}
 		catch (Exception e) {
 			_log.error("Unable to check if a user is in role " + role, e);

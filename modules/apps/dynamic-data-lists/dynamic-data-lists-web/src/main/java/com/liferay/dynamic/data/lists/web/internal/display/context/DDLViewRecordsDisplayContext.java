@@ -122,7 +122,9 @@ public class DDLViewRecordsDisplayContext {
 					dropdownItem -> {
 						dropdownItem.putData("action", "deleteRecords");
 						dropdownItem.setIcon("trash");
-						dropdownItem.setLabel("delete");
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_ddlRequestHelper.getRequest(), "delete"));
 						dropdownItem.setQuickAction(true);
 					});
 			}
@@ -526,9 +528,8 @@ public class DDLViewRecordsDisplayContext {
 		if (isAdminPortlet()) {
 			return "/view_record_set.jsp";
 		}
-		else {
-			return "/view_selected_record_set.jsp";
-		}
+
+		return "/view_selected_record_set.jsp";
 	}
 
 	protected Consumer<DropdownItem> getOrderByDropdownItem(String orderByCol) {

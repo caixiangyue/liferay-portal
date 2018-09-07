@@ -167,9 +167,8 @@ public class PingbackMethodImpl implements Method {
 		long classPK = entry.getEntryId();
 
 		String body = StringBundler.concat(
-			"[...] ", getExcerpt(), " [...] [url=", _sourceURI, "]",
-			LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"),
-			"[/url]");
+			"[...] ", getExcerpt(), " [...] <a href=", _sourceURI, ">",
+			LanguageUtil.get(LocaleUtil.getSiteDefault(), "read-more"), "</a>");
 
 		ServiceContext serviceContext = buildServiceContext(
 			companyId, groupId, entry.getUrlTitle());
@@ -334,9 +333,8 @@ public class PingbackMethodImpl implements Method {
 		if (ArrayUtil.isNotEmpty(paramArray)) {
 			return paramArray[0];
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	@Reference(unbind = "-")

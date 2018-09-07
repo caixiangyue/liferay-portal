@@ -1183,11 +1183,11 @@
 				</then>
 			</elseif>
 			<elseif>
-				<equals arg1="${trivialPassword}" arg2="true" />
+				<isset var="minimumNumbers" />
 				<then>
 					<execute macro="Alert#viewRequestFailedToComplete" />
 
-					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_1" value1="That password uses common words. Please enter a password that is harder to guess (i.e. contains a mix of numbers and letters)." />
+					<execute function="AssertTextEquals#assertPartialText" locator1="Message#ERROR_1" value1="That password must contain at least ${minimumNumbers} numbers." />
 				</then>
 			</elseif>
 			<elseif>
@@ -1621,8 +1621,8 @@
 		<execute macro="Navigator#openURL" />
 
 		<execute macro="User#_login">
-			<var name="emailAddress" value="${emailAddress}" />
 			<var name="password" value="${password}" />
+			<var name="userEmailAddress" value="${userEmailAddress}" />
 		</execute>
 
 		<execute function="AssertElementPresent" locator1="UserBar#USER_AVATAR_IMAGE" />
@@ -1709,9 +1709,6 @@
 
 		<execute function="SelectWindow#selectWindowNoSPARefresh" locator1="title=Welcome - ${siteName}" />
 
-		<!-- LPS-83431-->
-		<execute function="Refresh" />
-
 		<execute function="AssertElementPresent" locator1="UserBar#USER_AVATAR_IMAGE" />
 	</command>
 
@@ -1731,9 +1728,6 @@
 				<execute macro="GoogleLogin#acceptConditions" />
 			</then>
 		</if>
-
-		<!-- LPS-83431-->
-		<execute function="Refresh" />
 
 		<execute function="AssertElementPresent" locator1="UserBar#USER_AVATAR_IMAGE" />
 	</command>

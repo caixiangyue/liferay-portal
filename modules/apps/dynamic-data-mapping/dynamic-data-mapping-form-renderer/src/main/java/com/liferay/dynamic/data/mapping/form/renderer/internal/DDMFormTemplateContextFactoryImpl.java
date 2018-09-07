@@ -197,6 +197,7 @@ public class DDMFormTemplateContextFactoryImpl
 
 		templateContext.put(
 			"templateNamespace", getTemplateNamespace(ddmFormLayout));
+		templateContext.put("viewMode", ddmFormRenderingContext.isViewMode());
 
 		return templateContext;
 	}

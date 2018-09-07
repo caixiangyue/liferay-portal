@@ -128,6 +128,9 @@
 		</check>
 		<check name="JavaDiamondOperatorCheck" />
 		<check name="JavaDeserializationSecurityCheck" />
+		<check name="JavaElseStatementCheck">
+			<property name="enabled" value="false" />
+		</check>
 		<check name="JavaEmptyLineAfterSuperCallCheck" />
 		<check name="JavaEmptyLinesCheck" />
 		<check name="JavaExceptionCheck" />
@@ -141,6 +144,7 @@
 		<check name="JavaIndexableCheck" />
 		<check name="JavaInnerClassImportsCheck">
 			<property name="enabled" value="false" />
+			<property name="upperCasePackageNames" value="com.microsoft.webservices.SharePoint.QueryService" />
 		</check>
 		<check name="JavaInterfaceCheck" />
 		<check name="JavaIOExceptionCheck" />

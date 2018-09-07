@@ -1163,6 +1163,8 @@ public interface PropsKeys {
 	@Deprecated
 	public static final String JOURNAL_IMAGE_SMALL_MAX_SIZE = "journal.image.small.max.size";
 
+	public static final String JSON_DESERIALIZATION_WHITELIST_CLASS_NAMES = "json.deserialization.whitelist.class.names";
+
 	public static final String JSON_SERVICE_AUTH_TOKEN_ENABLED = "json.service.auth.token.enabled";
 
 	public static final String JSON_SERVICE_AUTH_TOKEN_HOSTS_ALLOWED = "json.service.auth.token.hosts.allowed";
@@ -2323,10 +2325,18 @@ public interface PropsKeys {
 
 	public static final String SPRING_HIBERNATE_CONFIGURATION_PROXY_FACTORY_PRELOAD_CLASSLOADER_CLASSES = "spring.hibernate.configuration.proxy.factory.preload.classloader.classes";
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final String SPRING_HIBERNATE_DATA_SOURCE = "spring.hibernate.data.source";
 
 	public static final String SPRING_HIBERNATE_SESSION_DELEGATED = "spring.hibernate.session.delegated";
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	public static final String SPRING_HIBERNATE_SESSION_FACTORY = "spring.hibernate.session.factory";
 
 	public static final String SPRING_HIBERNATE_SESSION_FACTORY_PRELOAD_CLASSLOADER_CLASSES = "spring.hibernate.session.factory.preload.classloader.classes";
