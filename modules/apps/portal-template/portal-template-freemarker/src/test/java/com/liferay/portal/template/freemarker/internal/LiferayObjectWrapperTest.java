@@ -74,20 +74,20 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testCheckClassIsRestricted() throws Exception {
-		String[] testAllowedClassNames = new String[1];
+		String[] allowedClassNames = new String[1];
 		String[] restrictedClassNames = {TestLiferayObject.class.getName()};
 
-		testAllowedClassNames[0] = StringPool.STAR;
+		allowedClassNames[0] = StringPool.STAR;
 
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			testAllowedClassNames, restrictedClassNames);
+			allowedClassNames, restrictedClassNames);
 
 		_testLiferayObject(liferayObjectWrapper);
 
-		testAllowedClassNames[0] = TestLiferayObject.class.getName();
+		allowedClassNames[0] = TestLiferayObject.class.getName();
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
-			testAllowedClassNames, restrictedClassNames);
+			allowedClassNames, restrictedClassNames);
 
 		_testLiferayObject(liferayObjectWrapper);
 
