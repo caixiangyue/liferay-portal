@@ -74,15 +74,19 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testCheckClassIsRestricted() throws Exception {
-		String[] allowedClassNames = new String[1];
-		String[] restrictedClassNames = {TestLiferayObject.class.getName()};
 
-		allowedClassNames[0] = StringPool.STAR;
+		// Test 1, if "*" exists, allow all classes and ignore restriction
+
+		String[] allowedClassNames = {StringPool.STAR};
+		String[] restrictedClassNames = {TestLiferayObject.class.getName()};
 
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			allowedClassNames, restrictedClassNames);
 
 		_testLiferayObject(liferayObjectWrapper);
+
+		// Test 2, allowed class names takes precedence over restricted class
+		// names
 
 		allowedClassNames[0] = TestLiferayObject.class.getName();
 
@@ -91,12 +95,25 @@ public class LiferayObjectWrapperTest {
 
 		_testLiferayObject(liferayObjectWrapper);
 
+		// Test 3, TestLiferayObject is restricted by class name
+
 		restrictedClassNames[0] = "java.lang.String";
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			null, restrictedClassNames);
 
 		_testLiferayObject(liferayObjectWrapper);
+
+		// Test 4, TestLiferayObject is not restricted by package name
+
+		restrictedClassNames[0] = "com.liferay.portal.cache";
+
+		liferayObjectWrapper = new LiferayObjectWrapper(
+			null, restrictedClassNames);
+
+		_testLiferayObject(liferayObjectWrapper);
+
+		// Test 5, TestLiferayObject is restricted by class name
 
 		restrictedClassNames[0] = TestLiferayObject.class.getName();
 
@@ -119,35 +136,26 @@ public class LiferayObjectWrapperTest {
 				e.getMessage());
 		}
 
-		restrictedClassNames[0] = "test.not.start.with";
+		// Test 6, TestLiferayObject is restricted by package name
+
+		restrictedClassNames[0] = "com.liferay.portal.template.freemarker";
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			null, restrictedClassNames);
 
-		_testLiferayObject(liferayObjectWrapper);
-
-		String restrictedPackageName = "java.lang";
-		String testRestrictedPackage = "testRestrictedPackage";
-
 		try {
-			restrictedClassNames[0] = restrictedPackageName;
-
-			liferayObjectWrapper = new LiferayObjectWrapper(
-				null, restrictedClassNames);
-
-			liferayObjectWrapper.wrap(testRestrictedPackage);
+			_testLiferayObject(liferayObjectWrapper);
 
 			Assert.fail("No exception thrown!");
 		}
 		catch (Exception e) {
 			Assert.assertTrue(e instanceof TemplateModelException);
 
-			Class<?> restrictedClass = testRestrictedPackage.getClass();
-
 			Assert.assertEquals(
 				StringBundler.concat(
-					"Denied resolving class ", restrictedClass.getName(),
-					" by ", restrictedPackageName),
+					"Denied resolving class ",
+					TestLiferayObject.class.getName(), " by ",
+					TestLiferayObject.class.getName()),
 				e.getMessage());
 		}
 	}
