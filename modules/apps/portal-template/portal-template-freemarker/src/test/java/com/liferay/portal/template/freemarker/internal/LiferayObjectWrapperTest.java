@@ -82,36 +82,21 @@ public class LiferayObjectWrapperTest {
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			testAllowedClassNames, restrictedClassNames);
 
-		try {
-			_testLiferayObject(liferayObjectWrapper);
-		}
-		catch (Exception e) {
-			Assert.fail("Should not throw exception!");
-		}
+		_testLiferayObject(liferayObjectWrapper);
 
 		testAllowedClassNames[0] = TestLiferayObject.class.getName();
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			testAllowedClassNames, restrictedClassNames);
 
-		try {
-			_testLiferayObject(liferayObjectWrapper);
-		}
-		catch (Exception e) {
-			Assert.fail("Should not throw exception!");
-		}
+		_testLiferayObject(liferayObjectWrapper);
 
 		restrictedClassNames[0] = "java.lang.String";
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			null, restrictedClassNames);
 
-		try {
-			_testLiferayObject(liferayObjectWrapper);
-		}
-		catch (Exception e) {
-			Assert.fail("Should not throw exception!");
-		}
+		_testLiferayObject(liferayObjectWrapper);
 
 		restrictedClassNames[0] = TestLiferayObject.class.getName();
 
@@ -139,12 +124,7 @@ public class LiferayObjectWrapperTest {
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			null, restrictedClassNames);
 
-		try {
-			_testLiferayObject(liferayObjectWrapper);
-		}
-		catch (Exception e) {
-			Assert.fail("Should not throw exception!");
-		}
+		_testLiferayObject(liferayObjectWrapper);
 
 		String restrictedPackageName = "java.lang";
 		String testRestrictedPackage = "testRestrictedPackage";
