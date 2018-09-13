@@ -74,14 +74,8 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testCheckClassIsRestricted() throws Exception {
-		TestLiferayMap testLiferayMap = new TestLiferayMap();
-
-		Class<?> clazz = TestLiferayMap.class;
-
-		String className = clazz.getName();
-
 		String[] testAllowedClassNames = new String[1];
-		String[] restrictedClassNames = {className};
+		String[] restrictedClassNames = {TestLiferayObject.class.getName()};
 
 		testAllowedClassNames[0] = StringPool.STAR;
 
@@ -89,19 +83,19 @@ public class LiferayObjectWrapperTest {
 			testAllowedClassNames, restrictedClassNames);
 
 		try {
-			liferayObjectWrapper.wrap(testLiferayMap);
+			_testLiferayObject(liferayObjectWrapper);
 		}
 		catch (Exception e) {
 			Assert.fail("Should not throw exception!");
 		}
 
-		testAllowedClassNames[0] = className;
+		testAllowedClassNames[0] = TestLiferayObject.class.getName();
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			testAllowedClassNames, restrictedClassNames);
 
 		try {
-			liferayObjectWrapper.wrap(testLiferayMap);
+			_testLiferayObject(liferayObjectWrapper);
 		}
 		catch (Exception e) {
 			Assert.fail("Should not throw exception!");
@@ -113,19 +107,19 @@ public class LiferayObjectWrapperTest {
 			null, restrictedClassNames);
 
 		try {
-			liferayObjectWrapper.wrap(testLiferayMap);
+			_testLiferayObject(liferayObjectWrapper);
 		}
 		catch (Exception e) {
 			Assert.fail("Should not throw exception!");
 		}
 
-		restrictedClassNames[0] = className;
+		restrictedClassNames[0] = TestLiferayObject.class.getName();
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
 			null, restrictedClassNames);
 
 		try {
-			liferayObjectWrapper.wrap(testLiferayMap);
+			_testLiferayObject(liferayObjectWrapper);
 
 			Assert.fail("No exception thrown!");
 		}
@@ -134,7 +128,9 @@ public class LiferayObjectWrapperTest {
 
 			Assert.assertEquals(
 				StringBundler.concat(
-					"Denied resolving class ", className, " by ", className),
+					"Denied resolving class ",
+					TestLiferayObject.class.getName(), " by ",
+					TestLiferayObject.class.getName()),
 				e.getMessage());
 		}
 
@@ -144,7 +140,7 @@ public class LiferayObjectWrapperTest {
 			null, restrictedClassNames);
 
 		try {
-			liferayObjectWrapper.wrap(testLiferayMap);
+			_testLiferayObject(liferayObjectWrapper);
 		}
 		catch (Exception e) {
 			Assert.fail("Should not throw exception!");
@@ -495,17 +491,7 @@ public class LiferayObjectWrapperTest {
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
-		TestLiferayObject testLiferayObject = new TestLiferayObject();
-
-		TemplateModel templateModel = liferayObjectWrapper.wrap(
-			testLiferayObject);
-
-		Assert.assertTrue(templateModel instanceof StringModel);
-
-		StringModel stringModel = (StringModel)templateModel;
-
-		Assert.assertEquals(
-			testLiferayObject.toString(), stringModel.getAsString());
+		_testLiferayObject(liferayObjectWrapper);
 	}
 
 	@Test
@@ -610,6 +596,22 @@ public class LiferayObjectWrapperTest {
 				LiferayObjectWrapper.class, "_modelFactories");
 
 		Assert.assertSame(modelFactory, modelFactories.get(clazz));
+	}
+
+	private void _testLiferayObject(LiferayObjectWrapper liferayObjectWrapper)
+		throws Exception {
+
+		TestLiferayObject testLiferayObject = new TestLiferayObject();
+
+		TemplateModel templateModel = liferayObjectWrapper.wrap(
+			testLiferayObject);
+
+		Assert.assertTrue(templateModel instanceof StringModel);
+
+		StringModel stringModel = (StringModel)templateModel;
+
+		Assert.assertEquals(
+			testLiferayObject.toString(), stringModel.getAsString());
 	}
 
 	private class TestLiferayCollection extends ArrayList<Object> {
