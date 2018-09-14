@@ -281,6 +281,8 @@ public class LiferayObjectWrapperTest {
 	public void testLiferayObjectWrapperConstructor()
 		throws ClassNotFoundException {
 
+		// Test 1, allowedClassNames and restrictedClassNames are not provided
+
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
@@ -295,7 +297,7 @@ public class LiferayObjectWrapperTest {
 		Assert.assertTrue(restrictedClasses.isEmpty());
 		Assert.assertTrue(restrictedPackageNames.isEmpty());
 
-		final int testSize = 3;
+		// Test 2, allowedClassNames has "*"
 
 		String[] testAllowedClassNames = {
 			StringPool.STAR, StringPool.BLANK, "test.allow.class"
@@ -314,6 +316,8 @@ public class LiferayObjectWrapperTest {
 			ReflectionTestUtil.getFieldValue(
 				liferayObjectWrapper, "_allowAllClasses"));
 
+		// Test 3, allowedClassNames doesn't have "*"
+
 		testAllowedClassNames[0] = "test.not.contain.star";
 
 		liferayObjectWrapper = new LiferayObjectWrapper(
@@ -322,6 +326,8 @@ public class LiferayObjectWrapperTest {
 		Assert.assertFalse(
 			ReflectionTestUtil.getFieldValue(
 				liferayObjectWrapper, "_allowAllClasses"));
+
+		// Test 4, restrictedClassNames
 
 		String[] testRestrictedClassNames = {
 			"com.liferay.portal.template.ServiceLocator", StringPool.BLANK,
@@ -354,8 +360,6 @@ public class LiferayObjectWrapperTest {
 			Assert.assertEquals(
 				restrictedPackageNames.toString(), 1,
 				restrictedPackageNames.size());
-			Assert.assertFalse(
-				restrictedPackageNames.contains(testRestrictedClassNames[0]));
 			Assert.assertTrue(
 				restrictedPackageNames.contains(testRestrictedClassNames[2]));
 
