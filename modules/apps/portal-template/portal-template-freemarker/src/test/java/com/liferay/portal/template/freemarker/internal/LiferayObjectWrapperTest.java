@@ -330,26 +330,38 @@ public class LiferayObjectWrapperTest {
 
 		try (CaptureHandler captureHandler =
 				JDKLoggerTestUtil.configureJDKLogger(
-					LiferayObjectWrapper.class.getName(), Level.ALL)) {
+					LiferayObjectWrapper.class.getName(), Level.OFF)) {
 
-			Log log = (Log)ProxyUtil.newProxyInstance(
-				Log.class.getClassLoader(), new Class<?>[] {Log.class},
-				(proxy, method, args) -> false);
-
-			log = ReflectionTestUtil.getAndSetFieldValue(
-				LiferayObjectWrapper.class, "_log", log);
-
-			new LiferayObjectWrapper(null, testRestrictedClassNames);
+			liferayObjectWrapper = new LiferayObjectWrapper(
+				null, testRestrictedClassNames);
 
 			List<LogRecord> logRecords = captureHandler.getLogRecords();
 
 			Assert.assertEquals(logRecords.toString(), 0, logRecords.size());
 
-			ReflectionTestUtil.setFieldValue(
-				LiferayObjectWrapper.class, "_log", log);
+			restrictedClasses = ReflectionTestUtil.getFieldValue(
+				liferayObjectWrapper, "_restrictedClasses");
 
-			liferayObjectWrapper = new LiferayObjectWrapper(
-				null, testRestrictedClassNames);
+			Assert.assertEquals(
+				restrictedClasses.toString(), 1, restrictedClasses.size());
+			Assert.assertTrue(
+				restrictedClasses.contains(
+					Class.forName(testRestrictedClassNames[0])));
+
+			restrictedPackageNames = ReflectionTestUtil.getFieldValue(
+				liferayObjectWrapper, "_restrictedPackageNames");
+
+			Assert.assertEquals(
+				restrictedPackageNames.toString(), 1,
+				restrictedPackageNames.size());
+			Assert.assertFalse(
+				restrictedPackageNames.contains(testRestrictedClassNames[0]));
+			Assert.assertTrue(
+				restrictedPackageNames.contains(testRestrictedClassNames[2]));
+
+			captureHandler.resetLogLevel(Level.INFO);
+
+			new LiferayObjectWrapper(null, testRestrictedClassNames);
 
 			logRecords = captureHandler.getLogRecords();
 
@@ -363,26 +375,6 @@ public class LiferayObjectWrapperTest {
 					testRestrictedClassNames[2], ". Registering as a package."),
 				logRecord.getMessage());
 		}
-
-		restrictedClasses = ReflectionTestUtil.getFieldValue(
-			liferayObjectWrapper, "_restrictedClasses");
-
-		Assert.assertEquals(
-			restrictedClasses.toString(), 1, restrictedClasses.size());
-		Assert.assertTrue(
-			restrictedClasses.contains(
-				Class.forName(testRestrictedClassNames[0])));
-
-		restrictedPackageNames = ReflectionTestUtil.getFieldValue(
-			liferayObjectWrapper, "_restrictedPackageNames");
-
-		Assert.assertEquals(
-			restrictedPackageNames.toString(), 1,
-			restrictedPackageNames.size());
-		Assert.assertFalse(
-			restrictedPackageNames.contains(testRestrictedClassNames[0]));
-		Assert.assertTrue(
-			restrictedPackageNames.contains(testRestrictedClassNames[2]));
 	}
 
 	@Test
