@@ -527,12 +527,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testParsePropertiesThrowable() {
-		SingleVMEhcachePortalCacheManagerConfigurator
-			singleVMEhcachePortalCacheManagerConfigurator =
-				new SingleVMEhcachePortalCacheManagerConfigurator();
-
 		try {
-			singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
+			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
 				"key1=value1", StringPool.COMMA);
 
 			Assert.fail("RuntimeException was not thrown");
