@@ -43,7 +43,6 @@ import net.sf.ehcache.config.CacheConfiguration.CacheEventListenerFactoryConfigu
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.FactoryConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration;
-import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -115,8 +114,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			new FactoryConfiguration();
 
 		factoryConfiguration.setClass(
-			SingleVMEhcachePortalCacheManagerConfiguratorTest.
-				class.getName());
+			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 
 		configuration.addCacheManagerPeerListenerFactory(factoryConfiguration);
 		configuration.addCacheManagerPeerProviderFactory(factoryConfiguration);
@@ -293,7 +291,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			new PersistenceConfiguration();
 
 		persistenceConfiguration.setStrategy(
-			String.valueOf(Strategy.LOCALTEMPSWAP));
+			String.valueOf(PersistenceConfiguration.Strategy.LOCALTEMPSWAP));
 
 		cacheConfiguration.addPersistence(persistenceConfiguration);
 
@@ -304,7 +302,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				isRequireSerialization(cacheConfiguration));
 
 		persistenceConfiguration.setStrategy(
-			String.valueOf(Strategy.LOCALRESTARTABLE));
+			String.valueOf(PersistenceConfiguration.Strategy.LOCALRESTARTABLE));
 
 		cacheConfiguration.addPersistence(persistenceConfiguration);
 
@@ -315,7 +313,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				isRequireSerialization(cacheConfiguration));
 
 		persistenceConfiguration.setStrategy(
-			String.valueOf(Strategy.DISTRIBUTED));
+			String.valueOf(PersistenceConfiguration.Strategy.DISTRIBUTED));
 
 		cacheConfiguration.addPersistence(persistenceConfiguration);
 
@@ -325,7 +323,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				isRequireSerialization(cacheConfiguration));
 
-		persistenceConfiguration.setStrategy(String.valueOf(Strategy.NONE));
+		persistenceConfiguration.setStrategy(
+			String.valueOf(PersistenceConfiguration.Strategy.NONE));
 
 		cacheConfiguration.addPersistence(persistenceConfiguration);
 
@@ -352,8 +351,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		cacheEventListenerFactoryConfiguration.setPropertySeparator(
 			StringPool.COMMA);
 		cacheEventListenerFactoryConfiguration.setClass(
-			SingleVMEhcachePortalCacheManagerConfiguratorTest.
-				class.getName());
+			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 		cacheEventListenerFactoryConfiguration.setListenFor("ALL");
 
 		List<CacheEventListenerFactoryConfiguration>
@@ -432,8 +430,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			new FactoryConfiguration<>();
 
 		factoryConfiguration.setClass(
-			SingleVMEhcachePortalCacheManagerConfiguratorTest.
-				class.getName());
+			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 
 		cacheManagerEventListenerConfigurations =
 			_singleVMEhcachePortalCacheManagerConfigurator.
