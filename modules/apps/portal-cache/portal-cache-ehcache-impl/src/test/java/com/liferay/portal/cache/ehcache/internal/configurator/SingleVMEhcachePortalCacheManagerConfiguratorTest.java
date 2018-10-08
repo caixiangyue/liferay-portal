@@ -569,7 +569,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	private static final String _TEST_CACHE_NAME = "testCacheName";
 
-	private static final SingleVMEhcachePortalCacheManagerConfigurator
+	private final SingleVMEhcachePortalCacheManagerConfigurator
 		_singleVMEhcachePortalCacheManagerConfigurator =
 			new SingleVMEhcachePortalCacheManagerConfigurator();
 
