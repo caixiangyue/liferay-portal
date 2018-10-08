@@ -526,7 +526,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	@AdviseWith(adviceClasses = UnsyncStringReaderAdvice.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
-	public void testParsePropertiesThrowable() {
+	public void testParsePropertiesException() {
 		try {
 			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
 				"key1=value1", StringPool.COMMA);
