@@ -116,9 +116,11 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		factoryConfiguration.setClass(
 			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 
-		configuration.addCacheManagerPeerListenerFactory(factoryConfiguration);
-		configuration.addCacheManagerPeerProviderFactory(factoryConfiguration);
 		configuration.addCacheManagerEventListenerFactory(factoryConfiguration);
+		configuration.addCacheManagerPeerListenerFactory(
+			new FactoryConfiguration());
+		configuration.addCacheManagerPeerProviderFactory(
+			new FactoryConfiguration());
 
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
@@ -136,6 +138,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(configuration);
 
+		Assert.assertSame(
+			factoryConfiguration,
+			configuration.getCacheManagerEventListenerFactoryConfiguration());
 		Assert.assertNull(factoryConfiguration.getFullyQualifiedClassPath());
 
 		List<FactoryConfiguration> listenerFactoryConfigurations =
