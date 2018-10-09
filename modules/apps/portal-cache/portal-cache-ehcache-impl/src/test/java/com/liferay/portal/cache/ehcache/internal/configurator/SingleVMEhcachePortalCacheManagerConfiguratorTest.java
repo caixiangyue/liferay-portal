@@ -224,10 +224,11 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertEquals(
 			PortalCacheManagerNames.SINGLE_VM, configuration.getName());
 
+		CacheConfiguration defaultCacheConfiguration =
+			configuration.getDefaultCacheConfiguration();
+
 		Assert.assertEquals(
-			9999,
-			configuration.getDefaultCacheConfiguration().
-				getMaxElementsInMemory());
+			9999, defaultCacheConfiguration.getMaxElementsInMemory());
 
 		Map<String, CacheConfiguration> cacheConfigurations =
 			configuration.getCacheConfigurations();
