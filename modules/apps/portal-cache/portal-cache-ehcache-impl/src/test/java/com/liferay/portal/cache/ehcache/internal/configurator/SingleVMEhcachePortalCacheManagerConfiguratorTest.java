@@ -449,14 +449,11 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			cacheManagerEventListenerConfigurations.size());
 
 		for (Properties properties : cacheManagerEventListenerConfigurations) {
-			String factoryClassName = properties.getProperty(
-				EhcacheConstants.
-					CACHE_MANAGER_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME);
-
 			Assert.assertEquals(
 				SingleVMEhcachePortalCacheManagerConfiguratorTest.class.
 					getName(),
-				factoryClassName);
+				properties.getProperty(EhcacheConstants.
+					CACHE_MANAGER_LISTENER_PROPERTIES_KEY_FACTORY_CLASS_NAME));
 		}
 	}
 
