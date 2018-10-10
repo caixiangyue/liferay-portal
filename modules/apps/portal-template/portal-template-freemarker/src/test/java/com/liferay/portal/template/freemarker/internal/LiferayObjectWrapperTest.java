@@ -516,55 +516,23 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testWrapUnknownType() throws Exception {
-		AtomicInteger handleUnknownTypeCount = new AtomicInteger(0);
-
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null) {
-
-			@Override
-			protected TemplateModel handleUnknownType(Object object) {
-				handleUnknownTypeCount.incrementAndGet();
-
-				return super.handleUnknownType(object);
-			}
-
-		};
-
-		Assert.assertEquals(0, handleUnknownTypeCount.get());
-
-		// Test 1, wrap unkown type for the first time
-
-		Thread thread1 = new Thread("testThread1");
-
-		TemplateModel templateModel1 = liferayObjectWrapper.wrap(thread1);
-
-		Assert.assertEquals(1, handleUnknownTypeCount.get());
+			null, null);
 
 		Assert.assertTrue(
 			"Unknown type (java.lang.Thread) should be wrapped as StringModel",
-			templateModel1 instanceof StringModel);
+			liferayObjectWrapper.wrap(new Thread("testThread1")) instanceof
+				StringModel);
 
-		_assertModelFactoryCache("_STRING_MODEL_FACTORY", thread1.getClass());
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Thread.class);
 
-		StringModel stringModel1 = (StringModel)templateModel1;
+		Map<Class<?>, ModelFactory> modelFactories =
+			ReflectionTestUtil.getFieldValue(
+				LiferayObjectWrapper.class, "_modelFactories");
 
-		Assert.assertEquals(thread1.toString(), stringModel1.getAsString());
+		modelFactories.put(Thread.class, (object, wrapper) -> null);
 
-		// Test 2, wrap the same type again
-
-		Thread thread2 = new Thread("testThread2");
-
-		TemplateModel templateModel2 = liferayObjectWrapper.wrap(thread2);
-
-		Assert.assertEquals(1, handleUnknownTypeCount.get());
-
-		Assert.assertTrue(
-			"Unknown type (java.lang.Thread) should be wrapped as StringModel",
-			templateModel2 instanceof StringModel);
-
-		StringModel stringModel2 = (StringModel)templateModel2;
-
-		Assert.assertEquals(thread2.toString(), stringModel2.getAsString());
+		Assert.assertNull(liferayObjectWrapper.wrap(new Thread("testThread2")));
 	}
 
 	private void _assertModelFactoryCache(
