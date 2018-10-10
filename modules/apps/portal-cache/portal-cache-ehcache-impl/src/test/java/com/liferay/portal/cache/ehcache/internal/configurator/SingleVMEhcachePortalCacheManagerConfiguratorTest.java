@@ -197,9 +197,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			Assert.fail("NullPointerException was not thrown");
 		}
 		catch (Exception e) {
-			Assert.assertTrue(
-				"NullPointerException should be thrown",
-				e instanceof NullPointerException);
+			Assert.assertEquals(NullPointerException.class, e.getClass());
+			Assert.assertEquals("Configuration path is null", e.getMessage());
 		}
 
 		ObjectValuePair<Configuration, PortalCacheManagerConfiguration>
