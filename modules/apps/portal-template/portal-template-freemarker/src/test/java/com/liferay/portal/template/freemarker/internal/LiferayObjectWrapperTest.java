@@ -405,13 +405,20 @@ public class LiferayObjectWrapperTest {
 		}
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testLiferayObjectWrapperConstructorWithException() {
 		Field cacheClassNamesField = ReflectionTestUtil.getAndSetFieldValue(
 			LiferayObjectWrapper.class, "_cacheClassNamesField", null);
 
 		try {
 			new LiferayObjectWrapper(null, null);
+
+			Assert.fail("NullPointerException was not thrown");
+		}
+		catch (Exception e) {
+			Assert.assertTrue(
+				"NullPointException should be thrown",
+				e instanceof NullPointerException);
 		}
 		finally {
 			ReflectionTestUtil.setFieldValue(
