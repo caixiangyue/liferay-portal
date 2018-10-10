@@ -39,6 +39,7 @@ import freemarker.ext.util.ModelFactory;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.Version;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -50,11 +51,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import freemarker.template.Version;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -237,6 +236,26 @@ public class LiferayObjectWrapperTest {
 		ResourceBundle handledResourceBundle = resourceBundleModel.getBundle();
 
 		Assert.assertNull(handledResourceBundle.getKeys());
+	}
+
+	@Test
+	public void testHandleUnknowTypeVersion() throws Exception {
+		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+			null, null);
+
+		TemplateModel templateModel = liferayObjectWrapper.handleUnknownType(
+			new Version("1.0"));
+
+		Assert.assertTrue(
+			"Unknown type (freemarker.template.Version) should be handled as " +
+				"StringModel",
+			templateModel instanceof StringModel);
+
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Version.class);
+
+		StringModel stringModel = (StringModel)templateModel;
+
+		Assert.assertEquals("1.0", stringModel.getAsString());
 	}
 
 	@AdviseWith(adviceClasses = ReflectionUtilAdvice.class)
@@ -486,32 +505,12 @@ public class LiferayObjectWrapperTest {
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
-		TemplateModel originalTemplateModel =
-			ProxyFactory.newDummyInstance(TemplateModel.class);
+		TemplateModel originalTemplateModel = ProxyFactory.newDummyInstance(
+			TemplateModel.class);
 
 		Assert.assertSame(
 			originalTemplateModel,
 			liferayObjectWrapper.wrap(originalTemplateModel));
-	}
-
-	@Test
-	public void testHandleUnknowTypeVersion() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null);
-
-		TemplateModel templateModel = liferayObjectWrapper.handleUnknownType(
-			new Version("1.0"));
-
-		Assert.assertTrue(
-			"Unknown type (freemarker.template.Version) should be handled as " +
-				"StringModel",
-			templateModel instanceof StringModel);
-
-		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Version.class);
-
-		StringModel stringModel = (StringModel)templateModel;
-
-		Assert.assertEquals("1.0", stringModel.getAsString());
 	}
 
 	@Test
