@@ -494,6 +494,27 @@ public class LiferayObjectWrapperTest {
 	}
 
 	@Test
+	public void testHandleUnknowTypeThread() throws Exception {
+		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+			null, null);
+
+		Thread thread = new Thread("testThread");
+
+		TemplateModel templateModel = liferayObjectWrapper.handleUnknownType(
+			thread);
+
+		Assert.assertTrue(
+			"Unknown type (java.lang.Thread) should be handled as StringModel",
+			templateModel instanceof StringModel);
+
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", thread.getClass());
+
+		StringModel stringModel = (StringModel)templateModel;
+
+		Assert.assertEquals(thread.toString(), stringModel.getAsString());
+	}
+
+	@Test
 	public void testWrapUnknownType() throws Exception {
 		AtomicInteger handleUnknownTypeCount = new AtomicInteger(0);
 
