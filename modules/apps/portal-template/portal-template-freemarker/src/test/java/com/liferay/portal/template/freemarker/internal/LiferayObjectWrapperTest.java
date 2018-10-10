@@ -74,39 +74,24 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testCheckClassIsRestricted() throws Exception {
-
-		// Test 1, if neither allowedClassNames nor restrictedClassNames is
-		// provided, the object can be wrapped
-
 		_testWrapLiferayObject(new LiferayObjectWrapper(null, null));
-
-		// Test 2, if "*" exists, allow all classes and ignore restriction
 
 		_testWrapLiferayObject(
 			new LiferayObjectWrapper(
 				new String[] {StringPool.STAR},
 				new String[] {TestLiferayObject.class.getName()}));
 
-		// Test 3, allowed class names takes precedence over restricted class
-		// names
-
 		_testWrapLiferayObject(
 			new LiferayObjectWrapper(
 				new String[] {TestLiferayObject.class.getName()},
 				new String[] {TestLiferayObject.class.getName()}));
 
-		// Test 4, TestLiferayObject is not restricted by class name
-
 		_testWrapLiferayObject(
 			new LiferayObjectWrapper(null, new String[] {"java.lang.String"}));
-
-		// Test 5, TestLiferayObject is not restricted by package name
 
 		_testWrapLiferayObject(
 			new LiferayObjectWrapper(
 				null, new String[] {"com.liferay.portal.cache"}));
-
-		// Test 6, TestLiferayObject is restricted by class name
 
 		try {
 			_testWrapLiferayObject(
@@ -123,8 +108,6 @@ public class LiferayObjectWrapperTest {
 					TestLiferayObject.class.getName()),
 				tme.getMessage());
 		}
-
-		// Test 7, TestLiferayObject is restricted by package name
 
 		try {
 			_testWrapLiferayObject(
@@ -143,7 +126,7 @@ public class LiferayObjectWrapperTest {
 				tme.getMessage());
 		}
 
-		// test 8, a class without package is considered allowed
+		// Coverage: a class without package is considered allowed
 
 		Method checkClassIsRestricted = ReflectionTestUtil.getMethod(
 			LiferayObjectWrapper.class, "_checkClassIsRestricted", Class.class);
