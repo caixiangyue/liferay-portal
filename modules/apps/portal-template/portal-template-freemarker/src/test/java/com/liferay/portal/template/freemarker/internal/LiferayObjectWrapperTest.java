@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.util.ProxyFactory;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
 import com.liferay.portal.test.rule.AdviseWith;
@@ -485,10 +486,7 @@ public class LiferayObjectWrapperTest {
 			null, null);
 
 		TemplateModel originalTemplateModel =
-			(TemplateModel)ProxyUtil.newProxyInstance(
-				LiferayObjectWrapper.class.getClassLoader(),
-				new Class<?>[] {TemplateModel.class},
-				(proxy, method, args) -> null);
+			ProxyFactory.newDummyInstance(TemplateModel.class);
 
 		Assert.assertSame(
 			originalTemplateModel,
