@@ -54,6 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import freemarker.template.Version;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -494,24 +495,23 @@ public class LiferayObjectWrapperTest {
 	}
 
 	@Test
-	public void testHandleUnknowTypeThread() throws Exception {
+	public void testHandleUnknowTypeVersion() throws Exception {
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
-		Thread thread = new Thread("testThread");
-
 		TemplateModel templateModel = liferayObjectWrapper.handleUnknownType(
-			thread);
+			new Version("1.0"));
 
 		Assert.assertTrue(
-			"Unknown type (java.lang.Thread) should be handled as StringModel",
+			"Unknown type (freemarker.template.Version) should be handled as " +
+				"StringModel",
 			templateModel instanceof StringModel);
 
-		_assertModelFactoryCache("_STRING_MODEL_FACTORY", thread.getClass());
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Version.class);
 
 		StringModel stringModel = (StringModel)templateModel;
 
-		Assert.assertEquals(thread.toString(), stringModel.getAsString());
+		Assert.assertEquals("1.0", stringModel.getAsString());
 	}
 
 	@Test
@@ -520,19 +520,20 @@ public class LiferayObjectWrapperTest {
 			null, null);
 
 		Assert.assertTrue(
-			"Unknown type (java.lang.Thread) should be wrapped as StringModel",
-			liferayObjectWrapper.wrap(new Thread("testThread1")) instanceof
+			"Unknown type (freemarker.template.Version) should be wrapped as " +
+				"StringModel",
+			liferayObjectWrapper.wrap(new Version("1.0")) instanceof
 				StringModel);
 
-		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Thread.class);
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Version.class);
 
 		Map<Class<?>, ModelFactory> modelFactories =
 			ReflectionTestUtil.getFieldValue(
 				LiferayObjectWrapper.class, "_modelFactories");
 
-		modelFactories.put(Thread.class, (object, wrapper) -> null);
+		modelFactories.put(Version.class, (object, wrapper) -> null);
 
-		Assert.assertNull(liferayObjectWrapper.wrap(new Thread("testThread2")));
+		Assert.assertNull(liferayObjectWrapper.wrap(new Version("2.0")));
 	}
 
 	private void _assertModelFactoryCache(
