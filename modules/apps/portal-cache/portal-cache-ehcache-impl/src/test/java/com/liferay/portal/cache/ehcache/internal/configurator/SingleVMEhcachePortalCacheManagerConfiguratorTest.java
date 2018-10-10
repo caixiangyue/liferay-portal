@@ -276,7 +276,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				isRequireSerialization(cacheConfiguration));
 
-		cacheConfiguration.setOverflowToDisk(false);
 		cacheConfiguration.setOverflowToOffHeap(false);
 		cacheConfiguration.setDiskPersistent(true);
 
