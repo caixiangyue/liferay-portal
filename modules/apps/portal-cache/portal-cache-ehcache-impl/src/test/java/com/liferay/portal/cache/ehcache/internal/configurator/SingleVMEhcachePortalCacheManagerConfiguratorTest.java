@@ -98,9 +98,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(cacheConfiguration);
 
-		cacheEventListenerFactoryConfigurations =
-			cacheConfiguration.getCacheEventListenerConfigurations();
-
 		Assert.assertTrue(
 			cacheEventListenerFactoryConfigurations.toString(),
 			cacheEventListenerFactoryConfigurations.isEmpty());
