@@ -422,15 +422,13 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testWrapLiferayCollection() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null);
-
 		TestLiferayCollection testLiferayCollection =
 			new TestLiferayCollection();
 
-		String testElement = "testElement";
+		testLiferayCollection.add("testElement");
 
-		testLiferayCollection.add(testElement);
+		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+			null, null);
 
 		TemplateModel templateModel = liferayObjectWrapper.wrap(
 			testLiferayCollection);
@@ -444,17 +442,14 @@ public class LiferayObjectWrapperTest {
 
 		TemplateModel elementTemplateModel = simpleSequence.get(0);
 
-		Assert.assertEquals(testElement, elementTemplateModel.toString());
+		Assert.assertEquals("testElement", elementTemplateModel.toString());
 	}
 
 	@Test
 	public void testWrapLiferayMap() throws Exception {
 		TestLiferayMap testLiferayMap = new TestLiferayMap();
 
-		String testKey = "testKey";
-		String testValue = "testValue";
-
-		testLiferayMap.put(testKey, testValue);
+		testLiferayMap.put("testKey", "testValue");
 
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
@@ -467,9 +462,9 @@ public class LiferayObjectWrapperTest {
 
 		MapModel mapModel = (MapModel)templateModel;
 
-		TemplateModel testValueModel = mapModel.get(testKey);
+		TemplateModel testValueModel = mapModel.get("testKey");
 
-		Assert.assertEquals(testValue, testValueModel.toString());
+		Assert.assertEquals("testValue", testValueModel.toString());
 	}
 
 	@Test
