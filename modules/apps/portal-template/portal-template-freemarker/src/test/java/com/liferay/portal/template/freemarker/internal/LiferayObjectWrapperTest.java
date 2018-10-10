@@ -513,37 +513,37 @@ public class LiferayObjectWrapperTest {
 
 		// Test 1, wrap unkown type for the first time
 
-		Thread thread = new Thread("testThread1");
+		Thread thread1 = new Thread("testThread1");
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(thread);
+		TemplateModel templateModel1 = liferayObjectWrapper.wrap(thread1);
 
 		Assert.assertEquals(1, handleUnknownTypeCount.get());
 
 		Assert.assertTrue(
 			"Unknown type (java.lang.Thread) should be wrapped as StringModel",
-			templateModel instanceof StringModel);
+			templateModel1 instanceof StringModel);
 
-		_assertModelFactoryCache("_STRING_MODEL_FACTORY", thread.getClass());
+		_assertModelFactoryCache("_STRING_MODEL_FACTORY", thread1.getClass());
 
-		StringModel stringModel = (StringModel)templateModel;
+		StringModel stringModel1 = (StringModel)templateModel1;
 
-		Assert.assertEquals(thread.toString(), stringModel.getAsString());
+		Assert.assertEquals(thread1.toString(), stringModel1.getAsString());
 
 		// Test 2, wrap the same type again
 
-		thread = new Thread("testThread2");
+		Thread thread2 = new Thread("testThread2");
 
-		templateModel = liferayObjectWrapper.wrap(thread);
+		TemplateModel templateModel2 = liferayObjectWrapper.wrap(thread2);
 
 		Assert.assertEquals(1, handleUnknownTypeCount.get());
 
 		Assert.assertTrue(
 			"Unknown type (java.lang.Thread) should be wrapped as StringModel",
-			templateModel instanceof StringModel);
+			templateModel2 instanceof StringModel);
 
-		stringModel = (StringModel)templateModel;
+		StringModel stringModel2 = (StringModel)templateModel2;
 
-		Assert.assertEquals(thread.toString(), stringModel.getAsString());
+		Assert.assertEquals(thread2.toString(), stringModel2.getAsString());
 	}
 
 	private void _assertModelFactoryCache(
