@@ -431,16 +431,11 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testWrapLiferayCollection() throws Exception {
-		TestLiferayCollection testLiferayCollection =
-			new TestLiferayCollection();
-
-		testLiferayCollection.add("testElement");
-
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
 		TemplateModel templateModel = liferayObjectWrapper.wrap(
-			testLiferayCollection);
+			new TestLiferayCollection("testElement"));
 
 		Assert.assertTrue(
 			"Liferay collection implementation should be wrapped as" +
@@ -456,14 +451,11 @@ public class LiferayObjectWrapperTest {
 
 	@Test
 	public void testWrapLiferayMap() throws Exception {
-		TestLiferayMap testLiferayMap = new TestLiferayMap();
-
-		testLiferayMap.put("testKey", "testValue");
-
 		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
 			null, null);
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(testLiferayMap);
+		TemplateModel templateModel = liferayObjectWrapper.wrap(
+			new TestLiferayMap("testKey","testValue"));
 
 		Assert.assertTrue(
 			"Liferay map implementation should be wrapped as MapModel",
@@ -572,9 +564,17 @@ public class LiferayObjectWrapperTest {
 	}
 
 	private class TestLiferayCollection extends ArrayList<Object> {
+		private TestLiferayCollection(Object object){
+
+			add(object);
+		}
 	}
 
 	private class TestLiferayMap extends HashMap<String, Object> {
+		private TestLiferayMap(String key, String value){
+
+			put(key,value);
+		}
 	}
 
 	private class TestLiferayObject {
