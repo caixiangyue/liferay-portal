@@ -403,94 +403,91 @@ public class LiferayObjectWrapperTest {
 	}
 
 	@Test
-	public void testWrapLiferayCollection() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+	public void testWrapNull() throws Exception {
+		// 1. wrap null
+
+		LiferayObjectWrapper liferayObjectWrapper1 = new LiferayObjectWrapper(
 			null, null);
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(
+		Assert.assertNull(liferayObjectWrapper1.wrap(null));
+
+		// 2. wrap TemplateModel
+
+		LiferayObjectWrapper liferayObjectWrapper2 = new LiferayObjectWrapper(
+			null, null);
+
+		TemplateModel templateModel1 = ProxyFactory.newDummyInstance(
+			TemplateModel.class);
+
+		Assert.assertSame(
+			templateModel1,
+			liferayObjectWrapper2.wrap(templateModel1));
+
+		// 3. wrap TemplateNode
+
+		LiferayObjectWrapper liferayObjectWrapper3 = new LiferayObjectWrapper(
+			null, null);
+
+		TemplateModel templateModel2 = liferayObjectWrapper3.wrap(
+			new TemplateNode(null, "testName", "", "", null));
+
+		Assert.assertTrue(
+			"TemplateNode should be wrapped as LiferayTemplateModel",
+			templateModel2 instanceof LiferayTemplateModel);
+
+		LiferayTemplateModel liferayTemplateModel =
+			(LiferayTemplateModel)templateModel2;
+
+		TemplateModel nameTemplateModel = liferayTemplateModel.get("name");
+
+		Assert.assertEquals("testName", nameTemplateModel.toString());
+
+		// 4. wrap TestLiferayCollection
+
+		LiferayObjectWrapper liferayObjectWrapper4 = new LiferayObjectWrapper(
+			null, null);
+
+		TemplateModel templateModel3 = liferayObjectWrapper4.wrap(
 			new TestLiferayCollection("testElement"));
 
 		Assert.assertTrue(
 			"Liferay collection implementation should be wrapped as" +
 				"SimpleSequence",
-			templateModel instanceof SimpleSequence);
+			templateModel3 instanceof SimpleSequence);
 
-		SimpleSequence simpleSequence = (SimpleSequence)templateModel;
+		SimpleSequence simpleSequence = (SimpleSequence)templateModel3;
 
 		TemplateModel elementTemplateModel = simpleSequence.get(0);
 
 		Assert.assertEquals("testElement", elementTemplateModel.toString());
-	}
 
-	@Test
-	public void testWrapLiferayMap() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+		// 5. wrap TestLiferayMap
+
+		LiferayObjectWrapper liferayObjectWrapper5 = new LiferayObjectWrapper(
 			null, null);
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(
+		TemplateModel templateModel4 = liferayObjectWrapper5.wrap(
 			new TestLiferayMap("testKey","testValue"));
 
 		Assert.assertTrue(
 			"Liferay map implementation should be wrapped as MapModel",
-			templateModel instanceof MapModel);
+			templateModel4 instanceof MapModel);
 
-		MapModel mapModel = (MapModel)templateModel;
+		MapModel mapModel = (MapModel)templateModel4;
 
 		TemplateModel testValueModel = mapModel.get("testKey");
 
 		Assert.assertEquals("testValue", testValueModel.toString());
-	}
 
-	@Test
-	public void testWrapLiferayTemplateNode() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null);
+		// 6. wrap UnknownType
 
-		TemplateModel templateModel = liferayObjectWrapper.wrap(
-			new TemplateNode(null, "testName", "", "", null));
-
-		Assert.assertTrue(
-			"TemplateNode should be wrapped as LiferayTemplateModel",
-			templateModel instanceof LiferayTemplateModel);
-
-		LiferayTemplateModel liferayTemplateModel =
-			(LiferayTemplateModel)templateModel;
-
-		TemplateModel nameTemplateModel = liferayTemplateModel.get("name");
-
-		Assert.assertEquals("testName", nameTemplateModel.toString());
-	}
-
-	@Test
-	public void testWrapNull() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null);
-
-		Assert.assertNull(liferayObjectWrapper.wrap(null));
-	}
-
-	@Test
-	public void testWrapTemplateModel() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
-			null, null);
-
-		TemplateModel originalTemplateModel = ProxyFactory.newDummyInstance(
-			TemplateModel.class);
-
-		Assert.assertSame(
-			originalTemplateModel,
-			liferayObjectWrapper.wrap(originalTemplateModel));
-	}
-
-	@Test
-	public void testWrapUnknownType() throws Exception {
-		LiferayObjectWrapper liferayObjectWrapper = new LiferayObjectWrapper(
+		LiferayObjectWrapper liferayObjectWrapper6 = new LiferayObjectWrapper(
 			null, null);
 
 		Assert.assertTrue(
 			"Unknown type (freemarker.template.Version) should be wrapped as " +
 				"StringModel",
-			liferayObjectWrapper.wrap(new Version("1.0")) instanceof
+			liferayObjectWrapper6.wrap(new Version("1.0")) instanceof
 				StringModel);
 
 		_assertModelFactoryCache("_STRING_MODEL_FACTORY", Version.class);
@@ -501,7 +498,7 @@ public class LiferayObjectWrapperTest {
 
 		modelFactories.put(Version.class, (object, wrapper) -> null);
 
-		Assert.assertNull(liferayObjectWrapper.wrap(new Version("2.0")));
+		Assert.assertNull(liferayObjectWrapper6.wrap(new Version("2.0")));
 	}
 
 	private void _assertModelFactoryCache(
