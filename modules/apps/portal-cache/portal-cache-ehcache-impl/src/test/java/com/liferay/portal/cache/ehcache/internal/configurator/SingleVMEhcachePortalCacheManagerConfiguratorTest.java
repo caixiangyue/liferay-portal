@@ -452,24 +452,16 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertTrue(properties.toString(), properties.isEmpty());
 
-		String propertiesString = "key1=value1,key2=value2,key3=value3";
+		Properties expectedProperties = new Properties();
 
-		properties =
+		expectedProperties.put("key1", "value1");
+		expectedProperties.put("key2", "value2");
+
+		Assert.assertEquals(
+			expectedProperties,
 			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
-				propertiesString, StringPool.COMMA);
-
-		Assert.assertEquals(3, properties.size());
-		Assert.assertEquals("value1", properties.getProperty("key1"));
-		Assert.assertEquals("value2", properties.getProperty("key2"));
-		Assert.assertEquals("value3", properties.getProperty("key3"));
-
-		propertiesString = propertiesString.concat(StringPool.SPACE);
-
-		properties =
-			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
-				propertiesString, StringPool.COMMA);
-
-		Assert.assertEquals("value3", properties.getProperty("key3"));
+				"key1=value1,key2=value2".concat(StringPool.SPACE),
+				StringPool.COMMA));
 	}
 
 	@AdviseWith(adviceClasses = UnsyncStringReaderAdvice.class)
