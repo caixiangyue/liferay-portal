@@ -427,13 +427,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseListenerConfigurations(configuration, true);
 
-		PortalCacheConfiguration portalCacheConfiguration =
+		Assert.assertNotNull(
 			portalCacheManagerConfiguration.getPortalCacheConfiguration(
-				_TEST_CACHE_NAME);
-
-		Assert.assertNotNull(portalCacheConfiguration);
-		Assert.assertEquals(
-			portalCacheConfiguration.getPortalCacheName(), _TEST_CACHE_NAME);
+				_TEST_CACHE_NAME));
 
 		Set<Properties> cacheManagerListenerPropertiesSet =
 			portalCacheManagerConfiguration.
