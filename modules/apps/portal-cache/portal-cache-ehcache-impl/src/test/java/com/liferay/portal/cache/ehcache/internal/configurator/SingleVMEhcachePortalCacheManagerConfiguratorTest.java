@@ -318,10 +318,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			cacheEventListenerFactoryConfiguration =
 				new CacheEventListenerFactoryConfiguration();
 
-		cacheEventListenerFactoryConfiguration.setProperties(
-			"key1=value1,key2=value2,key3=value3");
-		cacheEventListenerFactoryConfiguration.setPropertySeparator(
-			StringPool.COMMA);
 		cacheEventListenerFactoryConfiguration.setClass(
 			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 		cacheEventListenerFactoryConfiguration.setListenFor("ALL");
@@ -342,10 +338,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			portalCacheListenerPropertiesSet.size());
 
 		for (Properties properties : portalCacheListenerPropertiesSet) {
-			Assert.assertEquals(5, properties.size());
-			Assert.assertEquals("value1", properties.get("key1"));
-			Assert.assertEquals("value2", properties.get("key2"));
-			Assert.assertEquals("value3", properties.get("key3"));
+			Assert.assertEquals(2, properties.size());
+
 			Assert.assertEquals(
 				SingleVMEhcachePortalCacheManagerConfiguratorTest.class.
 					getName(),
