@@ -448,8 +448,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				getDefaultPortalCacheConfiguration();
 
 		Assert.assertEquals(
-			defaultPortalCacheConfiguration.getPortalCacheName(),
-			PortalCacheConfiguration.PORTAL_CACHE_NAME_DEFAULT);
+			PortalCacheConfiguration.PORTAL_CACHE_NAME_DEFAULT,
+			defaultPortalCacheConfiguration.getPortalCacheName());
 	}
 
 	@Test
