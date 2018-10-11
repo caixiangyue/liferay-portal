@@ -475,7 +475,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			Assert.fail("RuntimeException was not thrown");
 		}
 		catch (RuntimeException re) {
-			Assert.assertEquals(_IO_EXCEPTION, re.getCause());
+			Assert.assertSame(_IO_EXCEPTION, re.getCause());
 		}
 	}
 
