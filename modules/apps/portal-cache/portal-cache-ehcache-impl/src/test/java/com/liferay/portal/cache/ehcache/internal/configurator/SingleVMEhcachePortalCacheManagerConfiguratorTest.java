@@ -356,21 +356,18 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseCacheListenerConfigurations() {
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
-
-		cacheConfiguration.setName(_TEST_CACHE_NAME);
-
 		EhcachePortalCacheConfiguration ehcachePortalCacheConfiguration =
 			(EhcachePortalCacheConfiguration)
 				_singleVMEhcachePortalCacheManagerConfigurator.
-					parseCacheListenerConfigurations(cacheConfiguration, true);
+					parseCacheListenerConfigurations(
+						new CacheConfiguration(_TEST_CACHE_NAME, 0), true);
 
 		Assert.assertEquals(
 			ehcachePortalCacheConfiguration.getPortalCacheName(),
 			_TEST_CACHE_NAME);
 		Assert.assertFalse(
 			"isRequireSerialization() should be false if cacheConfiguration " +
-				"only set name",
+				"is not set anything after being created by constructor",
 			ehcachePortalCacheConfiguration.isRequireSerialization());
 
 		Set<Properties> portalCacheListenerPropertiesSet =
