@@ -415,13 +415,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseListenerConfigurations() {
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
-
-		cacheConfiguration.setName(_TEST_CACHE_NAME);
-
 		Configuration configuration = new Configuration();
 
-		configuration.addCache(cacheConfiguration);
+		configuration.addCache(new CacheConfiguration(_TEST_CACHE_NAME, 0));
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
 			_singleVMEhcachePortalCacheManagerConfigurator.
