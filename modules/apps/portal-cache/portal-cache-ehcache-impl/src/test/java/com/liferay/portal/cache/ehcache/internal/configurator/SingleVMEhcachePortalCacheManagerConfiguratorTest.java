@@ -33,7 +33,6 @@ import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -288,12 +287,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 		cacheEventListenerFactoryConfiguration.setListenFor("ALL");
 
-		List<CacheEventListenerFactoryConfiguration>
-			cacheEventListenerFactoryConfigurationList = new ArrayList<>();
-
-		cacheEventListenerFactoryConfigurationList.add(
-			cacheEventListenerFactoryConfiguration);
-
 		Properties expectedProperties = new Properties();
 
 		expectedProperties.put(
@@ -307,7 +300,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			Collections.singleton(expectedProperties),
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				parseCacheEventListenerConfigurations(
-					cacheEventListenerFactoryConfigurationList, false));
+					Collections.singletonList(
+						cacheEventListenerFactoryConfiguration),
+					false));
 	}
 
 	@Test
