@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.CacheConfiguration.BootstrapCacheLoaderFactoryConfiguration;
@@ -148,31 +147,21 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			configuration.getCacheManagerEventListenerFactoryConfiguration());
 		Assert.assertNull(factoryConfiguration.getFullyQualifiedClassPath());
 
-		List<FactoryConfiguration> listenerFactoryConfigurations =
-			configuration.getCacheManagerPeerListenerFactoryConfigurations();
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerListenerFactoryConfigurations());
 
-		Assert.assertTrue(
-			listenerFactoryConfigurations.toString(),
-			listenerFactoryConfigurations.isEmpty());
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerProviderFactoryConfiguration());
 
-		List<FactoryConfiguration> providerFactoryConfigurations =
-			configuration.getCacheManagerPeerProviderFactoryConfiguration();
+		Assert.assertEquals(
+			Collections.emptyList(),
+			defaultCacheConfiguration.getCacheEventListenerConfigurations());
 
-		Assert.assertTrue(
-			providerFactoryConfigurations.toString(),
-			providerFactoryConfigurations.isEmpty());
-
-		List<?> factoryConfigurations =
-			defaultCacheConfiguration.getCacheEventListenerConfigurations();
-
-		Assert.assertTrue(
-			factoryConfigurations.toString(), factoryConfigurations.isEmpty());
-
-		factoryConfigurations =
-			cacheConfiguration.getCacheEventListenerConfigurations();
-
-		Assert.assertTrue(
-			factoryConfigurations.toString(), factoryConfigurations.isEmpty());
+		Assert.assertEquals(
+			Collections.emptyList(),
+			cacheConfiguration.getCacheEventListenerConfigurations());
 	}
 
 	@Test
@@ -199,19 +188,13 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Configuration configuration = objectValuePair.getKey();
 
-		List<?> listenerFactoryConfigurations =
-			configuration.getCacheManagerPeerListenerFactoryConfigurations();
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerListenerFactoryConfigurations());
 
-		Assert.assertTrue(
-			listenerFactoryConfigurations.toString(),
-			listenerFactoryConfigurations.isEmpty());
-
-		List<?> providerFactoryConfigurations =
-			configuration.getCacheManagerPeerProviderFactoryConfiguration();
-
-		Assert.assertTrue(
-			providerFactoryConfigurations.toString(),
-			providerFactoryConfigurations.isEmpty());
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerProviderFactoryConfiguration());
 
 		Assert.assertEquals(
 			PortalCacheManagerNames.SINGLE_VM, configuration.getName());
@@ -269,11 +252,10 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseCacheEventListenerConfigurations() {
-		Set<Properties> emptySet =
+		Assert.assertEquals(
+			Collections.emptySet(),
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				parseCacheEventListenerConfigurations(null, true);
-
-		Assert.assertTrue(emptySet.toString(), emptySet.isEmpty());
+				parseCacheEventListenerConfigurations(null, true));
 
 		CacheEventListenerFactoryConfiguration
 			cacheEventListenerFactoryConfiguration =
@@ -317,24 +299,18 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				"is not set anything after being created by constructor",
 			ehcachePortalCacheConfiguration.isRequireSerialization());
 
-		Set<Properties> portalCacheListenerPropertiesSet =
+		Assert.assertEquals(
+			Collections.emptySet(),
 			ehcachePortalCacheConfiguration.
-				getPortalCacheListenerPropertiesSet();
-
-		Assert.assertTrue(
-			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.isEmpty());
+				getPortalCacheListenerPropertiesSet());
 	}
 
 	@Test
 	public void testParseCacheManagerEventListenerConfigurations() {
-		Set<Properties> cacheManagerEventListenerConfigurations =
+		Assert.assertEquals(
+			Collections.emptySet(),
 			_singleVMEhcachePortalCacheManagerConfigurator.
-				parseCacheManagerEventListenerConfigurations(null);
-
-		Assert.assertTrue(
-			cacheManagerEventListenerConfigurations.toString(),
-			cacheManagerEventListenerConfigurations.isEmpty());
+				parseCacheManagerEventListenerConfigurations(null));
 
 		FactoryConfiguration<?> factoryConfiguration =
 			new FactoryConfiguration<>();
@@ -370,13 +346,10 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			portalCacheManagerConfiguration.getPortalCacheConfiguration(
 				_TEST_CACHE_NAME));
 
-		Set<Properties> cacheManagerListenerPropertiesSet =
+		Assert.assertEquals(
+			Collections.emptySet(),
 			portalCacheManagerConfiguration.
-				getPortalCacheManagerListenerPropertiesSet();
-
-		Assert.assertTrue(
-			cacheManagerListenerPropertiesSet.toString(),
-			cacheManagerListenerPropertiesSet.isEmpty());
+				getPortalCacheManagerListenerPropertiesSet());
 
 		PortalCacheConfiguration defaultPortalCacheConfiguration =
 			portalCacheManagerConfiguration.
