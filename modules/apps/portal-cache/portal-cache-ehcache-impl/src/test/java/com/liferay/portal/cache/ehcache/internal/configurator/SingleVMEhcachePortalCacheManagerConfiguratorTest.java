@@ -21,6 +21,7 @@ import com.liferay.portal.cache.ehcache.internal.EhcacheConstants;
 import com.liferay.portal.cache.ehcache.internal.EhcachePortalCacheConfiguration;
 import com.liferay.portal.kernel.cache.PortalCacheListenerScope;
 import com.liferay.portal.kernel.cache.PortalCacheManagerNames;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
@@ -257,41 +258,15 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testIsRequireSerializationByCacheConfiguration() {
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
+		_assertIsRequireSerializationByCacheConfiguration(
+			true, "setOverflowToDisk");
 
-		cacheConfiguration.setOverflowToDisk(true);
+		_assertIsRequireSerializationByCacheConfiguration(
+			true, "setOverflowToOffHeap");
 
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if overflowToDisk is " +
-				"set true",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		cacheConfiguration.setOverflowToDisk(false);
-		cacheConfiguration.setOverflowToOffHeap(true);
-
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if overflowToOffHeap is " +
-				"set true",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		cacheConfiguration.setOverflowToOffHeap(false);
-		cacheConfiguration.setDiskPersistent(true);
-
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if diskPersistent is " +
-				"set true",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		cacheConfiguration.setDiskPersistent(false);
-
-		Assert.assertFalse(
-			"isRequireSerialization() should be false if overflowToDisk " +
-				"overflowToOffHeap and diskPersistent is set false",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
+		_assertIsRequireSerializationByCacheConfiguration(
+			true, "setDiskPersistent");
+		_assertIsRequireSerializationByCacheConfiguration(false, null);
 	}
 
 	@Test
@@ -502,6 +477,23 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			throw _IO_EXCEPTION;
 		}
 
+	}
+
+	private void _assertIsRequireSerializationByCacheConfiguration(
+		boolean expected, String methodName) {
+
+		CacheConfiguration cacheConfiguration = new CacheConfiguration();
+
+		if (methodName != null) {
+			ReflectionTestUtil.invoke(
+				cacheConfiguration, methodName, new Class<?>[] {boolean.class},
+				true);
+		}
+
+		Assert.assertEquals(
+			expected,
+			_singleVMEhcachePortalCacheManagerConfigurator.
+				isRequireSerialization(cacheConfiguration));
 	}
 
 	private void _assertIsRequireSerializationByPersistenceConfiguration(
