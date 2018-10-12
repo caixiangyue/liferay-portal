@@ -296,53 +296,14 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testIsRequireSerializationByPersistenceConfiguration() {
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
-
-		PersistenceConfiguration persistenceConfiguration =
-			new PersistenceConfiguration();
-
-		persistenceConfiguration.setStrategy(
-			String.valueOf(PersistenceConfiguration.Strategy.LOCALTEMPSWAP));
-
-		cacheConfiguration.addPersistence(persistenceConfiguration);
-
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if strategy is set " +
-				"LOCALTEMPSWAP",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		persistenceConfiguration.setStrategy(
-			String.valueOf(PersistenceConfiguration.Strategy.LOCALRESTARTABLE));
-
-		cacheConfiguration.addPersistence(persistenceConfiguration);
-
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if strategy is set " +
-				"LOCALRESTARTABLE",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		persistenceConfiguration.setStrategy(
-			String.valueOf(PersistenceConfiguration.Strategy.DISTRIBUTED));
-
-		cacheConfiguration.addPersistence(persistenceConfiguration);
-
-		Assert.assertTrue(
-			"isRequireSerialization() should be true if strategy is set " +
-				"DISTRIBUTED",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
-
-		persistenceConfiguration.setStrategy(
-			String.valueOf(PersistenceConfiguration.Strategy.NONE));
-
-		cacheConfiguration.addPersistence(persistenceConfiguration);
-
-		Assert.assertFalse(
-			"isRequireSerialization() should be false if strategy is set NONE",
-			_singleVMEhcachePortalCacheManagerConfigurator.
-				isRequireSerialization(cacheConfiguration));
+		_assertIsRequireSerializationByPersistenceConfiguration(
+			true, PersistenceConfiguration.Strategy.LOCALTEMPSWAP);
+		_assertIsRequireSerializationByPersistenceConfiguration(
+			true, PersistenceConfiguration.Strategy.LOCALRESTARTABLE);
+		_assertIsRequireSerializationByPersistenceConfiguration(
+			true, PersistenceConfiguration.Strategy.DISTRIBUTED);
+		_assertIsRequireSerializationByPersistenceConfiguration(
+			false, PersistenceConfiguration.Strategy.NONE);
 	}
 
 	@Test
@@ -568,6 +529,24 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			throw _IO_EXCEPTION;
 		}
 
+	}
+
+	private void _assertIsRequireSerializationByPersistenceConfiguration(
+		boolean expected, PersistenceConfiguration.Strategy strategy) {
+
+		PersistenceConfiguration persistenceConfiguration =
+			new PersistenceConfiguration();
+
+		persistenceConfiguration.setStrategy(String.valueOf(strategy));
+
+		CacheConfiguration cacheConfiguration = new CacheConfiguration();
+
+		cacheConfiguration.addPersistence(persistenceConfiguration);
+
+		Assert.assertEquals(
+			expected,
+			_singleVMEhcachePortalCacheManagerConfigurator.
+				isRequireSerialization(cacheConfiguration));
 	}
 
 	private static final IOException _IO_EXCEPTION = new IOException();
