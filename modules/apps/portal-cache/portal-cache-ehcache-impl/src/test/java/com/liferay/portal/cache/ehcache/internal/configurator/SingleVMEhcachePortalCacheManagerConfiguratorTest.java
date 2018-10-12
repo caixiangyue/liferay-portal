@@ -172,19 +172,11 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertTrue(
 			factoryConfigurations.toString(), factoryConfigurations.isEmpty());
 
-		Map<String, CacheConfiguration> cacheConfigurations =
-			configuration.getCacheConfigurations();
+		factoryConfigurations =
+			cacheConfiguration.getCacheEventListenerConfigurations();
 
-		for (CacheConfiguration testCacheConfiguration :
-				cacheConfigurations.values()) {
-
-			factoryConfigurations =
-				testCacheConfiguration.getCacheEventListenerConfigurations();
-
-			Assert.assertTrue(
-				factoryConfigurations.toString(),
-				factoryConfigurations.isEmpty());
-		}
+		Assert.assertTrue(
+			factoryConfigurations.toString(), factoryConfigurations.isEmpty());
 	}
 
 	@Test
