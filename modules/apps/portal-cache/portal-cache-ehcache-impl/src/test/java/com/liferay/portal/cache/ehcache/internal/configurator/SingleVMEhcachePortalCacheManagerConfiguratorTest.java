@@ -26,7 +26,7 @@ import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Props;
-import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.ProxyFactory;
 import com.liferay.portal.test.rule.AdviseWith;
 import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 
@@ -481,9 +481,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testSetProps() {
-		Props props = (Props)ProxyUtil.newProxyInstance(
-			Props.class.getClassLoader(), new Class<?>[] {Props.class},
-			(proxy, method, args) -> null);
+		Props props = ProxyFactory.newDummyInstance(Props.class);
 
 		_singleVMEhcachePortalCacheManagerConfigurator.setProps(props);
 
