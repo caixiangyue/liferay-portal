@@ -45,7 +45,6 @@ import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.FactoryConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration;
 
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
@@ -434,9 +433,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			"execution(public int com.liferay.portal.kernel.io.unsync." +
 				"UnsyncStringReader.read(char[]))"
 		)
-		public Object read(ProceedingJoinPoint proceedingJoinPoint)
-			throws IOException {
-
+		public Object read() throws IOException {
 			throw _IO_EXCEPTION;
 		}
 
