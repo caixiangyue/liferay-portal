@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -103,8 +104,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, true, true),
 				"_getMergedPropertiesMap", null, null);
 
-		Assert.assertTrue(
-			mergedPropertiesMap.toString(), mergedPropertiesMap.isEmpty());
+		Assert.assertEquals(Collections.emptyMap(), mergedPropertiesMap);
 
 		// Test 2: _bootstrapLoaderEnabled is true, _bootstrapLoaderProperties
 		// and _replicatorProperties are non-empty
@@ -114,18 +114,14 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				true, true, false, false),
 			"_getMergedPropertiesMap", null, null);
 
-		Set<String> keySet = mergedPropertiesMap.keySet();
-
 		Properties exceptProperties = new Properties();
 
 		exceptProperties.setProperty("portalCacheName1", "key1=value1");
 		exceptProperties.setProperty("portalCacheName2X", "key2X=value2X");
 		exceptProperties.setProperty("portalCacheName2Y", "key2Y=value2Y");
 
-		Assert.assertTrue(
-			keySet.toString(), keySet.containsAll(exceptProperties.keySet()));
-
-		Assert.assertEquals(keySet.toString(), 3, keySet.size());
+		Assert.assertEquals(exceptProperties.keySet(),
+			mergedPropertiesMap.keySet());
 
 		ObjectValuePair objectValuePair = mergedPropertiesMap.get(
 			"portalCacheName1");
@@ -169,17 +165,13 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				true, false, false, false),
 			"_getMergedPropertiesMap", null, null);
 
-		keySet = mergedPropertiesMap.keySet();
-
 		exceptProperties = new Properties();
 
 		exceptProperties.setProperty("portalCacheName1", "key1=value1");
 		exceptProperties.setProperty("portalCacheName2Y", "key2Y=value2Y");
 
-		Assert.assertTrue(
-			keySet.toString(), keySet.containsAll(exceptProperties.keySet()));
-
-		Assert.assertEquals(keySet.toString(), 2, keySet.size());
+		Assert.assertEquals(exceptProperties.keySet(),
+			mergedPropertiesMap.keySet());
 
 		objectValuePair = mergedPropertiesMap.get("portalCacheName1");
 
@@ -610,9 +602,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		Set<Properties> portalCacheListenerPropertiesSet =
 			portalCacheConfiguration.getPortalCacheListenerPropertiesSet();
 
-		Assert.assertTrue(
-			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.isEmpty());
+		Assert.assertEquals(Collections.emptySet(),
+			portalCacheListenerPropertiesSet);
 
 		// Test 2: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
