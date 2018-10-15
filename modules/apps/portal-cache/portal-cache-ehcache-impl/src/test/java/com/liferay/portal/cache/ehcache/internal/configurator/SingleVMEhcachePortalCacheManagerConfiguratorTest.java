@@ -139,6 +139,28 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		configuration.addCache(cacheConfiguration);
 
+		Assert.assertSame(
+			factoryConfiguration,
+			configuration.getCacheManagerEventListenerFactoryConfiguration());
+
+		Assert.assertNotNull(factoryConfiguration.getFullyQualifiedClassPath());
+
+		Assert.assertNotEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerListenerFactoryConfigurations());
+
+		Assert.assertNotEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerProviderFactoryConfiguration());
+
+		Assert.assertNotEquals(
+			Collections.emptyList(),
+			defaultCacheConfiguration.getCacheEventListenerConfigurations());
+
+		Assert.assertNotEquals(
+			Collections.emptyList(),
+			cacheConfiguration.getCacheEventListenerConfigurations());
+
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(configuration);
 
