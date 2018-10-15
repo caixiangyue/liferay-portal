@@ -425,7 +425,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	}
 
 	private void _assertIsRequireSerializationByCacheConfiguration(
-		boolean expected, String methodName) {
+		boolean expectedIsRequireSerialization, String methodName) {
 
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
@@ -436,13 +436,14 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		}
 
 		Assert.assertEquals(
-			expected,
+			expectedIsRequireSerialization,
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				isRequireSerialization(cacheConfiguration));
 	}
 
 	private void _assertIsRequireSerializationByPersistenceConfiguration(
-		boolean expected, PersistenceConfiguration.Strategy strategy) {
+		boolean expectedIsRequireSerialization,
+		PersistenceConfiguration.Strategy strategy) {
 
 		PersistenceConfiguration persistenceConfiguration =
 			new PersistenceConfiguration();
@@ -454,7 +455,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		cacheConfiguration.addPersistence(persistenceConfiguration);
 
 		Assert.assertEquals(
-			expected,
+			expectedIsRequireSerialization,
 			_singleVMEhcachePortalCacheManagerConfigurator.
 				isRequireSerialization(cacheConfiguration));
 	}
