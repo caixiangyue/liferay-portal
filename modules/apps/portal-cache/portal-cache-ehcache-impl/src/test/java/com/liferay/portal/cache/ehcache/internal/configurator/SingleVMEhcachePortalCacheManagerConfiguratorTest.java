@@ -141,21 +141,16 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertSame(
 			factoryConfiguration,
 			configuration.getCacheManagerEventListenerFactoryConfiguration());
-
 		Assert.assertNotNull(factoryConfiguration.getFullyQualifiedClassPath());
-
 		Assert.assertNotEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerListenerFactoryConfigurations());
-
 		Assert.assertNotEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerProviderFactoryConfiguration());
-
 		Assert.assertNotEquals(
 			Collections.emptyList(),
 			defaultCacheConfiguration.getCacheEventListenerConfigurations());
-
 		Assert.assertNotEquals(
 			Collections.emptyList(),
 			cacheConfiguration.getCacheEventListenerConfigurations());
@@ -167,19 +162,15 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			factoryConfiguration,
 			configuration.getCacheManagerEventListenerFactoryConfiguration());
 		Assert.assertNull(factoryConfiguration.getFullyQualifiedClassPath());
-
 		Assert.assertEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerListenerFactoryConfigurations());
-
 		Assert.assertEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerProviderFactoryConfiguration());
-
 		Assert.assertEquals(
 			Collections.emptyList(),
 			defaultCacheConfiguration.getCacheEventListenerConfigurations());
-
 		Assert.assertEquals(
 			Collections.emptyList(),
 			cacheConfiguration.getCacheEventListenerConfigurations());
@@ -212,11 +203,9 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerListenerFactoryConfigurations());
-
 		Assert.assertEquals(
 			Collections.emptyList(),
 			configuration.getCacheManagerPeerProviderFactoryConfiguration());
-
 		Assert.assertEquals(
 			PortalCacheManagerNames.SINGLE_VM, configuration.getName());
 
@@ -319,7 +308,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			"isRequireSerialization() should be false if cacheConfiguration " +
 				"is not set anything after being created by constructor",
 			ehcachePortalCacheConfiguration.isRequireSerialization());
-
 		Assert.assertEquals(
 			Collections.emptySet(),
 			ehcachePortalCacheConfiguration.
@@ -366,7 +354,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertNotNull(
 			portalCacheManagerConfiguration.getPortalCacheConfiguration(
 				_TEST_CACHE_NAME));
-
 		Assert.assertEquals(
 			Collections.emptySet(),
 			portalCacheManagerConfiguration.
