@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.CacheConfiguration.BootstrapCacheLoaderFactoryConfiguration;
 import net.sf.ehcache.config.CacheConfiguration.CacheEventListenerFactoryConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.FactoryConfiguration;
@@ -85,6 +86,12 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
+		cacheConfiguration.bootstrapCacheLoaderFactory(
+			new BootstrapCacheLoaderFactoryConfiguration());
+
+		Assert.assertNotNull(
+			cacheConfiguration.getBootstrapCacheLoaderFactoryConfiguration());
+
 		cacheConfiguration.addCacheEventListenerFactory(
 			new CacheEventListenerFactoryConfiguration());
 
@@ -98,6 +105,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		_singleVMEhcachePortalCacheManagerConfigurator.
 			clearListenerConfigrations(cacheConfiguration);
 
+		Assert.assertNull(
+			cacheConfiguration.getBootstrapCacheLoaderFactoryConfiguration());
 		Assert.assertTrue(
 			cacheEventListenerFactoryConfigurations.toString(),
 			cacheEventListenerFactoryConfigurations.isEmpty());
