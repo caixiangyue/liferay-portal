@@ -247,13 +247,13 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testIsRequireSerializationByPersistenceConfiguration() {
-		_assertIsRequireSerializationByPersistenceConfiguration(
+		_assertIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.LOCALTEMPSWAP);
-		_assertIsRequireSerializationByPersistenceConfiguration(
+		_assertIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.LOCALRESTARTABLE);
-		_assertIsRequireSerializationByPersistenceConfiguration(
+		_assertIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.DISTRIBUTED);
-		_assertIsRequireSerializationByPersistenceConfiguration(
+		_assertIsRequireSerializationByPersistenceStrategy(
 			false, PersistenceConfiguration.Strategy.NONE);
 	}
 
@@ -439,7 +439,7 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 				isRequireSerialization(cacheConfiguration));
 	}
 
-	private void _assertIsRequireSerializationByPersistenceConfiguration(
+	private void _assertIsRequireSerializationByPersistenceStrategy(
 		boolean expectedIsRequireSerialization,
 		PersistenceConfiguration.Strategy strategy) {
 
