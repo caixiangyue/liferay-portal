@@ -118,7 +118,6 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 			SingleVMEhcachePortalCacheManagerConfiguratorTest.class.getName());
 
 		configuration.addCacheManagerEventListenerFactory(factoryConfiguration);
-
 		configuration.addCacheManagerPeerListenerFactory(
 			new FactoryConfiguration());
 		configuration.addCacheManagerPeerProviderFactory(
