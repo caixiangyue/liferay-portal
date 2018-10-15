@@ -383,11 +383,10 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testParseProperties() {
-		Properties properties =
+		Assert.assertEquals(
+			new Properties(),
 			_singleVMEhcachePortalCacheManagerConfigurator.parseProperties(
-				null, StringPool.COMMA);
-
-		Assert.assertTrue(properties.toString(), properties.isEmpty());
+				null, StringPool.COMMA));
 
 		Properties expectedProperties = new Properties();
 
