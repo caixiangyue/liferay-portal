@@ -238,10 +238,8 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 	public void testIsRequireSerializationByCacheConfiguration() {
 		_assertIsRequireSerializationByCacheConfiguration(
 			true, "setOverflowToDisk");
-
 		_assertIsRequireSerializationByCacheConfiguration(
 			true, "setOverflowToOffHeap");
-
 		_assertIsRequireSerializationByCacheConfiguration(
 			true, "setDiskPersistent");
 		_assertIsRequireSerializationByCacheConfiguration(false, null);
