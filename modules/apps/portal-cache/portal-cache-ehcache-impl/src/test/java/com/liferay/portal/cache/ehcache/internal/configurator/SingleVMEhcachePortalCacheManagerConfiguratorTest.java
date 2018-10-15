@@ -304,14 +304,14 @@ public class SingleVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertEquals(
 			ehcachePortalCacheConfiguration.getPortalCacheName(),
 			_TEST_CACHE_NAME);
-		Assert.assertFalse(
-			"isRequireSerialization() should be false if cacheConfiguration " +
-				"is not set anything after being created by constructor",
-			ehcachePortalCacheConfiguration.isRequireSerialization());
 		Assert.assertEquals(
 			Collections.emptySet(),
 			ehcachePortalCacheConfiguration.
 				getPortalCacheListenerPropertiesSet());
+		Assert.assertFalse(
+			"isRequireSerialization() should be false if cacheConfiguration " +
+				"is not set anything after being created by constructor",
+			ehcachePortalCacheConfiguration.isRequireSerialization());
 	}
 
 	@Test
