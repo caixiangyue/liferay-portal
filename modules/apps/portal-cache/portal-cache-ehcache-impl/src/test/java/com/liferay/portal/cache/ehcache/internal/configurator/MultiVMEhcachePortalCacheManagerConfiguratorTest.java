@@ -227,7 +227,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
 
 		Assert.assertTrue(
-			"The true value should be returned",
+			"The true value should be returned if clusterEnabled is true",
 			multiVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
 				cacheConfiguration));
 
@@ -236,7 +236,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				false, true, true, true);
 
 		Assert.assertFalse(
-			"The false value should be returned",
+			"The false value should be returned if clusterEnabled is false " +
+				"with empty cacheConfiguration",
 			multiVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
 				cacheConfiguration));
 	}
@@ -632,13 +633,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertEquals(
 			"TestName", portalCacheConfiguration2.getPortalCacheName());
 
-		Properties expectProperties = new Properties();
-
-		expectProperties.put("key1", "value1");
-		expectProperties.put("key2", "value2");
+		Properties expectedProperties = _getProperties(
+			"key1=value1,key2=value2");
 
 		Assert.assertEquals(
-			expectProperties,
+			expectedProperties,
 			portalCacheConfiguration2.
 				getPortalCacheBootstrapLoaderProperties());
 
@@ -646,11 +645,12 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				portalCacheConfiguration2.
 					getPortalCacheListenerPropertiesSet()) {
 
-			for (Object key : expectProperties.keySet()) {
+			for (Object key : expectedProperties.keySet()) {
 				Assert.assertEquals(
-					expectProperties.get(key), replicatorProperties.get(key));
+					expectedProperties.get(key), replicatorProperties.get(key));
 			}
 
+			System.out.println(replicatorProperties.toString());
 			Assert.assertTrue(
 				"The value should be true",
 				(Boolean)replicatorProperties.get(
@@ -680,9 +680,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				portalCacheConfiguration3.
 					getPortalCacheListenerPropertiesSet()) {
 
-			for (Object key : expectProperties.keySet()) {
+			for (Object key : expectedProperties.keySet()) {
 				Assert.assertEquals(
-					expectProperties.get(key), replicatorProperties.get(key));
+					expectedProperties.get(key), replicatorProperties.get(key));
 			}
 
 			Assert.assertTrue(
