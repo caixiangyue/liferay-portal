@@ -119,12 +119,12 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties exceptProperties1 = _getProperties(
+		Properties expectedProperties1 = _getProperties(
 			"portalCacheName1=key1=value1,portalCacheName2X=key2X=value2X," +
 				"portalCacheName2Y=key2Y=value2Y");
 
 		Assert.assertEquals(
-			exceptProperties1.keySet(), mergedPropertiesMap1.keySet());
+			expectedProperties1.keySet(), mergedPropertiesMap1.keySet());
 
 		ObjectValuePair objectValuePair1 = mergedPropertiesMap1.get(
 			"portalCacheName1");
@@ -166,11 +166,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, false, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties exceptProperties5 = _getProperties(
+		Properties expectedProperties2 = _getProperties(
 			"portalCacheName1=key1=value1,portalCacheName2Y=key2Y=value2Y");
 
 		Assert.assertEquals(
-			exceptProperties5.keySet(), mergedPropertiesMap2.keySet());
+			expectedProperties2.keySet(), mergedPropertiesMap2.keySet());
 
 		ObjectValuePair objectValuePair4 = mergedPropertiesMap2.get(
 			"portalCacheName1");
