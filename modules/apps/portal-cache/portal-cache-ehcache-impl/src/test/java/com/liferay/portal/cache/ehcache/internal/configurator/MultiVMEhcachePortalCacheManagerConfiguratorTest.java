@@ -14,16 +14,21 @@
 
 package com.liferay.portal.cache.ehcache.internal.configurator;
 
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.cache.PortalCacheReplicator;
 import com.liferay.portal.cache.configuration.PortalCacheConfiguration;
 import com.liferay.portal.cache.configuration.PortalCacheManagerConfiguration;
+import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.io.IOException;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -114,11 +119,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties exceptProperties1 = new Properties();
-
-		exceptProperties1.setProperty("portalCacheName1", "key1=value1");
-		exceptProperties1.setProperty("portalCacheName2X", "key2X=value2X");
-		exceptProperties1.setProperty("portalCacheName2Y", "key2Y=value2Y");
+		Properties exceptProperties1 = _getProperties(
+			"portalCacheName1=key1=value1,portalCacheName2X=key2X=value2X," +
+				"portalCacheName2Y=key2Y=value2Y");
 
 		Assert.assertEquals(
 			exceptProperties1.keySet(), mergedPropertiesMap1.keySet());
@@ -126,24 +129,20 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		ObjectValuePair objectValuePair1 = mergedPropertiesMap1.get(
 			"portalCacheName1");
 
-		Properties exceptProperties2 = new Properties();
+		Assert.assertEquals(
+			_getProperties("key1=value1"), objectValuePair1.getKey());
 
-		exceptProperties2.put("key1", "value1");
-
-		Assert.assertEquals(exceptProperties2, objectValuePair1.getKey());
-
-		exceptProperties2.put("replicator", true);
-
-		Assert.assertEquals(exceptProperties2, objectValuePair1.getValue());
+		Assert.assertEquals(
+			_getProperties(
+				new ObjectValuePair<Object, Object>("key1", "value1"),
+				new ObjectValuePair<Object, Object>("replicator", true)),
+			objectValuePair1.getValue());
 
 		ObjectValuePair objectValuePair2 = mergedPropertiesMap1.get(
 			"portalCacheName2X");
 
-		Properties exceptProperties3 = new Properties();
-
-		exceptProperties3.put("key2X", "value2X");
-
-		Assert.assertEquals(exceptProperties3, objectValuePair2.getKey());
+		Assert.assertEquals(
+			_getProperties("key2X=value2X"), objectValuePair2.getKey());
 
 		Assert.assertNull(objectValuePair2.getValue());
 
@@ -152,12 +151,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertNull(objectValuePair3.getKey());
 
-		Properties exceptProperties4 = new Properties();
-
-		exceptProperties4.put("key2Y", "value2Y");
-		exceptProperties4.put("replicator", true);
-
-		Assert.assertEquals(exceptProperties4, objectValuePair3.getValue());
+		Assert.assertEquals(
+			_getProperties(
+				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
+				new ObjectValuePair<Object, Object>("replicator", true)),
+			objectValuePair3.getValue());
 
 		// Test 3: _bootstrapLoaderEnabled is false, _bootstrapLoaderProperties
 		// and _replicatorProperties are non-empty
@@ -168,10 +166,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, false, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties exceptProperties5 = new Properties();
-
-		exceptProperties5.setProperty("portalCacheName1", "key1=value1");
-		exceptProperties5.setProperty("portalCacheName2Y", "key2Y=value2Y");
+		Properties exceptProperties5 = _getProperties(
+			"portalCacheName1=key1=value1,portalCacheName2Y=key2Y=value2Y");
 
 		Assert.assertEquals(
 			exceptProperties5.keySet(), mergedPropertiesMap2.keySet());
@@ -181,24 +177,22 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertNull(objectValuePair4.getKey());
 
-		Properties exceptProperties6 = new Properties();
-
-		exceptProperties6.put("key1", "value1");
-		exceptProperties6.put("replicator", true);
-
-		Assert.assertEquals(exceptProperties6, objectValuePair4.getValue());
+		Assert.assertEquals(
+			_getProperties(
+				new ObjectValuePair<Object, Object>("key1", "value1"),
+				new ObjectValuePair<Object, Object>("replicator", true)),
+			objectValuePair4.getValue());
 
 		ObjectValuePair objectValuePair5 = mergedPropertiesMap2.get(
 			"portalCacheName2Y");
 
 		Assert.assertNull(objectValuePair5.getKey());
 
-		Properties exceptProperties7 = new Properties();
-
-		exceptProperties7.put("key2Y", "value2Y");
-		exceptProperties7.put("replicator", true);
-
-		Assert.assertEquals(exceptProperties7, objectValuePair5.getValue());
+		Assert.assertEquals(
+			_getProperties(
+				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
+				new ObjectValuePair<Object, Object>("replicator", true)),
+			objectValuePair5.getValue());
 	}
 
 	@Test
@@ -291,17 +285,15 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Set<Properties> portalCacheListenerPropertiesSet = new HashSet<>();
 
-		Properties properties1 = new Properties();
+		portalCacheListenerPropertiesSet.add(
+			_getProperties(
+				new ObjectValuePair<Object, Object>(
+					PortalCacheReplicator.REPLICATOR, true)));
 
-		properties1.put(PortalCacheReplicator.REPLICATOR, true);
-
-		portalCacheListenerPropertiesSet.add(properties1);
-
-		Properties properties2 = new Properties();
-
-		properties2.put(PortalCacheReplicator.REPLICATOR, false);
-
-		portalCacheListenerPropertiesSet.add(properties2);
+		portalCacheListenerPropertiesSet.add(
+			_getProperties(
+				new ObjectValuePair<Object, Object>(
+					PortalCacheReplicator.REPLICATOR, false)));
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
 			new PortalCacheManagerConfiguration(
@@ -338,14 +330,20 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			portalCacheListenerPropertiesSet.size());
 		Assert.assertFalse(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties1));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, true))));
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
 			portalCacheListenerPropertiesSet.contains(
 				propertiesPair.getValue()));
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties2));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, false))));
 
 		portalCacheConfiguration =
 			portalCacheManagerConfiguration.getPortalCacheConfiguration(
@@ -365,10 +363,16 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			portalCacheListenerPropertiesSet.size());
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties1));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, true))));
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties2));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, false))));
 
 		portalCacheConfiguration =
 			portalCacheManagerConfiguration.getPortalCacheConfiguration(
@@ -387,14 +391,20 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			portalCacheListenerPropertiesSet.size());
 		Assert.assertFalse(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties1));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, true))));
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
 			portalCacheListenerPropertiesSet.contains(
 				propertiesPair.getValue()));
 		Assert.assertTrue(
 			portalCacheListenerPropertiesSet.toString(),
-			portalCacheListenerPropertiesSet.contains(properties2));
+			portalCacheListenerPropertiesSet.contains(
+				_getProperties(
+					new ObjectValuePair<Object, Object>(
+						PortalCacheReplicator.REPLICATOR, false))));
 
 		// Test 3: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties is empty, _replicatorProperties is
@@ -766,6 +776,41 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		multiVMEhcachePortalCacheManagerConfigurator.activate();
 
 		return multiVMEhcachePortalCacheManagerConfigurator;
+	}
+
+	private Properties _getProperties(
+		ObjectValuePair<Object, Object>... objectObjectValuePairs) {
+
+		Properties properties = new Properties();
+
+		for (ObjectValuePair<Object, Object> objectObjectValuePair :
+				objectObjectValuePairs) {
+
+			properties.put(
+				objectObjectValuePair.getKey(),
+				objectObjectValuePair.getValue());
+		}
+
+		return properties;
+	}
+
+	private Properties _getProperties(String propertiesString) {
+		Properties properties = new Properties();
+
+		if (propertiesString == null) {
+			return properties;
+		}
+
+		try {
+			properties.load(
+				new UnsyncStringReader(
+					StringUtil.replace(
+						propertiesString, CharPool.COMMA,
+						StringPool.NEW_LINE)));
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		} return properties;
 	}
 
 	private class PropsInvocationHandler implements InvocationHandler {
