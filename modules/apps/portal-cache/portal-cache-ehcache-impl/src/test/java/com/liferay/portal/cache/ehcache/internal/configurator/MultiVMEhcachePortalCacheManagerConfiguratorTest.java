@@ -832,27 +832,23 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			String methodName = method.getName();
 
 			if (methodName.equals("get")) {
-				String key = (String)args[0];
-
-				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(key)) {
+				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(args[0])) {
 					return String.valueOf(_clusterEnabled);
 				}
 
 				if (PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_ENABLED.equals(
-						key)) {
+						args[0])) {
 
 					return String.valueOf(_bootstrapLoaderEnabled);
 				}
 			}
 
 			if (methodName.equals("getArray")) {
-				String key = (String)args[0];
-
-				if ("portal.property.Key1".equals(key)) {
+				if ("portal.property.Key1".equals(args[0])) {
 					return new String[0];
 				}
 
-				if ("portal.property.Key2".equals(key)) {
+				if ("portal.property.Key2".equals(args[0])) {
 					return new String[] {"key=value"};
 				}
 
@@ -860,31 +856,27 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			}
 
 			if (methodName.equals("getProperties")) {
-				String key = (String)args[0];
-
-				Properties properties = new Properties();
-
-				if (key.equals(
+				if (args[0].equals(
 						PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_PROPERTIES +
 							StringPool.PERIOD) &&
 					!_bootstrapLoaderPropertiesIsEmpty) {
 
-					properties.setProperty("portalCacheName1", "key1=value1");
-					properties.setProperty(
-						"portalCacheName2X", "key2X=value2X");
+					return _getProperties(
+						"portalCacheName1=key1=value1," +
+							"portalCacheName2X=key2X=value2X");
 				}
 
-				if (key.equals(
+				if (args[0].equals(
 						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
 							StringPool.PERIOD) &&
 					!_replicatorPropertiesIsEmpty) {
 
-					properties.setProperty("portalCacheName1", "key1=value1");
-					properties.setProperty(
-						"portalCacheName2Y", "key2Y=value2Y");
+					return _getProperties(
+						"portalCacheName1=key1=value1," +
+							"portalCacheName2Y=key2Y=value2Y");
 				}
 
-				return properties;
+				return _getProperties((String)null);
 			}
 
 			return null;
