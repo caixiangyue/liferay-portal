@@ -206,7 +206,7 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 				return new String[] {"key1=value1", "key2=value2"};
 			}
 
-			if ("getProperties".equals(methodName)) {
+			if ("getProperties".equals(methodName) && (args.length > 0)) {
 				if (args[0].equals(
 						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
 							StringPool.PERIOD)) {
