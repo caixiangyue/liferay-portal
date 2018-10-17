@@ -46,51 +46,44 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testActivate() {
-		RMIMultiVMEhcachePortalCacheManagerConfigurator
-			rmiMultiVMEhcachePortalCacheManagerConfigurator =
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false);
-
 		Assert.assertNull(
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
 				"_peerListenerFactoryClass"));
 		Assert.assertNull(
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
 				"_peerListenerFactoryPropertiesString"));
 		Assert.assertNull(
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
 				"_peerProviderFactoryClass"));
 		Assert.assertNull(
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
 				"_peerProviderFactoryPropertiesString"));
-
-		rmiMultiVMEhcachePortalCacheManagerConfigurator =
-			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true);
 
 		Assert.assertSame(
 			"net.sf.ehcache.distribution." +
 				"TestRMICacheManagerPeerProviderFactory",
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
 				"_peerProviderFactoryClass"));
 		Assert.assertEquals(
 			"key1=value1,key2=value2",
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
 				"_peerListenerFactoryPropertiesString"));
 		Assert.assertSame(
 			"com.liferay.portal.cache.ehcache.internal.rmi." +
 				"TestLiferayRMICacheManagerPeerListenerFactory",
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
 				"_peerListenerFactoryClass"));
 		Assert.assertEquals(
 			"key1=value1,key2=value2",
 			ReflectionTestUtil.getFieldValue(
-				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
 				"_peerProviderFactoryPropertiesString"));
 	}
 
@@ -98,15 +91,13 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 	public void testManageConfiguration() {
 		Configuration configuration = new Configuration();
 
-		PortalCacheManagerConfiguration portalCacheManagerConfiguration =
-			new PortalCacheManagerConfiguration(null, null, null);
-
 		RMIMultiVMEhcachePortalCacheManagerConfigurator
 			rmiMultiVMEhcachePortalCacheManagerConfigurator =
 				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false);
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.manageConfiguration(
-			configuration, portalCacheManagerConfiguration);
+			configuration,
+			new PortalCacheManagerConfiguration(null, null, null));
 
 		List<FactoryConfiguration>
 			cacheManagerPeerProviderFactoryConfiguration =
@@ -127,7 +118,8 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true);
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.manageConfiguration(
-			configuration, portalCacheManagerConfiguration);
+			configuration,
+			new PortalCacheManagerConfiguration(null, null, null));
 
 		List<FactoryConfiguration>
 			cacheManagerPeerProviderFactoryConfigurations =
@@ -177,17 +169,15 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.setProps(
 			(Props)ProxyUtil.newProxyInstance(
-				_classLoader, new Class<?>[] {Props.class},
+				RMIMultiVMEhcachePortalCacheManagerConfiguratorTest.class.
+					getClassLoader(),
+				new Class<?>[] {Props.class},
 				new PropsInvocationHandler(clusterEnabled)));
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.activate();
 
 		return rmiMultiVMEhcachePortalCacheManagerConfigurator;
 	}
-
-	private static final ClassLoader _classLoader =
-		RMIMultiVMEhcachePortalCacheManagerConfiguratorTest.class.
-			getClassLoader();
 
 	private class PropsInvocationHandler implements InvocationHandler {
 
@@ -199,38 +189,34 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 		public Object invoke(Object proxy, Method method, Object[] args) {
 			String methodName = method.getName();
 
-			if (methodName.equals("get")) {
-				String key = (String)args[0];
-
+			if ("get".equals(methodName)) {
 				if (PropsKeys.EHCACHE_RMI_PEER_LISTENER_FACTORY_CLASS.equals(
-						key)) {
+						args[0])) {
 
 					return "com.liferay.portal.cache.ehcache.internal.rmi." +
 						"TestLiferayRMICacheManagerPeerListenerFactory";
 				}
 
 				if (PropsKeys.EHCACHE_RMI_PEER_PROVIDER_FACTORY_CLASS.equals(
-						key)) {
+						args[0])) {
 
 					return "net.sf.ehcache.distribution." +
 						"TestRMICacheManagerPeerProviderFactory";
 				}
 
-				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(key)) {
+				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(args[0])) {
 					return String.valueOf(_clusterEnabled);
 				}
 			}
 
-			if (methodName.equals("getArray")) {
+			if ("getArray".equals(methodName)) {
 				return new String[] {"key1=value1", "key2=value2"};
 			}
 
-			if (methodName.equals("getProperties")) {
-				String key = (String)args[0];
-
-				if (key.equals(
-						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
-							StringPool.PERIOD)) {
+			if ("getProperties".equals(methodName)) {
+				if (args[0].equals(
+					PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
+						StringPool.PERIOD)) {
 
 					return new Properties();
 				}
