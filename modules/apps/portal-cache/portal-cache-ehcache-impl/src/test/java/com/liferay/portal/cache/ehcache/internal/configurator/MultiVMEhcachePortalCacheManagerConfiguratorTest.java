@@ -762,7 +762,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe);
-		} return properties;
+		}
+
+		return properties;
 	}
 
 	private class PropsInvocationHandler implements InvocationHandler {
