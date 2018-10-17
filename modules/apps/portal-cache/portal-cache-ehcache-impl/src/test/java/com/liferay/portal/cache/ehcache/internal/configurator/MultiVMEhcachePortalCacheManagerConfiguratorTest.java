@@ -223,22 +223,21 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				_getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
-		CacheConfiguration cacheConfiguration = new CacheConfiguration();
-
 		Assert.assertTrue(
 			"The true value should be returned if clusterEnabled is true",
 			multiVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
-				cacheConfiguration));
+				new CacheConfiguration()));
 
-		multiVMEhcachePortalCacheManagerConfigurator =
-			_getMultiVMEhcachePortalCacheManagerConfigurator(
-				false, true, true, true);
+		MultiVMEhcachePortalCacheManagerConfigurator
+			multiVMEhcachePortalCacheManagerConfigurator1 =
+				_getMultiVMEhcachePortalCacheManagerConfigurator(
+					false, true, true, true);
 
 		Assert.assertFalse(
 			"The false value should be returned if clusterEnabled is false " +
 				"with empty cacheConfiguration",
-			multiVMEhcachePortalCacheManagerConfigurator.isRequireSerialization(
-				cacheConfiguration));
+			multiVMEhcachePortalCacheManagerConfigurator1.
+				isRequireSerialization(new CacheConfiguration()));
 	}
 
 	@Test
