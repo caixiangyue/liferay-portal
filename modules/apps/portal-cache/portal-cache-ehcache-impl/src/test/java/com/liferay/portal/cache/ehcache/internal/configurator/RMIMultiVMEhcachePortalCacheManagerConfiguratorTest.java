@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -99,20 +100,12 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 			configuration,
 			new PortalCacheManagerConfiguration(null, null, null));
 
-		List<FactoryConfiguration>
-			cacheManagerPeerProviderFactoryConfiguration =
-				configuration.getCacheManagerPeerProviderFactoryConfiguration();
-		List<FactoryConfiguration>
-			cacheManagerPeerListenerFactoryConfiguration =
-				configuration.
-					getCacheManagerPeerListenerFactoryConfigurations();
-
-		Assert.assertTrue(
-			cacheManagerPeerProviderFactoryConfiguration.toString(),
-			cacheManagerPeerProviderFactoryConfiguration.isEmpty());
-		Assert.assertTrue(
-			cacheManagerPeerListenerFactoryConfiguration.toString(),
-			cacheManagerPeerListenerFactoryConfiguration.isEmpty());
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerProviderFactoryConfiguration());
+		Assert.assertEquals(
+			Collections.emptyList(),
+			configuration.getCacheManagerPeerListenerFactoryConfigurations());
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator =
 			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true);
@@ -215,8 +208,8 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 			if ("getProperties".equals(methodName)) {
 				if (args[0].equals(
-					PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
-						StringPool.PERIOD)) {
+						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
+							StringPool.PERIOD)) {
 
 					return new Properties();
 				}
