@@ -225,8 +225,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertTrue(
 			"The true value should be returned if clusterEnabled is true",
-			multiVMEhcachePortalCacheManagerConfigurator1.isRequireSerialization(
-				new CacheConfiguration()));
+			multiVMEhcachePortalCacheManagerConfigurator1.
+				isRequireSerialization(new CacheConfiguration()));
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator2 =
@@ -676,6 +676,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertNull(replicatorProperties.get("portalCacheName1"));
 		Assert.assertEquals(
 			"portalCacheName1", portalCacheConfiguration4.getPortalCacheName());
+
+		Assert.assertEquals(
+			_getProperties("key1=value1"),
+			portalCacheConfiguration4.
+				getPortalCacheBootstrapLoaderProperties());
 
 		Assert.assertEquals(
 			Collections.singleton(
