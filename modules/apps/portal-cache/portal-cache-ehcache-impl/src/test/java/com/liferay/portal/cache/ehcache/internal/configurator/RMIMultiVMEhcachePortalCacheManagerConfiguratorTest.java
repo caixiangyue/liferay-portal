@@ -47,109 +47,105 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@Test
 	public void testActivate() {
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
-				"_peerListenerFactoryClass"));
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
-				"_peerListenerFactoryPropertiesString"));
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
-				"_peerProviderFactoryClass"));
-		Assert.assertNull(
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false),
-				"_peerProviderFactoryPropertiesString"));
-
-		Assert.assertSame(
-			"net.sf.ehcache.distribution." +
-				"TestRMICacheManagerPeerProviderFactory",
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
-				"_peerProviderFactoryClass"));
-		Assert.assertEquals(
-			"key1=value1,key2=value2",
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
-				"_peerListenerFactoryPropertiesString"));
-		Assert.assertSame(
+		_assertRMIMultiVMEhcachePortalCacheManagerConfigurator(
+			null, null, null, null,
+			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false));
+		_assertRMIMultiVMEhcachePortalCacheManagerConfigurator(
 			"com.liferay.portal.cache.ehcache.internal.rmi." +
 				"TestLiferayRMICacheManagerPeerListenerFactory",
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
-				"_peerListenerFactoryClass"));
-		Assert.assertEquals(
 			"key1=value1,key2=value2",
-			ReflectionTestUtil.getFieldValue(
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true),
-				"_peerProviderFactoryPropertiesString"));
+			"net.sf.ehcache.distribution." +
+				"TestRMICacheManagerPeerProviderFactory",
+			"key1=value1,key2=value2",
+			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true));
 	}
 
 	@Test
 	public void testManageConfiguration() {
-		Configuration configuration = new Configuration();
+		_assertManageConfiguration(
+			Collections.<FactoryConfiguration>emptyList(),
+			Collections.<FactoryConfiguration>emptyList(), false);
+		_assertManageConfiguration(
+			Collections.singletonList(
+				_getFactoryConfiguration(
+					"net.sf.ehcache.distribution." +
+						"TestRMICacheManagerPeerProviderFactory",
+					"key1=value1,key2=value2", StringPool.COMMA)),
+			Collections.singletonList(
+				_getFactoryConfiguration(
+					"com.liferay.portal.cache.ehcache.internal.rmi." +
+						"TestLiferayRMICacheManagerPeerListenerFactory",
+					"key1=value1,key2=value2", StringPool.COMMA)),
+			true);
+	}
+
+	private void _assertManageConfiguration(
+		List<FactoryConfiguration>
+			expectedCacheManagerPeerProviderFactoryConfigurations,
+		List<FactoryConfiguration>
+			expectedCacheManagerPeerListenerFactoryConfigurations,
+		boolean clusterEnabled) {
 
 		RMIMultiVMEhcachePortalCacheManagerConfigurator
 			rmiMultiVMEhcachePortalCacheManagerConfigurator =
-				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false);
+				_getRMIMultiVMEhcachePortalCacheManagerConfigurator(
+					clusterEnabled);
+
+		Configuration configuration = new Configuration();
 
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.manageConfiguration(
 			configuration,
 			new PortalCacheManagerConfiguration(null, null, null));
 
 		Assert.assertEquals(
-			Collections.emptyList(),
+			expectedCacheManagerPeerProviderFactoryConfigurations,
 			configuration.getCacheManagerPeerProviderFactoryConfiguration());
 		Assert.assertEquals(
-			Collections.emptyList(),
+			expectedCacheManagerPeerListenerFactoryConfigurations,
 			configuration.getCacheManagerPeerListenerFactoryConfigurations());
+	}
 
-		rmiMultiVMEhcachePortalCacheManagerConfigurator =
-			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true);
+	private void _assertRMIMultiVMEhcachePortalCacheManagerConfigurator(
+		String expectedPeerListenerFactoryClass,
+		String expectedPeerListenerFactoryPropertiesString,
+		String expectedPeerProviderFactoryClass,
+		String expectedPeerProviderFactoryPropertiesString,
+		RMIMultiVMEhcachePortalCacheManagerConfigurator
+			rmiMultiVMEhcachePortalCacheManagerConfigurator) {
 
-		rmiMultiVMEhcachePortalCacheManagerConfigurator.manageConfiguration(
-			configuration,
-			new PortalCacheManagerConfiguration(null, null, null));
-
-		List<FactoryConfiguration>
-			cacheManagerPeerProviderFactoryConfigurations =
-				configuration.getCacheManagerPeerProviderFactoryConfiguration();
-
-		FactoryConfiguration peerProviderFactoryConfiguration =
-			cacheManagerPeerProviderFactoryConfigurations.get(0);
-
-		Assert.assertSame(
-			"net.sf.ehcache.distribution." +
-				"TestRMICacheManagerPeerProviderFactory",
-			peerProviderFactoryConfiguration.getFullyQualifiedClassPath());
 		Assert.assertEquals(
-			"key1=value1,key2=value2",
-			peerProviderFactoryConfiguration.getProperties());
-		Assert.assertSame(
-			StringPool.COMMA,
-			peerProviderFactoryConfiguration.getPropertySeparator());
-
-		List<FactoryConfiguration>
-			cacheManagerPeerListenerFactoryConfigurations =
-				configuration.
-					getCacheManagerPeerListenerFactoryConfigurations();
-
-		FactoryConfiguration peerListenerFacotryConfiguration =
-			cacheManagerPeerListenerFactoryConfigurations.get(0);
-
-		Assert.assertSame(
-			"com.liferay.portal.cache.ehcache.internal.rmi." +
-				"TestLiferayRMICacheManagerPeerListenerFactory",
-			peerListenerFacotryConfiguration.getFullyQualifiedClassPath());
+			expectedPeerListenerFactoryClass,
+			ReflectionTestUtil.getFieldValue(
+				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				"_peerListenerFactoryClass"));
 		Assert.assertEquals(
-			"key1=value1,key2=value2",
-			peerListenerFacotryConfiguration.getProperties());
-		Assert.assertSame(
-			StringPool.COMMA,
-			peerListenerFacotryConfiguration.getPropertySeparator());
+			expectedPeerListenerFactoryPropertiesString,
+			ReflectionTestUtil.getFieldValue(
+				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				"_peerListenerFactoryPropertiesString"));
+		Assert.assertEquals(
+			expectedPeerProviderFactoryClass,
+			ReflectionTestUtil.getFieldValue(
+				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				"_peerProviderFactoryClass"));
+		Assert.assertEquals(
+			expectedPeerProviderFactoryPropertiesString,
+			ReflectionTestUtil.getFieldValue(
+				rmiMultiVMEhcachePortalCacheManagerConfigurator,
+				"_peerProviderFactoryPropertiesString"));
+	}
+
+	private FactoryConfiguration _getFactoryConfiguration(
+		String fullyQualifiedClassPath, String properties,
+		String propertySeparator) {
+
+		FactoryConfiguration factoryConfiguration = new FactoryConfiguration();
+
+		factoryConfiguration.setClass(fullyQualifiedClassPath);
+		factoryConfiguration.setProperties(properties);
+		factoryConfiguration.setPropertySeparator(propertySeparator);
+
+		return factoryConfiguration;
 	}
 
 	private RMIMultiVMEhcachePortalCacheManagerConfigurator
