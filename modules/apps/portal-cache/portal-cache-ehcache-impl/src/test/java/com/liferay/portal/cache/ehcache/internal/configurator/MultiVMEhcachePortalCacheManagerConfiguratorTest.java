@@ -669,10 +669,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 	private Properties _getProperties(String propertiesString) {
 		Properties properties = new Properties();
 
-		if (propertiesString == null) {
-			return properties;
-		}
-
 		try {
 			properties.load(
 				new UnsyncStringReader(
@@ -750,7 +746,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 							"portalCacheName2Y=key2Y=value2Y");
 				}
 
-				return _getProperties((String)null);
+				return new Properties();
 			}
 
 			return null;
