@@ -174,7 +174,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			multiVMEhcachePortalCacheManagerConfigurator.
 				getPortalPropertiesString("portal.property.Key1"));
 
-		Assert.assertSame(
+		Assert.assertEquals(
 			"key=value",
 			multiVMEhcachePortalCacheManagerConfigurator.
 				getPortalPropertiesString("portal.property.Key2"));
