@@ -466,10 +466,13 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					false, true, true, true);
 
 		_assertPortalCacheConfiguration(
-			"TestName", null, Collections.<Properties>emptySet(),
+			"portalCacheNameOutsideProperties", null,
+			Collections.<Properties>emptySet(),
 			multiVMEhcachePortalCacheManagerConfigurator1.
 				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true));
+					new CacheConfiguration(
+						"portalCacheNameOutsideProperties", 0),
+					true));
 
 		// Test 2: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
@@ -480,7 +483,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, true, true);
 
 		_assertPortalCacheConfiguration(
-			"TestName", _getProperties("key1=value1,key2=value2"),
+			"portalCacheNameOutsideProperties",
+			_getProperties("key1=value1,key2=value2"),
 			Collections.singleton(
 				_getProperties(
 					new ObjectValuePair<Object, Object>("key1", "value1"),
@@ -488,7 +492,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					new ObjectValuePair<Object, Object>("replicator", true))),
 			multiVMEhcachePortalCacheManagerConfigurator2.
 				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true));
+					new CacheConfiguration(
+						"portalCacheNameOutsideProperties", 0),
+					true));
 
 		// Test 3: clusterEnabled is true, _bootstrapLoaderEnabled is false,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
@@ -499,7 +505,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, false, true, true);
 
 		_assertPortalCacheConfiguration(
-			"TestName", null,
+			"portalCacheNameOutsideProperties", null,
 			Collections.singleton(
 				_getProperties(
 					new ObjectValuePair<Object, Object>("key1", "value1"),
@@ -507,7 +513,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					new ObjectValuePair<Object, Object>("replicator", true))),
 			multiVMEhcachePortalCacheManagerConfigurator3.
 				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true));
+					new CacheConfiguration(
+						"portalCacheNameOutsideProperties", 0),
+					true));
 
 		// Test 4: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are non-empty
