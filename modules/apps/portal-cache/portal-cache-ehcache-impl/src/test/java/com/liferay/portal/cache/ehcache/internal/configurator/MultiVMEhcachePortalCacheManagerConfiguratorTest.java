@@ -171,12 +171,10 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		Assert.assertNull(
 			multiVMEhcachePortalCacheManagerConfigurator.
 				getPortalPropertiesString("portal.property.Key1"));
-
 		Assert.assertEquals(
 			"key=value",
 			multiVMEhcachePortalCacheManagerConfigurator.
 				getPortalPropertiesString("portal.property.Key2"));
-
 		Assert.assertEquals(
 			"key1=value1,key2=value2",
 			multiVMEhcachePortalCacheManagerConfigurator.
@@ -278,7 +276,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			_getProperties(
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, false)));
-
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration1, "portalCacheName2X",
 			_getProperties("key2X=value2X"),
@@ -288,7 +285,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			_getProperties(
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, false)));
-
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration1, "portalCacheName2Y", null,
 			_getProperties(
@@ -325,7 +321,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, true)));
-
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration2, "portalCacheName2Y", null,
 			_getProperties(
@@ -359,7 +354,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, true)));
-
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration3, "portalCacheName2Y", null,
 			_getProperties(
@@ -390,7 +384,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration4, "portalCacheName1",
 			_getProperties("key1=value1"), new Properties[0]);
-
 		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration4, "portalCacheName2X",
 			_getProperties("key2X=value2X"), new Properties[0]);
