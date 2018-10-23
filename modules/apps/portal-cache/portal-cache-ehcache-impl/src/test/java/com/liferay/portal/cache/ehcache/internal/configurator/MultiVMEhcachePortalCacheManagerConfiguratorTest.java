@@ -272,7 +272,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		multiVMEhcachePortalCacheManagerConfigurator2.manageConfiguration(
 			new Configuration(), portalCacheManagerConfiguration1);
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration1, "portalCacheName1",
 			_getProperties("key1=value1"),
 			_getProperties(
@@ -283,7 +283,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, false)));
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration1, "portalCacheName2X",
 			_getProperties("key2X=value2X"),
 			_getProperties(
@@ -293,7 +293,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, false)));
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration1, "portalCacheName2Y", null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
@@ -323,14 +323,14 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		multiVMEhcachePortalCacheManagerConfigurator3.manageConfiguration(
 			new Configuration(), portalCacheManagerConfiguration2);
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration2, "portalCacheName1", null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, true)));
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration2, "portalCacheName2Y", null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
@@ -357,14 +357,14 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		multiVMEhcachePortalCacheManagerConfigurator4.manageConfiguration(
 			new Configuration(), portalCacheManagerConfiguration3);
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration3, "portalCacheName1", null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>(
 					PortalCacheReplicator.REPLICATOR, true)));
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration3, "portalCacheName2Y", null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
@@ -391,11 +391,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		multiVMEhcachePortalCacheManagerConfigurator5.manageConfiguration(
 			new Configuration(), portalCacheManagerConfiguration4);
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration4, "portalCacheName1",
 			_getProperties("key1=value1"), new Properties[0]);
 
-		_assertPortalCacheConfiguration(
+		_assertPortalCacheManagerConfiguration(
 			portalCacheManagerConfiguration4, "portalCacheName2X",
 			_getProperties("key2X=value2X"), new Properties[0]);
 
@@ -611,7 +611,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			expectedReplicatorProperties, objectValuePair.getValue());
 	}
 
-	private void _assertPortalCacheConfiguration(
+	private void _assertPortalCacheManagerConfiguration(
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration,
 		String portalCacheName,
 		Properties expectedPortalCacheBootstrapLoaderProperties,
