@@ -729,7 +729,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				return new String[] {"key1=value1", "key2=value2"};
 			}
 
-			if (methodName.equals("getProperties")) {
+			if (methodName.equals("getProperties") && (args.length > 0)) {
 				if (args[0].equals(
 						PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_PROPERTIES +
 							StringPool.PERIOD) &&
