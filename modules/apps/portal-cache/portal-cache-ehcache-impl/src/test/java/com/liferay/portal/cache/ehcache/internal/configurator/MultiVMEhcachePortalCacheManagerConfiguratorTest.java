@@ -118,43 +118,24 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties expectedProperties1 = _getProperties(
-			"portalCacheName1=key1=value1,portalCacheName2X=key2X=value2X," +
-				"portalCacheName2Y=key2Y=value2Y");
-
 		Assert.assertEquals(
-			expectedProperties1.keySet(), mergedPropertiesMap1.keySet());
+			mergedPropertiesMap1.toString(), 3, mergedPropertiesMap1.size());
 
-		ObjectValuePair objectValuePair1 = mergedPropertiesMap1.get(
-			"portalCacheName1");
-
-		Assert.assertEquals(
-			_getProperties("key1=value1"), objectValuePair1.getKey());
-
-		Assert.assertEquals(
+		_assertMergedPropertiesMap(
+			_getProperties("key1=value1"),
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>("replicator", true)),
-			objectValuePair1.getValue());
-
-		ObjectValuePair objectValuePair2 = mergedPropertiesMap1.get(
+			mergedPropertiesMap1, "portalCacheName1");
+		_assertMergedPropertiesMap(
+			_getProperties("key2X=value2X"), null, mergedPropertiesMap1,
 			"portalCacheName2X");
-
-		Assert.assertEquals(
-			_getProperties("key2X=value2X"), objectValuePair2.getKey());
-
-		Assert.assertNull(objectValuePair2.getValue());
-
-		ObjectValuePair objectValuePair3 = mergedPropertiesMap1.get(
-			"portalCacheName2Y");
-
-		Assert.assertNull(objectValuePair3.getKey());
-
-		Assert.assertEquals(
+		_assertMergedPropertiesMap(
+			null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
 				new ObjectValuePair<Object, Object>("replicator", true)),
-			objectValuePair3.getValue());
+			mergedPropertiesMap1, "portalCacheName2Y");
 
 		// Test 3: _bootstrapLoaderEnabled is false, _bootstrapLoaderProperties
 		// and _replicatorProperties are non-empty
@@ -165,33 +146,21 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, false, false, false),
 				"_getMergedPropertiesMap", null, null);
 
-		Properties expectedProperties2 = _getProperties(
-			"portalCacheName1=key1=value1,portalCacheName2Y=key2Y=value2Y");
-
 		Assert.assertEquals(
-			expectedProperties2.keySet(), mergedPropertiesMap2.keySet());
+			mergedPropertiesMap2.toString(), 2, mergedPropertiesMap2.size());
 
-		ObjectValuePair objectValuePair4 = mergedPropertiesMap2.get(
-			"portalCacheName1");
-
-		Assert.assertNull(objectValuePair4.getKey());
-
-		Assert.assertEquals(
+		_assertMergedPropertiesMap(
+			null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key1", "value1"),
 				new ObjectValuePair<Object, Object>("replicator", true)),
-			objectValuePair4.getValue());
-
-		ObjectValuePair objectValuePair5 = mergedPropertiesMap2.get(
-			"portalCacheName2Y");
-
-		Assert.assertNull(objectValuePair5.getKey());
-
-		Assert.assertEquals(
+			mergedPropertiesMap2, "portalCacheName1");
+		_assertMergedPropertiesMap(
+			null,
 			_getProperties(
 				new ObjectValuePair<Object, Object>("key2Y", "value2Y"),
 				new ObjectValuePair<Object, Object>("replicator", true)),
-			objectValuePair5.getValue());
+			mergedPropertiesMap2, "portalCacheName2Y");
 	}
 
 	@Test
@@ -624,6 +593,22 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			props,
 			ReflectionTestUtil.getFieldValue(
 				multiVMEhcachePortalCacheManagerConfigurator, "props"));
+	}
+
+	private void _assertMergedPropertiesMap(
+		Properties expectedBootstrapLoaderProperties,
+		Properties expectedReplicatorProperties,
+		Map<String, ObjectValuePair<Properties, Properties>>
+			mergedPropertiesMap,
+		String portalCacheName) {
+
+		ObjectValuePair objectValuePair = mergedPropertiesMap.get(
+			portalCacheName);
+
+		Assert.assertEquals(
+			expectedBootstrapLoaderProperties, objectValuePair.getKey());
+		Assert.assertEquals(
+			expectedReplicatorProperties, objectValuePair.getValue());
 	}
 
 	private void _assertPortalCacheConfiguration(
