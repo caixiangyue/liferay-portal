@@ -465,20 +465,11 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				_getMultiVMEhcachePortalCacheManagerConfigurator(
 					false, true, true, true);
 
-		PortalCacheConfiguration portalCacheConfiguration1 =
+		_assertPortalCacheConfiguration(
+			"TestName", null, Collections.<Properties>emptySet(),
 			multiVMEhcachePortalCacheManagerConfigurator1.
 				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true);
-
-		Assert.assertEquals(
-			"TestName", portalCacheConfiguration1.getPortalCacheName());
-		Assert.assertNull(
-			portalCacheConfiguration1.
-				getPortalCacheBootstrapLoaderProperties());
-
-		Assert.assertEquals(
-			Collections.emptySet(),
-			portalCacheConfiguration1.getPortalCacheListenerPropertiesSet());
+					new CacheConfiguration("TestName", 0), true));
 
 		// Test 2: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
@@ -488,26 +479,16 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				_getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
-		PortalCacheConfiguration portalCacheConfiguration2 =
-			multiVMEhcachePortalCacheManagerConfigurator2.
-				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true);
-
-		Assert.assertEquals(
-			"TestName", portalCacheConfiguration2.getPortalCacheName());
-
-		Assert.assertEquals(
-			_getProperties("key1=value1,key2=value2"),
-			portalCacheConfiguration2.
-				getPortalCacheBootstrapLoaderProperties());
-
-		Assert.assertEquals(
+		_assertPortalCacheConfiguration(
+			"TestName", _getProperties("key1=value1,key2=value2"),
 			Collections.singleton(
 				_getProperties(
 					new ObjectValuePair<Object, Object>("key1", "value1"),
 					new ObjectValuePair<Object, Object>("key2", "value2"),
 					new ObjectValuePair<Object, Object>("replicator", true))),
-			portalCacheConfiguration2.getPortalCacheListenerPropertiesSet());
+			multiVMEhcachePortalCacheManagerConfigurator2.
+				parseCacheListenerConfigurations(
+					new CacheConfiguration("TestName", 0), true));
 
 		// Test 3: clusterEnabled is true, _bootstrapLoaderEnabled is false,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
@@ -517,25 +498,16 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				_getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, false, true, true);
 
-		PortalCacheConfiguration portalCacheConfiguration3 =
-			multiVMEhcachePortalCacheManagerConfigurator3.
-				parseCacheListenerConfigurations(
-					new CacheConfiguration("TestName", 0), true);
-
-		Assert.assertEquals(
-			"TestName", portalCacheConfiguration3.getPortalCacheName());
-
-		Assert.assertNull(
-			portalCacheConfiguration3.
-				getPortalCacheBootstrapLoaderProperties());
-
-		Assert.assertEquals(
+		_assertPortalCacheConfiguration(
+			"TestName", null,
 			Collections.singleton(
 				_getProperties(
 					new ObjectValuePair<Object, Object>("key1", "value1"),
 					new ObjectValuePair<Object, Object>("key2", "value2"),
 					new ObjectValuePair<Object, Object>("replicator", true))),
-			portalCacheConfiguration3.getPortalCacheListenerPropertiesSet());
+			multiVMEhcachePortalCacheManagerConfigurator3.
+				parseCacheListenerConfigurations(
+					new CacheConfiguration("TestName", 0), true));
 
 		// Test 4: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are non-empty
@@ -559,20 +531,14 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Assert.assertNull(bootstrapLoaderProperties.get("portalCacheName1"));
 		Assert.assertNull(replicatorProperties.get("portalCacheName1"));
-		Assert.assertEquals(
-			"portalCacheName1", portalCacheConfiguration4.getPortalCacheName());
 
-		Assert.assertEquals(
-			_getProperties("key1=value1"),
-			portalCacheConfiguration4.
-				getPortalCacheBootstrapLoaderProperties());
-
-		Assert.assertEquals(
+		_assertPortalCacheConfiguration(
+			"portalCacheName1", _getProperties("key1=value1"),
 			Collections.singleton(
 				_getProperties(
 					new ObjectValuePair<Object, Object>("key1", "value1"),
 					new ObjectValuePair<Object, Object>("replicator", true))),
-			portalCacheConfiguration4.getPortalCacheListenerPropertiesSet());
+			portalCacheConfiguration4);
 	}
 
 	@Test
@@ -611,6 +577,21 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			expectedReplicatorProperties, objectValuePair.getValue());
 	}
 
+	private void _assertPortalCacheConfiguration(
+		String expectedName, Properties expectedBootstrapLoaderProperties,
+		Set<Properties> expectedPortalCacheListenerPropertiesSet,
+		PortalCacheConfiguration portalCacheConfiguration) {
+
+		Assert.assertEquals(
+			expectedName, portalCacheConfiguration.getPortalCacheName());
+		Assert.assertEquals(
+			expectedBootstrapLoaderProperties,
+			portalCacheConfiguration.getPortalCacheBootstrapLoaderProperties());
+		Assert.assertEquals(
+			expectedPortalCacheListenerPropertiesSet,
+			portalCacheConfiguration.getPortalCacheListenerPropertiesSet());
+	}
+
 	private void _assertPortalCacheManagerConfiguration(
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration,
 		String portalCacheName,
@@ -631,12 +612,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				expectedPortalCacheListenerProperties);
 		}
 
-		Assert.assertEquals(
-			expectedPortalCacheBootstrapLoaderProperties,
-			portalCacheConfiguration.getPortalCacheBootstrapLoaderProperties());
-		Assert.assertEquals(
-			expectedPortalCacheListenerPropertiesSet,
-			portalCacheConfiguration.getPortalCacheListenerPropertiesSet());
+		_assertPortalCacheConfiguration(
+			portalCacheName, expectedPortalCacheBootstrapLoaderProperties,
+			expectedPortalCacheListenerPropertiesSet, portalCacheConfiguration);
 	}
 
 	private MultiVMEhcachePortalCacheManagerConfigurator
