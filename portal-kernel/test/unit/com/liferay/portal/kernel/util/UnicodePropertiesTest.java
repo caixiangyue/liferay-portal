@@ -286,18 +286,13 @@ public class UnicodePropertiesTest {
 
 	private static final String _TEST_KEY_3 = "testKey3";
 
-	private static final String _TEST_LINE_1 = StringBundler.concat(
-		_TEST_KEY_1, StringPool.EQUAL, UnicodePropertiesTest._TEST_VALUE_1);
+	private static final String _TEST_LINE_1;
 
-	private static final String _TEST_LINE_2 = StringBundler.concat(
-		_TEST_KEY_2, StringPool.EQUAL, UnicodePropertiesTest._TEST_VALUE_2);
+	private static final String _TEST_LINE_2;
 
-	private static final String _TEST_LINE_3 = StringBundler.concat(
-		_TEST_KEY_3, StringPool.EQUAL, UnicodePropertiesTest._TEST_VALUE_3);
+	private static final String _TEST_LINE_3;
 
-	private static final String _TEST_PROPS = StringBundler.concat(
-		_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_2, StringPool.NEW_LINE,
-		_TEST_LINE_3);
+	private static final String _TEST_PROPS;
 
 	private static final String _TEST_SAFE_NEWLINE_CHARACTER =
 		"_SAFE_NEWLINE_CHARACTER_";
@@ -307,5 +302,20 @@ public class UnicodePropertiesTest {
 	private static final String _TEST_VALUE_2 = "testValue2";
 
 	private static final String _TEST_VALUE_3 = "testValue3";
+
+	static {
+		_TEST_LINE_1 = StringBundler.concat(
+			_TEST_KEY_1, StringPool.EQUAL, _TEST_VALUE_1);
+
+		_TEST_LINE_2 = StringBundler.concat(
+			_TEST_KEY_2, StringPool.EQUAL, _TEST_VALUE_2);
+
+		_TEST_LINE_3 = StringBundler.concat(
+			_TEST_KEY_3, StringPool.EQUAL, _TEST_VALUE_3);
+
+		_TEST_PROPS = StringBundler.concat(
+			_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_2,
+			StringPool.NEW_LINE, _TEST_LINE_3);
+	}
 
 }
