@@ -38,22 +38,10 @@ import org.junit.Test;
 public class UnicodePropertiesTest {
 
 	@Test
-	public void testConstructorAndIsSafe() {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
-
-		Assert.assertFalse(
-			"_safe should be false",
-			ReflectionTestUtil.getFieldValue(unicodeProperties1, "_safe"));
-		Assert.assertFalse(
-			"isSafe() should be return false", unicodeProperties1.isSafe());
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		Assert.assertTrue(
-			"_safe should be true",
-			ReflectionTestUtil.getFieldValue(unicodeProperties2, "_safe"));
-		Assert.assertTrue(
-			"isSafe() should be return true", unicodeProperties2.isSafe());
+	public void testIsSafe() {
+		_assertIsSafe(false, new UnicodeProperties());
+		_assertIsSafe(false, new UnicodeProperties(false));
+		_assertIsSafe(true, new UnicodeProperties(true));
 	}
 
 	@Test
@@ -272,6 +260,15 @@ public class UnicodePropertiesTest {
 				_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_3,
 				_TEST_SAFE_NEWLINE_CHARACTER, StringPool.NEW_LINE),
 			unicodeProperties2.toSortedString());
+	}
+
+	private void _assertIsSafe(
+		boolean expectedValue, UnicodeProperties unicodeProperties) {
+
+		Assert.assertEquals(expectedValue, unicodeProperties.isSafe());
+		Assert.assertEquals(
+			ReflectionTestUtil.getFieldValue(unicodeProperties, "_safe"),
+			unicodeProperties.isSafe());
 	}
 
 	private void _assertTestProps(UnicodeProperties unicodeProperties) {
