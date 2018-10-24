@@ -76,9 +76,9 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testIsSafe() {
-		_assertIsSafe(false, new UnicodeProperties());
-		_assertIsSafe(false, new UnicodeProperties(false));
-		_assertIsSafe(true, new UnicodeProperties(true));
+		_testAndAssertIsSafe(false, new UnicodeProperties());
+		_testAndAssertIsSafe(false, new UnicodeProperties(false));
+		_testAndAssertIsSafe(true, new UnicodeProperties(true));
 	}
 
 	@Test
@@ -240,15 +240,6 @@ public class UnicodePropertiesTest {
 			unicodeProperties2.toSortedString());
 	}
 
-	private void _assertIsSafe(
-		boolean expectedValue, UnicodeProperties unicodeProperties) {
-
-		Assert.assertEquals(expectedValue, unicodeProperties.isSafe());
-		Assert.assertEquals(
-			ReflectionTestUtil.getFieldValue(unicodeProperties, "_safe"),
-			unicodeProperties.isSafe());
-	}
-
 	private void _testAndAssertFastLoad(
 		Map<String, String> expectedUnicodeProperties, String props) {
 
@@ -257,6 +248,15 @@ public class UnicodePropertiesTest {
 		unicodeProperties.fastLoad(props);
 
 		Assert.assertEquals(expectedUnicodeProperties, unicodeProperties);
+	}
+
+	private void _testAndAssertIsSafe(
+		boolean expectedValue, UnicodeProperties unicodeProperties) {
+
+		Assert.assertEquals(expectedValue, unicodeProperties.isSafe());
+		Assert.assertEquals(
+			ReflectionTestUtil.getFieldValue(unicodeProperties, "_safe"),
+			unicodeProperties.isSafe());
 	}
 
 	private void _testAndAssertLoad(
