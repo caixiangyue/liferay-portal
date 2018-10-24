@@ -39,21 +39,10 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testFastLoad() {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
-
-		unicodeProperties.fastLoad(null);
-
-		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
-
-		unicodeProperties.fastLoad(_TEST_LINE_1);
-
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
-
-		unicodeProperties.fastLoad(_TEST_PROPS);
-
-		Assert.assertEquals(_testMap, unicodeProperties);
+		_testAndAssertFastLoad(Collections.emptyMap(), null);
+		_testAndAssertFastLoad(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1), _TEST_LINE_1);
+		_testAndAssertFastLoad(_testMap, _TEST_PROPS);
 	}
 
 	@Test
@@ -97,21 +86,10 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testLoad() throws IOException {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
-
-		unicodeProperties.load(null);
-
-		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
-
-		unicodeProperties.load(_TEST_LINE_1);
-
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
-
-		unicodeProperties.load(_TEST_PROPS);
-
-		Assert.assertEquals(_testMap, unicodeProperties);
+		_testAndAssertLoad(Collections.emptyMap(), null);
+		_testAndAssertLoad(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1), _TEST_LINE_1);
+		_testAndAssertLoad(_testMap, _TEST_PROPS);
 	}
 
 	@Test
@@ -273,6 +251,27 @@ public class UnicodePropertiesTest {
 		Assert.assertEquals(
 			ReflectionTestUtil.getFieldValue(unicodeProperties, "_safe"),
 			unicodeProperties.isSafe());
+	}
+
+	private void _testAndAssertFastLoad(
+		Map<String, String> expectedUnicodeProperties, String props) {
+
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
+
+		unicodeProperties.fastLoad(props);
+
+		Assert.assertEquals(expectedUnicodeProperties, unicodeProperties);
+	}
+
+	private void _testAndAssertLoad(
+			Map<String, String> expectedUnicodeProperties, String props)
+		throws IOException {
+
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
+
+		unicodeProperties.load(props);
+
+		Assert.assertEquals(expectedUnicodeProperties, unicodeProperties);
 	}
 
 	private static final String _TEST_KEY_1 = "testKey1";
