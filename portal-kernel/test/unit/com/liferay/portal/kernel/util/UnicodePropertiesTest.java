@@ -99,7 +99,7 @@ public class UnicodePropertiesTest {
 	}
 
 	@Test
-	public void testPutWithKeyAndValue() {
+	public void testPutKeyValue() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		Assert.assertNull(unicodeProperties.put(null, null));
@@ -116,7 +116,7 @@ public class UnicodePropertiesTest {
 	}
 
 	@Test
-	public void testPutWithLine() {
+	public void testPutLines() {
 		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
 
 		// line with empty
