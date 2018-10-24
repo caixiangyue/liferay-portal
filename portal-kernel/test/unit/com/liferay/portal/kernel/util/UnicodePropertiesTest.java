@@ -38,13 +38,6 @@ import org.junit.Test;
 public class UnicodePropertiesTest {
 
 	@Test
-	public void testIsSafe() {
-		_assertIsSafe(false, new UnicodeProperties());
-		_assertIsSafe(false, new UnicodeProperties(false));
-		_assertIsSafe(true, new UnicodeProperties(true));
-	}
-
-	@Test
 	public void testFastLoad() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
@@ -91,6 +84,13 @@ public class UnicodePropertiesTest {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		Assert.assertEquals(-1, unicodeProperties.getToStringLength());
+	}
+
+	@Test
+	public void testIsSafe() {
+		_assertIsSafe(false, new UnicodeProperties());
+		_assertIsSafe(false, new UnicodeProperties(false));
+		_assertIsSafe(true, new UnicodeProperties(true));
 	}
 
 	@Test
