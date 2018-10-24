@@ -51,7 +51,7 @@ public class UnicodePropertiesTest {
 
 		unicodeProperties.fastLoad(_TEST_PROPS);
 
-		_assertTestProps(unicodeProperties);
+		Assert.assertEquals(_testMap, unicodeProperties);
 	}
 
 	@Test
@@ -101,22 +101,16 @@ public class UnicodePropertiesTest {
 
 		unicodeProperties.load(_TEST_PROPS);
 
-		_assertTestProps(unicodeProperties);
+		Assert.assertEquals(_testMap, unicodeProperties);
 	}
 
 	@Test
 	public void testPutAll() {
-		Map<String, String> testMap = new HashMap<>();
-
-		testMap.put(_TEST_KEY_1, _TEST_VALUE_1);
-		testMap.put(_TEST_KEY_2, _TEST_VALUE_2);
-		testMap.put(_TEST_KEY_3, _TEST_VALUE_3);
-
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		unicodeProperties.putAll(testMap);
+		unicodeProperties.putAll(_testMap);
 
-		_assertTestProps(unicodeProperties);
+		Assert.assertEquals(_testMap, unicodeProperties);
 	}
 
 	@Test
@@ -271,12 +265,6 @@ public class UnicodePropertiesTest {
 			unicodeProperties.isSafe());
 	}
 
-	private void _assertTestProps(UnicodeProperties unicodeProperties) {
-		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
-		Assert.assertEquals(_TEST_VALUE_2, unicodeProperties.get(_TEST_KEY_2));
-		Assert.assertEquals(_TEST_VALUE_3, unicodeProperties.get(_TEST_KEY_3));
-	}
-
 	private static final String _TEST_KEY_1 = "testKey1";
 
 	private static final String _TEST_KEY_2 = "testKey2";
@@ -299,6 +287,15 @@ public class UnicodePropertiesTest {
 	private static final String _TEST_VALUE_2 = "testValue2";
 
 	private static final String _TEST_VALUE_3 = "testValue3";
+
+	private static final Map<String, String> _testMap =
+		new HashMap<String, String>() {
+			{
+				put(_TEST_KEY_1, _TEST_VALUE_1);
+				put(_TEST_KEY_2, _TEST_VALUE_2);
+				put(_TEST_KEY_3, _TEST_VALUE_3);
+			}
+		};
 
 	static {
 		_TEST_LINE_1 = StringBundler.concat(
