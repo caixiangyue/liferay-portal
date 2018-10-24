@@ -107,13 +107,13 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testLoad() throws IOException {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		unicodeProperties1.load(null);
+		unicodeProperties.load(null);
 
-		unicodeProperties1.load(_TEST_PROPS);
+		unicodeProperties.load(_TEST_PROPS);
 
-		_assertTestProps(unicodeProperties1);
+		_assertTestProps(unicodeProperties);
 	}
 
 	@Test
