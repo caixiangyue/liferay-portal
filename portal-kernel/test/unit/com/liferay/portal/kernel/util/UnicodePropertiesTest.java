@@ -178,20 +178,16 @@ public class UnicodePropertiesTest {
 	public void testRemove() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		Assert.assertNull(unicodeProperties.remove(null));
-
 		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
 
-		Assert.assertEquals(1, unicodeProperties.size());
-
-		Assert.assertNotNull(unicodeProperties.get(_TEST_KEY_1));
+		Assert.assertNull(unicodeProperties.remove(null));
+		Assert.assertEquals(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
+			unicodeProperties);
 
 		Assert.assertEquals(
 			_TEST_VALUE_1, unicodeProperties.remove(_TEST_KEY_1));
-
-		Assert.assertEquals(0, unicodeProperties.size());
-
-		Assert.assertNull(unicodeProperties.get(_TEST_KEY_1));
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
 	}
 
 	@Test
