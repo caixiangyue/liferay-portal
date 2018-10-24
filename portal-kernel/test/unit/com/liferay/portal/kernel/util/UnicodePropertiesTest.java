@@ -102,17 +102,23 @@ public class UnicodePropertiesTest {
 	public void testPutKeyValue() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		Assert.assertNull(unicodeProperties.put(null, null));
+		unicodeProperties.put(null, null);
+
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
 
 		unicodeProperties.put(_TEST_KEY_1, null);
 
-		Assert.assertNull(unicodeProperties.get(_TEST_KEY_1));
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
 
 		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
 
 		Assert.assertEquals(
 			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
 			unicodeProperties);
+
+		unicodeProperties.put(_TEST_KEY_1, null);
+
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
 	}
 
 	@Test
