@@ -43,6 +43,8 @@ public class UnicodePropertiesTest {
 
 		unicodeProperties.fastLoad(null);
 
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
+
 		unicodeProperties.fastLoad(_TEST_LINE_1);
 
 		Assert.assertEquals(
@@ -98,6 +100,14 @@ public class UnicodePropertiesTest {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		unicodeProperties.load(null);
+
+		Assert.assertEquals(Collections.emptyMap(), unicodeProperties);
+
+		unicodeProperties.load(_TEST_LINE_1);
+
+		Assert.assertEquals(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
+			unicodeProperties);
 
 		unicodeProperties.load(_TEST_PROPS);
 
