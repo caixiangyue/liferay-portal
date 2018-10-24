@@ -47,27 +47,24 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testGetProperty() {
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		// with key
-
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
 		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
 
 		Assert.assertEquals(
 			_TEST_VALUE_1, unicodeProperties.getProperty(_TEST_KEY_1));
-
-		// with key and defaultValue
-
 		Assert.assertEquals(
 			_TEST_VALUE_1,
 			unicodeProperties.getProperty(_TEST_KEY_1, "testDefaultValue"));
 
-		unicodeProperties.remove(_TEST_KEY_1);
+		// with key and defaultValue
 
+		Assert.assertNull(unicodeProperties.getProperty(_TEST_KEY_2));
 		Assert.assertEquals(
 			"testDefaultValue",
-			unicodeProperties.getProperty(_TEST_KEY_1, "testDefaultValue"));
+			unicodeProperties.getProperty(_TEST_KEY_2, "testDefaultValue"));
 	}
 
 	@Test
