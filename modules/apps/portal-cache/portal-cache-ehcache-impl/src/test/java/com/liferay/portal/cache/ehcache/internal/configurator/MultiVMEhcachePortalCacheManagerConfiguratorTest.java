@@ -234,9 +234,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			});
 
 		Assert.assertFalse(
-			"The method MultiVMEhcachePortalCacheManagerConfigurator." +
-				"manageConfiguration(Configuration, PortalCacheManagerConfigu" +
-					"ration) should be returned if clusterEnabled is false",
+			"The manageConfiguration method should be returned directly if " +
+				"clusterEnabled is false",
 			calledGetDefaultPortalCacheConfiguration[0]);
 
 		// Test 2: clusterEnabled is true, _bootstrapLoaderProperties and
@@ -442,8 +441,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			new Configuration(), portalCacheManagerConfiguration5);
 
 		Assert.assertFalse(
-			"The portalCacheConfiguration do not need be created again it " +
-				"already exists",
+			"The portalCacheConfiguration should be get from " +
+				"portalCacheManagerConfiguration if it exists",
 			calledNewPortalCacheConfiguration[0]);
 	}
 
