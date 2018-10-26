@@ -63,12 +63,14 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 					true, true, true, true);
 
 		Assert.assertTrue(
-			"The _bootstrapLoaderEnabled should be true",
+			"The _bootstrapLoaderEnabled should be true if props.get(" +
+				"PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_ENABLED) return true",
 			(Boolean)ReflectionTestUtil.getFieldValue(
 				multiVMEhcachePortalCacheManagerConfigurator,
 				"_bootstrapLoaderEnabled"));
 		Assert.assertTrue(
-			"The clusterEnabled should be true",
+			"The clusterEnabled should be true if props.get(PropsKeys." +
+				"CLUSTER_LINK_ENABLED) return true",
 			(Boolean)ReflectionTestUtil.getFieldValue(
 				multiVMEhcachePortalCacheManagerConfigurator,
 				"clusterEnabled"));
@@ -232,7 +234,9 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			});
 
 		Assert.assertFalse(
-			"The method should be returned directly",
+			"The method MultiVMEhcachePortalCacheManagerConfigurator." +
+				"manageConfiguration(Configuration, PortalCacheManagerConfigu" +
+					"ration) should be returned if clusterEnabled is false",
 			calledGetDefaultPortalCacheConfiguration[0]);
 
 		// Test 2: clusterEnabled is true, _bootstrapLoaderProperties and
@@ -438,8 +442,8 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			new Configuration(), portalCacheManagerConfiguration5);
 
 		Assert.assertFalse(
-			"The portalCacheConfiguration should be get from " +
-				"portalCacheManagerConfiguration",
+			"The portalCacheConfiguration do not need be created again it " +
+				"already exists",
 			calledNewPortalCacheConfiguration[0]);
 	}
 
