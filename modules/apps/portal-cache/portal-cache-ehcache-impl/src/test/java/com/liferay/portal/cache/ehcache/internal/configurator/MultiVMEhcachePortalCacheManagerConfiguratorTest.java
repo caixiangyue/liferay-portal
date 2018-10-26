@@ -102,12 +102,16 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		// Test 1: _bootstrapLoaderEnabled is true, _bootstrapLoaderProperties
 		// and _replicatorProperties are empty
 
-		Assert.assertEquals(
-			Collections.emptyMap(),
-			ReflectionTestUtil.invoke(
+		Map<String, ObjectValuePair<Properties, Properties>>
+			mergedPropertiesMap = ReflectionTestUtil.invoke(
 				_getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true),
-				"_getMergedPropertiesMap", null, null));
+				"_getMergedPropertiesMap", null, null);
+
+		Assert.assertTrue(
+			"The mergedPropertiesMap should be empty if " +
+				"bootstrapLoaderProperties and replicatorProperties are empty",
+			mergedPropertiesMap.isEmpty());
 
 		// Test 2: _bootstrapLoaderEnabled is true, _bootstrapLoaderProperties
 		// and _replicatorProperties are non-empty
