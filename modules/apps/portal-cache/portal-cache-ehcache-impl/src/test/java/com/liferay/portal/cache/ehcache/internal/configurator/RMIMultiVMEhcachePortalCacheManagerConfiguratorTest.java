@@ -19,15 +19,10 @@ import com.liferay.portal.cache.configuration.PortalCacheManagerConfiguration;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.util.Props;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.FactoryConfiguration;
@@ -166,56 +161,6 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 		rmiMultiVMEhcachePortalCacheManagerConfigurator.activate();
 
 		return rmiMultiVMEhcachePortalCacheManagerConfigurator;
-	}
-
-	private class PropsInvocationHandler implements InvocationHandler {
-
-		public PropsInvocationHandler(boolean clusterEnabled) {
-			_clusterEnabled = clusterEnabled;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) {
-			String methodName = method.getName();
-
-			if ("get".equals(methodName)) {
-				if (PropsKeys.EHCACHE_RMI_PEER_LISTENER_FACTORY_CLASS.equals(
-						args[0])) {
-
-					return "com.liferay.portal.cache.ehcache.internal.rmi." +
-						"TestLiferayRMICacheManagerPeerListenerFactory";
-				}
-
-				if (PropsKeys.EHCACHE_RMI_PEER_PROVIDER_FACTORY_CLASS.equals(
-						args[0])) {
-
-					return "net.sf.ehcache.distribution." +
-						"TestRMICacheManagerPeerProviderFactory";
-				}
-
-				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(args[0])) {
-					return String.valueOf(_clusterEnabled);
-				}
-			}
-
-			if ("getArray".equals(methodName)) {
-				return new String[] {"key1=value1", "key2=value2"};
-			}
-
-			if ("getProperties".equals(methodName) && (args.length > 0)) {
-				if (args[0].equals(
-						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
-							StringPool.PERIOD)) {
-
-					return new Properties();
-				}
-			}
-
-			return null;
-		}
-
-		private final boolean _clusterEnabled;
-
 	}
 
 }

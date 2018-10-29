@@ -24,14 +24,10 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Props;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.IOException;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -677,82 +673,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		}
 
 		return properties;
-	}
-
-	private class PropsInvocationHandler implements InvocationHandler {
-
-		public PropsInvocationHandler(
-			boolean clusterEnabled, boolean bootstrapLoaderEnabled,
-			boolean bootstrapLoaderPropertiesIsEmpty,
-			boolean replicatorPropertiesIsEmpty) {
-
-			_clusterEnabled = clusterEnabled;
-			_bootstrapLoaderEnabled = bootstrapLoaderEnabled;
-			_bootstrapLoaderPropertiesIsEmpty =
-				bootstrapLoaderPropertiesIsEmpty;
-			_replicatorPropertiesIsEmpty = replicatorPropertiesIsEmpty;
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) {
-			String methodName = method.getName();
-
-			if (methodName.equals("get")) {
-				if (PropsKeys.CLUSTER_LINK_ENABLED.equals(args[0])) {
-					return String.valueOf(_clusterEnabled);
-				}
-
-				if (PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_ENABLED.equals(
-						args[0])) {
-
-					return String.valueOf(_bootstrapLoaderEnabled);
-				}
-			}
-
-			if (methodName.equals("getArray")) {
-				if ("portal.property.Key1".equals(args[0])) {
-					return new String[0];
-				}
-
-				if ("portal.property.Key2".equals(args[0])) {
-					return new String[] {"key=value"};
-				}
-
-				return new String[] {"key1=value1", "key2=value2"};
-			}
-
-			if (methodName.equals("getProperties") && (args.length > 0)) {
-				if (args[0].equals(
-						PropsKeys.EHCACHE_BOOTSTRAP_CACHE_LOADER_PROPERTIES +
-							StringPool.PERIOD) &&
-					!_bootstrapLoaderPropertiesIsEmpty) {
-
-					return _getProperties(
-						"portalCacheName1=key1=value1," +
-							"portalCacheName2X=key2X=value2X");
-				}
-
-				if (args[0].equals(
-						PropsKeys.EHCACHE_REPLICATOR_PROPERTIES +
-							StringPool.PERIOD) &&
-					!_replicatorPropertiesIsEmpty) {
-
-					return _getProperties(
-						"portalCacheName1=key1=value1," +
-							"portalCacheName2Y=key2Y=value2Y");
-				}
-
-				return new Properties();
-			}
-
-			return null;
-		}
-
-		private final boolean _bootstrapLoaderEnabled;
-		private final boolean _bootstrapLoaderPropertiesIsEmpty;
-		private final boolean _clusterEnabled;
-		private final boolean _replicatorPropertiesIsEmpty;
-
 	}
 
 }
