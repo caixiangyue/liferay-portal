@@ -14,6 +14,7 @@
 
 package com.liferay.portal.kernel.util;
 
+import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
@@ -35,25 +36,11 @@ import org.junit.Test;
 public class UnicodePropertiesTest {
 
 	@Test
-	public void testFastLoad() {
+	public void testFastLoad() throws Exception {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		unicodeProperties.fastLoad(null);
-
-		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"fastLoad(null)",
-			unicodeProperties.isEmpty());
-
-		unicodeProperties.fastLoad(_TEST_LINE_1);
-
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
-
-		unicodeProperties.fastLoad(_TEST_PROPS);
-
-		Assert.assertEquals(_testMap, unicodeProperties);
+		_testLoad(
+			props -> unicodeProperties.fastLoad(props), unicodeProperties);
 	}
 
 	@Test
@@ -113,22 +100,7 @@ public class UnicodePropertiesTest {
 	public void testLoad() throws Exception {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		unicodeProperties.load(null);
-
-		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"fastLoad(null)",
-			unicodeProperties.isEmpty());
-
-		unicodeProperties.load(_TEST_LINE_1);
-
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
-
-		unicodeProperties.load(_TEST_PROPS);
-
-		Assert.assertEquals(_testMap, unicodeProperties);
+		_testLoad(props -> unicodeProperties.load(props), unicodeProperties);
 	}
 
 	@Test
@@ -337,6 +309,29 @@ public class UnicodePropertiesTest {
 				_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_3,
 				_TEST_SAFE_NEWLINE_CHARACTER, StringPool.NEW_LINE),
 			unicodeProperties2.toString());
+	}
+
+	private void _testLoad(
+			UnsafeConsumer<String, Exception> load,
+			UnicodeProperties unicodeProperties)
+		throws Exception {
+
+		load.accept(null);
+
+		Assert.assertTrue(
+			"unicodeProperties.isEmpty() should be return true if call " +
+				"fastLoad(null)",
+			unicodeProperties.isEmpty());
+
+		load.accept(_TEST_LINE_1);
+
+		Assert.assertEquals(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
+			unicodeProperties);
+
+		load.accept(_TEST_PROPS);
+
+		Assert.assertEquals(_testMap, unicodeProperties);
 	}
 
 	private static final String _TEST_KEY_1 = "testKey1";
