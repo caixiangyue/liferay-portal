@@ -260,29 +260,9 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testToSortedString() {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
+		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		Assert.assertEquals(
-			StringPool.BLANK, unicodeProperties1.toSortedString());
-
-		unicodeProperties1.put(_TEST_KEY_1, _TEST_VALUE_1);
-
-		Assert.assertEquals(
-			_TEST_LINE_1.concat(StringPool.NEW_LINE),
-			unicodeProperties1.toSortedString());
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		unicodeProperties2.put(_TEST_KEY_1, _TEST_VALUE_1);
-		unicodeProperties2.put(_TEST_KEY_2, StringPool.BLANK);
-		unicodeProperties2.put(
-			_TEST_KEY_3, _TEST_VALUE_3.concat(StringPool.NEW_LINE));
-
-		Assert.assertEquals(
-			StringBundler.concat(
-				_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_3,
-				_TEST_SAFE_NEWLINE_CHARACTER, StringPool.NEW_LINE),
-			unicodeProperties2.toSortedString());
+		unicodeProperties.toSortedString();
 	}
 
 	@Test
