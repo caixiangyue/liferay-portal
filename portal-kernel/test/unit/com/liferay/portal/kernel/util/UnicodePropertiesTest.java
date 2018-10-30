@@ -210,12 +210,6 @@ public class UnicodePropertiesTest {
 				"setProperty(null,null)",
 			unicodeProperties.isEmpty());
 
-		Assert.assertNull(unicodeProperties.setProperty(_TEST_KEY_1, null));
-		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"setProperty(_TEST_KEY_1,null)",
-			unicodeProperties.isEmpty());
-
 		Assert.assertNull(
 			unicodeProperties.setProperty(_TEST_KEY_1, _TEST_VALUE_1));
 		Assert.assertEquals(
