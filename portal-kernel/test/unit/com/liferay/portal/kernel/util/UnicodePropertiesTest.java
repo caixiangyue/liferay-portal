@@ -104,34 +104,6 @@ public class UnicodePropertiesTest {
 	}
 
 	@Test
-	public void testPut() {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
-
-		Assert.assertNull(unicodeProperties.put(null, null));
-		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"put(null,null)",
-			unicodeProperties.isEmpty());
-
-		Assert.assertNull(unicodeProperties.put(_TEST_KEY_1, null));
-		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"put(_TEST_KEY_1,null)",
-			unicodeProperties.isEmpty());
-
-		Assert.assertNull(unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1));
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
-
-		Assert.assertEquals(
-			_TEST_VALUE_1, unicodeProperties.put(_TEST_KEY_1, null));
-		Assert.assertTrue(
-			"put() of null value must remove entry",
-			unicodeProperties.isEmpty());
-	}
-
-	@Test
 	public void testPutAll() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
