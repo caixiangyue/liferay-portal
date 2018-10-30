@@ -146,12 +146,11 @@ public class UnicodePropertiesTest {
 
 		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
 
-		unicodeProperties2.put(
-			_TEST_LINE_1.concat(_TEST_SAFE_NEWLINE_CHARACTER));
+		unicodeProperties2.put(_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER);
 
 		Assert.assertEquals(
 			Collections.singletonMap(
-				_TEST_KEY_1, _TEST_VALUE_1.concat(StringPool.NEW_LINE)),
+				_TEST_KEY_1, _TEST_VALUE_1 + StringPool.NEW_LINE),
 			unicodeProperties2);
 	}
 
@@ -178,7 +177,7 @@ public class UnicodePropertiesTest {
 			LogRecord logRecord = logRecords.get(0);
 
 			Assert.assertEquals(
-				"Invalid property on line ".concat(_TEST_KEY_1),
+				"Invalid property on line " + _TEST_KEY_1,
 				logRecord.getMessage());
 		}
 	}
@@ -246,20 +245,18 @@ public class UnicodePropertiesTest {
 		unicodeProperties1.put(_TEST_KEY_1, _TEST_VALUE_1);
 
 		Assert.assertEquals(
-			_TEST_LINE_1.concat(StringPool.NEW_LINE),
-			unicodeProperties1.toString());
+			_TEST_LINE_1 + StringPool.NEW_LINE, unicodeProperties1.toString());
 
 		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
 
 		unicodeProperties2.put(_TEST_KEY_1, _TEST_VALUE_1);
 		unicodeProperties2.put(_TEST_KEY_2, StringPool.BLANK);
 		unicodeProperties2.put(
-			_TEST_KEY_3, _TEST_VALUE_3.concat(StringPool.NEW_LINE));
+			_TEST_KEY_3, _TEST_VALUE_3 + StringPool.NEW_LINE);
 
 		Assert.assertEquals(
-			StringBundler.concat(
-				_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_3,
-				_TEST_SAFE_NEWLINE_CHARACTER, StringPool.NEW_LINE),
+			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
+				_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE,
 			unicodeProperties2.toString());
 	}
 
@@ -319,18 +316,15 @@ public class UnicodePropertiesTest {
 		};
 
 	static {
-		_TEST_LINE_1 = StringBundler.concat(
-			_TEST_KEY_1, StringPool.EQUAL, _TEST_VALUE_1);
+		_TEST_LINE_1 = _TEST_KEY_1 + StringPool.EQUAL + _TEST_VALUE_1;
 
-		_TEST_LINE_2 = StringBundler.concat(
-			_TEST_KEY_2, StringPool.EQUAL, _TEST_VALUE_2);
+		_TEST_LINE_2 = _TEST_KEY_2 + StringPool.EQUAL + _TEST_VALUE_2;
 
-		_TEST_LINE_3 = StringBundler.concat(
-			_TEST_KEY_3, StringPool.EQUAL, _TEST_VALUE_3);
+		_TEST_LINE_3 = _TEST_KEY_3 + StringPool.EQUAL + _TEST_VALUE_3;
 
-		_TEST_PROPS = StringBundler.concat(
-			_TEST_LINE_1, StringPool.NEW_LINE, _TEST_LINE_2,
-			StringPool.NEW_LINE, _TEST_LINE_3);
+		_TEST_PROPS =
+			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_2 +
+				StringPool.NEW_LINE + _TEST_LINE_3;
 	}
 
 }
