@@ -232,26 +232,8 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testToString() {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
-
-		Assert.assertEquals(StringPool.BLANK, unicodeProperties1.toString());
-
-		unicodeProperties1.put(_TEST_KEY_1, _TEST_VALUE_1);
-
-		Assert.assertEquals(
-			_TEST_LINE_1 + StringPool.NEW_LINE, unicodeProperties1.toString());
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		unicodeProperties2.put(_TEST_KEY_1, _TEST_VALUE_1);
-		unicodeProperties2.put(_TEST_KEY_2, StringPool.BLANK);
-		unicodeProperties2.put(
-			_TEST_KEY_3, _TEST_VALUE_3 + StringPool.NEW_LINE);
-
-		Assert.assertEquals(
-			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
-				_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE,
-			unicodeProperties2.toString());
+		_testToString(false);
+		_testToString(true);
 	}
 
 	private void _testLoad(
@@ -274,6 +256,31 @@ public class UnicodePropertiesTest {
 		load.accept(_TEST_PROPS);
 
 		Assert.assertEquals(_testMap, unicodeProperties);
+	}
+
+	private void _testToString(boolean safe) {
+		UnicodeProperties unicodeProperties = new UnicodeProperties(safe);
+
+		Assert.assertEquals(StringPool.BLANK, unicodeProperties.toString());
+
+		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
+		unicodeProperties.put(_TEST_KEY_2, StringPool.BLANK);
+		unicodeProperties.put(_TEST_KEY_3, _TEST_VALUE_3);
+
+		Assert.assertEquals(
+			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
+				StringPool.NEW_LINE,
+			unicodeProperties.toString());
+
+		if (safe) {
+			unicodeProperties.put(
+				_TEST_KEY_3, _TEST_VALUE_3 + StringPool.NEW_LINE);
+
+			Assert.assertEquals(
+				_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
+					_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE,
+				unicodeProperties.toString());
+		}
 	}
 
 	private static final String _TEST_KEY_1 = "testKey1";
