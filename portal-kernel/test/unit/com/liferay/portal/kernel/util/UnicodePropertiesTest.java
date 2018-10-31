@@ -77,22 +77,20 @@ public class UnicodePropertiesTest {
 		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
 
 		Assert.assertFalse(
-			"unicodeProperties.isSafe() should be return false if new " +
-				"UnicodeProperties()",
+			"since _safe is set to false by default, isSafe() should return " +
+				"false",
 			unicodeProperties1.isSafe());
 
 		UnicodeProperties unicodeProperties2 = new UnicodeProperties(false);
 
 		Assert.assertFalse(
-			"unicodeProperties.isSafe() should be return false if new " +
-				"UnicodeProperties(false)",
+			"isSafe() should return false if _safe was set false",
 			unicodeProperties2.isSafe());
 
 		UnicodeProperties unicodeProperties3 = new UnicodeProperties(true);
 
 		Assert.assertTrue(
-			"unicodeProperties.isSafe() should be return false if new " +
-				"UnicodeProperties(true)",
+			"isSafe() should return false if _safe was set true",
 			unicodeProperties3.isSafe());
 	}
 
@@ -121,8 +119,7 @@ public class UnicodePropertiesTest {
 		unicodeProperties1.put("");
 
 		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"put(\"\")",
+			"nothing will be put in if call put(\"\")",
 			unicodeProperties1.isEmpty());
 
 		// line with POUND(#)
@@ -130,8 +127,7 @@ public class UnicodePropertiesTest {
 		unicodeProperties1.put("#");
 
 		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"put(\"#\")",
+			"nothing will be put in happen if call put(\"#\")",
 			unicodeProperties1.isEmpty());
 
 		// line with _TEST_LINE_1(testKey1=testValue1)
@@ -206,14 +202,12 @@ public class UnicodePropertiesTest {
 
 		Assert.assertNull(unicodeProperties.setProperty(null, null));
 		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"setProperty(null,null)",
+			"nothing will be put in if key is null",
 			unicodeProperties.isEmpty());
 
 		Assert.assertNull(unicodeProperties.setProperty(_TEST_KEY_1, null));
 		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"setProperty(_TEST_KEY_1,null)",
+			"nothing will be put in if value is null",
 			unicodeProperties.isEmpty());
 
 		Assert.assertNull(
@@ -268,8 +262,7 @@ public class UnicodePropertiesTest {
 		load.accept(null);
 
 		Assert.assertTrue(
-			"unicodeProperties.isEmpty() should be return true if call " +
-				"fastLoad(null)",
+			"nothing will be put in if props is null",
 			unicodeProperties.isEmpty());
 
 		load.accept(_TEST_LINE_1);
