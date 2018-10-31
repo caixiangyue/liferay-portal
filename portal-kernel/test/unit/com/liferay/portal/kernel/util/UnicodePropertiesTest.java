@@ -112,42 +112,8 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testPutLines() {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
-
-		// line with empty
-
-		unicodeProperties1.put("");
-
-		Assert.assertTrue(
-			"nothing will be put in if call put(\"\")",
-			unicodeProperties1.isEmpty());
-
-		// line with POUND(#)
-
-		unicodeProperties1.put("#");
-
-		Assert.assertTrue(
-			"nothing will be put in happen if call put(\"#\")",
-			unicodeProperties1.isEmpty());
-
-		// line with _TEST_LINE_1(testKey1=testValue1)
-
-		unicodeProperties1.put(_TEST_LINE_1);
-
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties1);
-
-		// _safe is true
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		unicodeProperties2.put(_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER);
-
-		Assert.assertEquals(
-			Collections.singletonMap(
-				_TEST_KEY_1, _TEST_VALUE_1 + StringPool.NEW_LINE),
-			unicodeProperties2);
+		_testPutLines(false);
+		_testPutLines(true);
 	}
 
 	@Test
@@ -256,6 +222,45 @@ public class UnicodePropertiesTest {
 		load.accept(_TEST_PROPS);
 
 		Assert.assertEquals(_testMap, unicodeProperties);
+	}
+
+	private void _testPutLines(boolean safe) {
+		UnicodeProperties unicodeProperties = new UnicodeProperties(safe);
+
+		// line with empty
+
+		unicodeProperties.put("");
+
+		Assert.assertTrue(
+			"nothing will be put in if call put(\"\")",
+			unicodeProperties.isEmpty());
+
+		// line with POUND(#)
+
+		unicodeProperties.put("#");
+
+		Assert.assertTrue(
+			"nothing will be put in happen if call put(\"#\")",
+			unicodeProperties.isEmpty());
+
+		// line with _TEST_LINE_1(testKey1=testValue1)
+
+		unicodeProperties.put(_TEST_LINE_1);
+
+		Assert.assertEquals(
+			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
+			unicodeProperties);
+
+		// safe is true
+
+		if (safe) {
+			unicodeProperties.put(_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER);
+
+			Assert.assertEquals(
+				Collections.singletonMap(
+					_TEST_KEY_1, _TEST_VALUE_1 + StringPool.NEW_LINE),
+				unicodeProperties);
+		}
 	}
 
 	private void _testToString(boolean safe) {
