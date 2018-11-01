@@ -77,8 +77,8 @@ public class UnicodePropertiesTest {
 		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
 
 		Assert.assertFalse(
-			"since _safe is set to false by default, isSafe() should return " +
-				"false",
+			"If you create an instance with new UnicodeProperties(), _safe " +
+				"will be set to false, then isSafe() should return false",
 			unicodeProperties1.isSafe());
 
 		UnicodeProperties unicodeProperties2 = new UnicodeProperties(false);
