@@ -111,37 +111,9 @@ public class UnicodePropertiesTest {
 	}
 
 	@Test
-	public void testPutLines() {
-		_testPutLines(false);
-		_testPutLines(true);
-	}
-
-	@Test
-	public void testPutLinesLog() {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
-
-		try (CaptureHandler captureHandler =
-				JDKLoggerTestUtil.configureJDKLogger(
-					UnicodeProperties.class.getName(), Level.ALL)) {
-
-			List<LogRecord> logRecords = captureHandler.getLogRecords();
-
-			Assert.assertEquals(logRecords.toString(), 0, logRecords.size());
-
-			// line without EQUAL(=)
-
-			unicodeProperties.put(_TEST_KEY_1);
-
-			logRecords = captureHandler.getLogRecords();
-
-			Assert.assertEquals(logRecords.toString(), 1, logRecords.size());
-
-			LogRecord logRecord = logRecords.get(0);
-
-			Assert.assertEquals(
-				"Invalid property on line " + _TEST_KEY_1,
-				logRecord.getMessage());
-		}
+	public void testPutLine() {
+		_testPutLine(false);
+		_testPutLine(true);
 	}
 
 	@Test
@@ -224,9 +196,33 @@ public class UnicodePropertiesTest {
 		Assert.assertEquals(_testMap, unicodeProperties);
 	}
 
-	private void _testPutLines(boolean safe) {
+	private void _testPutLine(boolean safe) {
 		UnicodeProperties unicodeProperties = new UnicodeProperties(safe);
 
+		try (CaptureHandler captureHandler =
+				 JDKLoggerTestUtil.configureJDKLogger(
+					 UnicodeProperties.class.getName(), Level.ALL)) {
+
+			List<LogRecord> logRecords = captureHandler.getLogRecords();
+
+			Assert.assertEquals(logRecords.toString(), 0, logRecords.size());
+
+			// line without EQUAL(=)
+
+			unicodeProperties.put(_TEST_KEY_1);
+
+			Assert.assertTrue(
+				"nothing will be put in if line without \"=\"",
+				unicodeProperties.isEmpty());
+
+			Assert.assertEquals(logRecords.toString(), 1, logRecords.size());
+
+			LogRecord logRecord = logRecords.get(0);
+
+			Assert.assertEquals(
+				"Invalid property on line " + _TEST_KEY_1,
+				logRecord.getMessage());
+		}
 		// line with empty
 
 		unicodeProperties.put("");
