@@ -268,12 +268,19 @@ public class UnicodePropertiesTest {
 
 		Assert.assertEquals(StringPool.BLANK, unicodeProperties.toString());
 
-		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
-		unicodeProperties.put(_TEST_KEY_2, StringPool.BLANK);
-		unicodeProperties.put(_TEST_KEY_3, _TEST_VALUE_3);
+		unicodeProperties.put(_TEST_KEY_1, StringPool.BLANK);
+
+		Assert.assertEquals(StringPool.BLANK, unicodeProperties.toString());
+
+		unicodeProperties.put(_TEST_LINE_2);
 
 		Assert.assertEquals(
-			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
+			_TEST_LINE_2 + StringPool.NEW_LINE, unicodeProperties.toString());
+
+		unicodeProperties.put(_TEST_LINE_3);
+
+		Assert.assertEquals(
+			_TEST_LINE_2 + StringPool.NEW_LINE + _TEST_LINE_3 +
 				StringPool.NEW_LINE,
 			unicodeProperties.toString());
 
@@ -282,7 +289,7 @@ public class UnicodePropertiesTest {
 				_TEST_KEY_3, _TEST_VALUE_3 + StringPool.NEW_LINE);
 
 			Assert.assertEquals(
-				_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_3 +
+				_TEST_LINE_2 + StringPool.NEW_LINE + _TEST_LINE_3 +
 					_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE,
 				unicodeProperties.toString());
 		}
