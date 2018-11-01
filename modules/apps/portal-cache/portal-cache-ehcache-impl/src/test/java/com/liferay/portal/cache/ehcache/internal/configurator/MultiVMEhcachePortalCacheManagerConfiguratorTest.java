@@ -39,23 +39,32 @@ import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 /**
  * @author Leon Chi
  */
-public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
+public class MultiVMEhcachePortalCacheManagerConfiguratorTest
+	extends BaseEhcachePortalCacheManagerConfiguratorTestCase {
 
 	@ClassRule
 	public static final CodeCoverageAssertor codeCoverageAssertor =
 		CodeCoverageAssertor.INSTANCE;
 
+	@Before
+	public void setUp() {
+		baseEhcachePortalCacheManagerConfigurator =
+			getMultiVMEhcachePortalCacheManagerConfigurator(
+				false, true, true, true);
+	}
+
 	@Test
 	public void testActivate() {
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
 		Assert.assertTrue(
@@ -100,7 +109,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Map<String, ObjectValuePair<Properties, Properties>>
 			mergedPropertiesMap1 = ReflectionTestUtil.invoke(
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true),
 				"_getMergedPropertiesMap", null, null);
 
@@ -114,7 +123,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Map<String, ObjectValuePair<Properties, Properties>>
 			mergedPropertiesMap2 = ReflectionTestUtil.invoke(
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, false, false),
 				"_getMergedPropertiesMap", null, null);
 
@@ -142,7 +151,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		Map<String, ObjectValuePair<Properties, Properties>>
 			mergedPropertiesMap3 = ReflectionTestUtil.invoke(
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, false, false, false),
 				"_getMergedPropertiesMap", null, null);
 
@@ -167,7 +176,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 	public void testGetPortalPropertiesString() {
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
 		Assert.assertNull(
@@ -183,27 +192,19 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 				getPortalPropertiesString("portal.property.Key3"));
 	}
 
+	@Override
 	@Test
 	public void testIsRequireSerialization() {
+		super.testIsRequireSerialization();
+
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator1 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
 		Assert.assertTrue(
 			"The true value should be returned if clusterEnabled is true",
 			multiVMEhcachePortalCacheManagerConfigurator1.
-				isRequireSerialization(new CacheConfiguration()));
-
-		MultiVMEhcachePortalCacheManagerConfigurator
-			multiVMEhcachePortalCacheManagerConfigurator2 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
-					false, true, true, true);
-
-		Assert.assertFalse(
-			"The false value should be returned if clusterEnabled is false " +
-				"with empty cacheConfiguration",
-			multiVMEhcachePortalCacheManagerConfigurator2.
 				isRequireSerialization(new CacheConfiguration()));
 	}
 
@@ -211,7 +212,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 	public void testManageConfiguration() {
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator1 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					false, true, true, true);
 
 		// Test 1: clusterEnabled is false
@@ -243,7 +244,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator2 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, false, false);
 
 		Set<Properties> portalCacheListenerPropertiesSet = new HashSet<>();
@@ -304,7 +305,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator3 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, false);
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration2 =
@@ -337,7 +338,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator4 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, false, true, false);
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration3 =
@@ -370,7 +371,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator5 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, false, true);
 
 		PortalCacheManagerConfiguration portalCacheManagerConfiguration4 =
@@ -396,7 +397,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator6 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, false, false);
 
 		final boolean[] calledNewPortalCacheConfiguration = {false};
@@ -446,32 +447,21 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			calledNewPortalCacheConfiguration[0]);
 	}
 
+	@Override
 	@Test
 	public void testParseCacheListenerConfigurations() {
 
 		// Test 1: clusterEnabled is false, _bootstrapLoaderEnabled is true,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
 
-		MultiVMEhcachePortalCacheManagerConfigurator
-			multiVMEhcachePortalCacheManagerConfigurator1 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
-					false, true, true, true);
-
-		_assertPortalCacheConfiguration(
-			"portalCacheNameOutsideProperties", null,
-			Collections.<Properties>emptySet(),
-			multiVMEhcachePortalCacheManagerConfigurator1.
-				parseCacheListenerConfigurations(
-					new CacheConfiguration(
-						"portalCacheNameOutsideProperties", 0),
-					true));
+		super.testParseCacheListenerConfigurations();
 
 		// Test 2: clusterEnabled and _bootstrapLoaderEnabled are true,
 		// _bootstrapLoaderProperties and _replicatorProperties are empty
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator2 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, true, true);
 
 		_assertPortalCacheConfiguration(
@@ -493,7 +483,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator3 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, false, true, true);
 
 		_assertPortalCacheConfiguration(
@@ -514,7 +504,7 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 		MultiVMEhcachePortalCacheManagerConfigurator
 			multiVMEhcachePortalCacheManagerConfigurator4 =
-				_getMultiVMEhcachePortalCacheManagerConfigurator(
+				getMultiVMEhcachePortalCacheManagerConfigurator(
 					true, true, false, false);
 
 		PortalCacheConfiguration portalCacheConfiguration4 =
@@ -559,6 +549,31 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 			props,
 			ReflectionTestUtil.getFieldValue(
 				multiVMEhcachePortalCacheManagerConfigurator, "props"));
+	}
+
+	protected MultiVMEhcachePortalCacheManagerConfigurator
+		getMultiVMEhcachePortalCacheManagerConfigurator(
+			boolean clusterEnabled, boolean bootstrapLoaderEnabled,
+			boolean bootstrapLoaderPropertiesIsEmpty,
+			boolean replicatorPropertiesIsEmpty) {
+
+		MultiVMEhcachePortalCacheManagerConfigurator
+			multiVMEhcachePortalCacheManagerConfigurator =
+				new MultiVMEhcachePortalCacheManagerConfigurator();
+
+		multiVMEhcachePortalCacheManagerConfigurator.setProps(
+			(Props)ProxyUtil.newProxyInstance(
+				MultiVMEhcachePortalCacheManagerConfiguratorTest.
+					class.getClassLoader(),
+				new Class<?>[] {Props.class},
+				new PropsInvocationHandler(
+					clusterEnabled, bootstrapLoaderEnabled,
+					bootstrapLoaderPropertiesIsEmpty,
+					replicatorPropertiesIsEmpty)));
+
+		multiVMEhcachePortalCacheManagerConfigurator.activate();
+
+		return multiVMEhcachePortalCacheManagerConfigurator;
 	}
 
 	private void _assertMergedPropertiesMap(
@@ -615,31 +630,6 @@ public class MultiVMEhcachePortalCacheManagerConfiguratorTest {
 		_assertPortalCacheConfiguration(
 			portalCacheName, expectedPortalCacheBootstrapLoaderProperties,
 			expectedPortalCacheListenerPropertiesSet, portalCacheConfiguration);
-	}
-
-	private MultiVMEhcachePortalCacheManagerConfigurator
-		_getMultiVMEhcachePortalCacheManagerConfigurator(
-			boolean clusterEnabled, boolean bootstrapLoaderEnabled,
-			boolean bootstrapLoaderPropertiesIsEmpty,
-			boolean replicatorPropertiesIsEmpty) {
-
-		MultiVMEhcachePortalCacheManagerConfigurator
-			multiVMEhcachePortalCacheManagerConfigurator =
-				new MultiVMEhcachePortalCacheManagerConfigurator();
-
-		multiVMEhcachePortalCacheManagerConfigurator.setProps(
-			(Props)ProxyUtil.newProxyInstance(
-				MultiVMEhcachePortalCacheManagerConfiguratorTest.
-					class.getClassLoader(),
-				new Class<?>[] {Props.class},
-				new PropsInvocationHandler(
-					clusterEnabled, bootstrapLoaderEnabled,
-					bootstrapLoaderPropertiesIsEmpty,
-					replicatorPropertiesIsEmpty)));
-
-		multiVMEhcachePortalCacheManagerConfigurator.activate();
-
-		return multiVMEhcachePortalCacheManagerConfigurator;
 	}
 
 	private Properties _getProperties(

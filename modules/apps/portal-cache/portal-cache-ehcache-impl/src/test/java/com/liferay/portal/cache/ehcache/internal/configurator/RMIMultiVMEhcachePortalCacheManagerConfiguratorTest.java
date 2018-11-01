@@ -34,14 +34,18 @@ import org.junit.Test;
 /**
  * @author Leon Chi
  */
-public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
+public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest
+	extends MultiVMEhcachePortalCacheManagerConfiguratorTest {
 
 	@ClassRule
 	public static final CodeCoverageAssertor codeCoverageAssertor =
 		CodeCoverageAssertor.INSTANCE;
 
+	@Override
 	@Test
 	public void testActivate() {
+		super.testActivate();
+
 		_assertRMIMultiVMEhcachePortalCacheManagerConfigurator(
 			null, null, null, null,
 			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(false));
@@ -55,8 +59,11 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 			_getRMIMultiVMEhcachePortalCacheManagerConfigurator(true));
 	}
 
+	@Override
 	@Test
 	public void testManageConfiguration() {
+		super.testManageConfiguration();
+
 		_assertManageConfiguration(
 			Collections.<FactoryConfiguration>emptyList(),
 			Collections.<FactoryConfiguration>emptyList(), false);
@@ -72,6 +79,32 @@ public class RMIMultiVMEhcachePortalCacheManagerConfiguratorTest {
 						"TestLiferayRMICacheManagerPeerListenerFactory",
 					"key1=value1,key2=value2", StringPool.COMMA)),
 			true);
+	}
+
+	@Override
+	protected MultiVMEhcachePortalCacheManagerConfigurator
+		getMultiVMEhcachePortalCacheManagerConfigurator(
+			boolean clusterEnabled, boolean bootstrapLoaderEnabled,
+			boolean bootstrapLoaderPropertiesIsEmpty,
+			boolean replicatorPropertiesIsEmpty) {
+
+		MultiVMEhcachePortalCacheManagerConfigurator
+			multiVMEhcachePortalCacheManagerConfigurator =
+				new RMIMultiVMEhcachePortalCacheManagerConfigurator();
+
+		multiVMEhcachePortalCacheManagerConfigurator.setProps(
+			(Props)ProxyUtil.newProxyInstance(
+				MultiVMEhcachePortalCacheManagerConfiguratorTest.
+					class.getClassLoader(),
+				new Class<?>[] {Props.class},
+				new PropsInvocationHandler(
+					clusterEnabled, bootstrapLoaderEnabled,
+					bootstrapLoaderPropertiesIsEmpty,
+					replicatorPropertiesIsEmpty)));
+
+		multiVMEhcachePortalCacheManagerConfigurator.activate();
+
+		return multiVMEhcachePortalCacheManagerConfigurator;
 	}
 
 	private void _assertManageConfiguration(
