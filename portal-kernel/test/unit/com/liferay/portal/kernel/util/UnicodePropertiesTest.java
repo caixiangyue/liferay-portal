@@ -37,10 +37,15 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testFastLoad() throws Exception {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
+		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
 
 		_testLoad(
-			props -> unicodeProperties.fastLoad(props), unicodeProperties);
+			props -> unicodeProperties1.fastLoad(props), unicodeProperties1);
+
+		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
+
+		_testLoad(
+			props -> unicodeProperties2.fastLoad(props), unicodeProperties2);
 	}
 
 	@Test
@@ -96,9 +101,13 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testLoad() throws Exception {
-		UnicodeProperties unicodeProperties = new UnicodeProperties();
+		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
 
-		_testLoad(props -> unicodeProperties.load(props), unicodeProperties);
+		_testLoad(props -> unicodeProperties1.load(props), unicodeProperties1);
+
+		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
+
+		_testLoad(props -> unicodeProperties2.load(props), unicodeProperties2);
 	}
 
 	@Test
@@ -187,21 +196,42 @@ public class UnicodePropertiesTest {
 
 		load.accept(_TEST_LINE_1);
 
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
 		load.accept(_TEST_PROPS);
 
-		Assert.assertEquals(_testMap, unicodeProperties);
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
+
+		Assert.assertEquals(_TEST_VALUE_2, unicodeProperties.get(_TEST_KEY_2));
+
+		Assert.assertEquals(_TEST_VALUE_3, unicodeProperties.get(_TEST_KEY_3));
+
+		if (unicodeProperties.isSafe()) {
+			load.accept(_TEST_SAFE_PROPS);
+
+			Assert.assertEquals(
+				_TEST_VALUE_1 +
+					StringPool.NEW_LINE,
+				unicodeProperties.get(_TEST_KEY_1));
+
+			Assert.assertEquals(
+				_TEST_VALUE_2 +
+					StringPool.NEW_LINE,
+				unicodeProperties.get(_TEST_KEY_2));
+
+			Assert.assertEquals(
+				_TEST_VALUE_3 +
+					StringPool.NEW_LINE,
+				unicodeProperties.get(_TEST_KEY_3));
+		}
 	}
 
 	private void _testPutLine(boolean safe) {
 		UnicodeProperties unicodeProperties = new UnicodeProperties(safe);
 
 		try (CaptureHandler captureHandler =
-				 JDKLoggerTestUtil.configureJDKLogger(
-					 UnicodeProperties.class.getName(), Level.ALL)) {
+				JDKLoggerTestUtil.configureJDKLogger(
+					UnicodeProperties.class.getName(), Level.ALL)) {
 
 			List<LogRecord> logRecords = captureHandler.getLogRecords();
 
@@ -223,6 +253,7 @@ public class UnicodePropertiesTest {
 				"Invalid property on line " + _TEST_KEY_1,
 				logRecord.getMessage());
 		}
+
 		// line with empty
 
 		unicodeProperties.put("");
@@ -308,6 +339,8 @@ public class UnicodePropertiesTest {
 	private static final String _TEST_SAFE_NEWLINE_CHARACTER =
 		"_SAFE_NEWLINE_CHARACTER_";
 
+	private static final String _TEST_SAFE_PROPS;
+
 	private static final String _TEST_VALUE_1 = "testValue1";
 
 	private static final String _TEST_VALUE_2 = "testValue2";
@@ -333,6 +366,12 @@ public class UnicodePropertiesTest {
 		_TEST_PROPS =
 			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_2 +
 				StringPool.NEW_LINE + _TEST_LINE_3;
+
+		_TEST_SAFE_PROPS =
+			_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE +
+				_TEST_LINE_2 + _TEST_SAFE_NEWLINE_CHARACTER +
+					StringPool.NEW_LINE + _TEST_LINE_3 +
+						_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE;
 	}
 
 }
