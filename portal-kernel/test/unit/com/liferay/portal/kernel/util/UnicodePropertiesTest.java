@@ -19,7 +19,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +115,11 @@ public class UnicodePropertiesTest {
 
 		unicodeProperties.putAll(_testMap);
 
-		Assert.assertEquals(_testMap, unicodeProperties);
+		Assert.assertEquals(3, unicodeProperties.size());
+
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
+		Assert.assertEquals(_TEST_VALUE_2, unicodeProperties.get(_TEST_KEY_2));
+		Assert.assertEquals(_TEST_VALUE_3, unicodeProperties.get(_TEST_KEY_3));
 	}
 
 	@Test
@@ -133,9 +136,7 @@ public class UnicodePropertiesTest {
 
 		Assert.assertNull(unicodeProperties.remove(null));
 
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
 		Assert.assertEquals(
 			_TEST_VALUE_1, unicodeProperties.remove(_TEST_KEY_1));
@@ -159,9 +160,7 @@ public class UnicodePropertiesTest {
 
 		Assert.assertNull(
 			unicodeProperties.setProperty(_TEST_KEY_1, _TEST_VALUE_1));
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
 		Assert.assertEquals(
 			_TEST_VALUE_1, unicodeProperties.setProperty(_TEST_KEY_1, null));
@@ -200,6 +199,8 @@ public class UnicodePropertiesTest {
 
 		load.accept(_TEST_PROPS);
 
+		Assert.assertEquals(3, unicodeProperties.size());
+
 		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
 		Assert.assertEquals(_TEST_VALUE_2, unicodeProperties.get(_TEST_KEY_2));
@@ -208,6 +209,8 @@ public class UnicodePropertiesTest {
 
 		if (unicodeProperties.isSafe()) {
 			load.accept(_TEST_SAFE_PROPS);
+
+			Assert.assertEquals(3, unicodeProperties.size());
 
 			Assert.assertEquals(
 				_TEST_VALUE_1 +
@@ -274,9 +277,7 @@ public class UnicodePropertiesTest {
 
 		unicodeProperties.put(_TEST_LINE_1);
 
-		Assert.assertEquals(
-			Collections.singletonMap(_TEST_KEY_1, _TEST_VALUE_1),
-			unicodeProperties);
+		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
 		// safe is true
 
@@ -284,9 +285,8 @@ public class UnicodePropertiesTest {
 			unicodeProperties.put(_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER);
 
 			Assert.assertEquals(
-				Collections.singletonMap(
-					_TEST_KEY_1, _TEST_VALUE_1 + StringPool.NEW_LINE),
-				unicodeProperties);
+				_TEST_VALUE_1 + StringPool.NEW_LINE,
+				unicodeProperties.get(_TEST_KEY_1));
 		}
 	}
 
