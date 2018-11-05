@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -109,7 +108,14 @@ public class UnicodePropertiesTest {
 	public void testPutAll() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		unicodeProperties.putAll(_testMap);
+		unicodeProperties.putAll(
+			new HashMap<String, String>() {
+				{
+					put(_TEST_KEY_1, _TEST_VALUE_1);
+					put(_TEST_KEY_2, _TEST_VALUE_2);
+					put(_TEST_KEY_3, _TEST_VALUE_3);
+				}
+			});
 
 		Assert.assertEquals(3, unicodeProperties.size());
 
@@ -204,7 +210,12 @@ public class UnicodePropertiesTest {
 		Assert.assertEquals(_TEST_VALUE_3, unicodeProperties.get(_TEST_KEY_3));
 
 		if (unicodeProperties.isSafe()) {
-			load.accept(_TEST_SAFE_PROPS);
+			load.accept(
+				_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER +
+					StringPool.NEW_LINE + _TEST_LINE_2 +
+						_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE +
+							_TEST_LINE_3 + _TEST_SAFE_NEWLINE_CHARACTER +
+								StringPool.NEW_LINE);
 
 			Assert.assertEquals(3, unicodeProperties.size());
 
@@ -335,22 +346,11 @@ public class UnicodePropertiesTest {
 	private static final String _TEST_SAFE_NEWLINE_CHARACTER =
 		"_SAFE_NEWLINE_CHARACTER_";
 
-	private static final String _TEST_SAFE_PROPS;
-
 	private static final String _TEST_VALUE_1 = "testValue1";
 
 	private static final String _TEST_VALUE_2 = "testValue2";
 
 	private static final String _TEST_VALUE_3 = "testValue3";
-
-	private static final Map<String, String> _testMap =
-		new HashMap<String, String>() {
-			{
-				put(_TEST_KEY_1, _TEST_VALUE_1);
-				put(_TEST_KEY_2, _TEST_VALUE_2);
-				put(_TEST_KEY_3, _TEST_VALUE_3);
-			}
-		};
 
 	static {
 		_TEST_LINE_1 = _TEST_KEY_1 + StringPool.EQUAL + _TEST_VALUE_1;
@@ -362,12 +362,6 @@ public class UnicodePropertiesTest {
 		_TEST_PROPS =
 			_TEST_LINE_1 + StringPool.NEW_LINE + _TEST_LINE_2 +
 				StringPool.NEW_LINE + _TEST_LINE_3;
-
-		_TEST_SAFE_PROPS =
-			_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE +
-				_TEST_LINE_2 + _TEST_SAFE_NEWLINE_CHARACTER +
-					StringPool.NEW_LINE + _TEST_LINE_3 +
-						_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE;
 	}
 
 }
