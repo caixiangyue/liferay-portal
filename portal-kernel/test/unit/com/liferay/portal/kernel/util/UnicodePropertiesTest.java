@@ -14,7 +14,7 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
@@ -35,15 +35,13 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testFastLoad() throws Exception {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
+		_testLoad(
+			(props, unicodeProperties) -> unicodeProperties.fastLoad(props),
+			false);
 
 		_testLoad(
-			props -> unicodeProperties1.fastLoad(props), unicodeProperties1);
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		_testLoad(
-			props -> unicodeProperties2.fastLoad(props), unicodeProperties2);
+			(props, unicodeProperties) -> unicodeProperties.fastLoad(props),
+			true);
 	}
 
 	@Test
@@ -95,13 +93,11 @@ public class UnicodePropertiesTest {
 
 	@Test
 	public void testLoad() throws Exception {
-		UnicodeProperties unicodeProperties1 = new UnicodeProperties();
+		_testLoad(
+			(props, unicodeProperties) -> unicodeProperties.load(props), false);
 
-		_testLoad(props -> unicodeProperties1.load(props), unicodeProperties1);
-
-		UnicodeProperties unicodeProperties2 = new UnicodeProperties(true);
-
-		_testLoad(props -> unicodeProperties2.load(props), unicodeProperties2);
+		_testLoad(
+			(props, unicodeProperties) -> unicodeProperties.load(props), true);
 	}
 
 	@Test
@@ -185,21 +181,23 @@ public class UnicodePropertiesTest {
 	}
 
 	private void _testLoad(
-			UnsafeConsumer<String, Exception> load,
-			UnicodeProperties unicodeProperties)
+			UnsafeBiConsumer<String, UnicodeProperties, Exception> load,
+			boolean safe)
 		throws Exception {
 
-		load.accept(null);
+		UnicodeProperties unicodeProperties = new UnicodeProperties(safe);
+
+		load.accept(null, unicodeProperties);
 
 		Assert.assertTrue(
 			"nothing will be put in if props is null",
 			unicodeProperties.isEmpty());
 
-		load.accept(_TEST_LINE_1);
+		load.accept(_TEST_LINE_1, unicodeProperties);
 
 		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
 
-		load.accept(_TEST_PROPS);
+		load.accept(_TEST_PROPS, unicodeProperties);
 
 		Assert.assertEquals(3, unicodeProperties.size());
 
@@ -215,7 +213,8 @@ public class UnicodePropertiesTest {
 					StringPool.NEW_LINE + _TEST_LINE_2 +
 						_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE +
 							_TEST_LINE_3 + _TEST_SAFE_NEWLINE_CHARACTER +
-								StringPool.NEW_LINE);
+								StringPool.NEW_LINE,
+				unicodeProperties);
 
 			Assert.assertEquals(3, unicodeProperties.size());
 
