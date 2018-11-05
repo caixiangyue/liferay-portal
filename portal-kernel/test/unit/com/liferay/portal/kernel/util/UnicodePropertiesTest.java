@@ -195,43 +195,54 @@ public class UnicodePropertiesTest {
 
 		load.accept(_TEST_LINE_1, unicodeProperties);
 
-		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
+		_assertUnicodeProperties(
+			new String[] {_TEST_VALUE_1}, new String[] {_TEST_KEY_1},
+			unicodeProperties);
 
 		load.accept(_TEST_PROPS, unicodeProperties);
 
-		Assert.assertEquals(3, unicodeProperties.size());
+		_assertUnicodeProperties(
+			new String[] {_TEST_VALUE_1, _TEST_VALUE_2, _TEST_VALUE_3},
+			new String[] {_TEST_KEY_1, _TEST_KEY_2, _TEST_KEY_3},
+			unicodeProperties);
 
-		Assert.assertEquals(_TEST_VALUE_1, unicodeProperties.get(_TEST_KEY_1));
+		load.accept(
+			_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER +
+				_TEST_LINE_2 + _TEST_SAFE_NEWLINE_CHARACTER +
+						_TEST_LINE_3 + _TEST_SAFE_NEWLINE_CHARACTER,
+			unicodeProperties);
 
-		Assert.assertEquals(_TEST_VALUE_2, unicodeProperties.get(_TEST_KEY_2));
-
-		Assert.assertEquals(_TEST_VALUE_3, unicodeProperties.get(_TEST_KEY_3));
-
-		if (unicodeProperties.isSafe()) {
-			load.accept(
-				_TEST_LINE_1 + _TEST_SAFE_NEWLINE_CHARACTER +
-					StringPool.NEW_LINE + _TEST_LINE_2 +
-						_TEST_SAFE_NEWLINE_CHARACTER + StringPool.NEW_LINE +
-							_TEST_LINE_3 + _TEST_SAFE_NEWLINE_CHARACTER +
-								StringPool.NEW_LINE,
+		if (safe) {
+			_assertUnicodeProperties(
+				new String[] {
+					_TEST_VALUE_1 + StringPool.NEW_LINE,
+					_TEST_VALUE_2 + StringPool.NEW_LINE,
+					_TEST_VALUE_3 + StringPool.NEW_LINE
+				},
+				new String[] {_TEST_KEY_1, _TEST_KEY_2, _TEST_KEY_3},
 				unicodeProperties);
+		}
+		else {
+			_assertUnicodeProperties(
+				new String[] {
+					_TEST_VALUE_1 + _TEST_SAFE_NEWLINE_CHARACTER,
+					_TEST_VALUE_2 + _TEST_SAFE_NEWLINE_CHARACTER,
+					_TEST_VALUE_3 + _TEST_SAFE_NEWLINE_CHARACTER
+				},
+				new String[] {_TEST_KEY_1, _TEST_KEY_2, _TEST_KEY_3},
+				unicodeProperties);
+		}
+	}
 
-			Assert.assertEquals(3, unicodeProperties.size());
+	private void _assertUnicodeProperties(
+		String[] expectedValues, String[] keys,
+		UnicodeProperties unicodeProperties) {
 
+		Assert.assertEquals(expectedValues.length, unicodeProperties.size());
+
+		for (int i = 0; i < keys.length; i++) {
 			Assert.assertEquals(
-				_TEST_VALUE_1 +
-					StringPool.NEW_LINE,
-				unicodeProperties.get(_TEST_KEY_1));
-
-			Assert.assertEquals(
-				_TEST_VALUE_2 +
-					StringPool.NEW_LINE,
-				unicodeProperties.get(_TEST_KEY_2));
-
-			Assert.assertEquals(
-				_TEST_VALUE_3 +
-					StringPool.NEW_LINE,
-				unicodeProperties.get(_TEST_KEY_3));
+				expectedValues[i], unicodeProperties.get(keys[i]));
 		}
 	}
 
