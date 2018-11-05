@@ -51,8 +51,6 @@ public class UnicodePropertiesTest {
 	public void testGetProperty() {
 		UnicodeProperties unicodeProperties = new UnicodeProperties();
 
-		// with key
-
 		unicodeProperties.put(_TEST_KEY_1, _TEST_VALUE_1);
 
 		Assert.assertEquals(
@@ -60,8 +58,6 @@ public class UnicodePropertiesTest {
 		Assert.assertEquals(
 			_TEST_VALUE_1,
 			unicodeProperties.getProperty(_TEST_KEY_1, "testDefaultValue"));
-
-		// with key and defaultValue
 
 		Assert.assertNull(unicodeProperties.getProperty(_TEST_KEY_2));
 		Assert.assertEquals(
