@@ -258,21 +258,21 @@ public abstract class BaseEhcachePortalCacheManagerConfiguratorTestCase {
 
 	@Test
 	public void testIsRequireSerialization() {
-		_assertIsRequireSerializationByCacheConfiguration(
+		_testIsRequireSerializationByCacheConfiguration(
 			true, "setOverflowToDisk");
-		_assertIsRequireSerializationByCacheConfiguration(
+		_testIsRequireSerializationByCacheConfiguration(
 			true, "setOverflowToOffHeap");
-		_assertIsRequireSerializationByCacheConfiguration(
+		_testIsRequireSerializationByCacheConfiguration(
 			true, "setDiskPersistent");
-		_assertIsRequireSerializationByCacheConfiguration(false, null);
+		_testIsRequireSerializationByCacheConfiguration(false, null);
 
-		_assertIsRequireSerializationByPersistenceStrategy(
+		_testIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.LOCALTEMPSWAP);
-		_assertIsRequireSerializationByPersistenceStrategy(
+		_testIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.LOCALRESTARTABLE);
-		_assertIsRequireSerializationByPersistenceStrategy(
+		_testIsRequireSerializationByPersistenceStrategy(
 			true, PersistenceConfiguration.Strategy.DISTRIBUTED);
-		_assertIsRequireSerializationByPersistenceStrategy(
+		_testIsRequireSerializationByPersistenceStrategy(
 			false, PersistenceConfiguration.Strategy.NONE);
 	}
 
@@ -424,7 +424,7 @@ public abstract class BaseEhcachePortalCacheManagerConfiguratorTestCase {
 	protected BaseEhcachePortalCacheManagerConfigurator
 		baseEhcachePortalCacheManagerConfigurator;
 
-	private void _assertIsRequireSerializationByCacheConfiguration(
+	private void _testIsRequireSerializationByCacheConfiguration(
 		boolean expectedIsRequireSerialization, String methodName) {
 
 		CacheConfiguration cacheConfiguration = new CacheConfiguration();
@@ -441,7 +441,7 @@ public abstract class BaseEhcachePortalCacheManagerConfiguratorTestCase {
 				cacheConfiguration));
 	}
 
-	private void _assertIsRequireSerializationByPersistenceStrategy(
+	private void _testIsRequireSerializationByPersistenceStrategy(
 		boolean expectedIsRequireSerialization,
 		PersistenceConfiguration.Strategy strategy) {
 
