@@ -368,7 +368,7 @@ public class AggregateClassLoaderTest {
 			TestClassLoader.class);
 	}
 
-	private void _assertAddClassLoader(
+	private void _assertAggregatedClassLoaders(
 		ClassLoader[] expectedClassLoaders,
 		AggregateClassLoader aggregateClassLoader) {
 
@@ -394,7 +394,7 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(classLoaders);
 
-		_assertAddClassLoader(expectedClassLoaders, aggregateClassLoader);
+		_assertAggregatedClassLoaders(expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _testAddClassLoader(
@@ -403,7 +403,7 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(classLoaders);
 
-		_assertAddClassLoader(expectedClassLoaders, aggregateClassLoader);
+		_assertAggregatedClassLoaders(expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _testGetClassLoaders(
