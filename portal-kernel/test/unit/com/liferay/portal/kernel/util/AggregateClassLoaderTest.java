@@ -210,6 +210,8 @@ public class AggregateClassLoaderTest {
 			_testClassLoader1,
 			AggregateClassLoader.getAggregateClassLoader(_testClassLoader1));
 
+		// TODO: please apply _assertAggregateClassLoader() here
+
 		Assert.assertEquals(
 			new AggregateClassLoader(_testClassLoader1),
 			AggregateClassLoader.getAggregateClassLoader(
@@ -366,6 +368,18 @@ public class AggregateClassLoaderTest {
 			aggregateClassLoader.loadClass(
 				TestClassLoader.class.getName(), true),
 			TestClassLoader.class);
+	}
+
+	private void _assertAggregateClassLoader(
+		ClassLoader expectedParentClassLoader,
+		ClassLoader[] expectedClassLoaders,
+		AggregateClassLoader aggregateClassLoader) {
+
+		Assert.assertEquals(
+			expectedParentClassLoader, aggregateClassLoader.getParent());
+
+		_assertAggregatedClassLoaders(
+			expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _assertAggregatedClassLoaders(
