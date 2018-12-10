@@ -93,7 +93,7 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
 			_testClassLoader1);
 
-		Assert.assertEquals(
+		Assert.assertSame(
 			_testClassLoader1, aggregateClassLoader.getParent());
 	}
 
