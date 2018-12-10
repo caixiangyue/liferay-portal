@@ -44,42 +44,48 @@ public class AggregateClassLoaderTest {
 		CodeCoverageAssertor.INSTANCE;
 
 	@Test
-	public void testAddClassLoaderWithClassloader() {
-		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
-			_testClassLoader1);
+	public void testAddClassLoader() {
+		_testAddClassLoader(
+			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
+			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
+			new AggregateClassLoader(null));
 
 		_testAddClassLoader(
-			aggregateClassLoader,
+			new ClassLoader[] {_testClassLoader2},
 			new ClassLoader[] {_testClassLoader2, _testClassLoader2},
-			_testClassLoader2);
+			new AggregateClassLoader(null));
 
 		_testAddClassLoader(
-			aggregateClassLoader, new ClassLoader[] {aggregateClassLoader},
-			_testClassLoader2);
+			new ClassLoader[0], new ClassLoader[] {_testClassLoader1},
+			new AggregateClassLoader(_testClassLoader1));
 
 		_testAddClassLoader(
-			aggregateClassLoader, new ClassLoader[] {_testClassLoader1},
-			_testClassLoader2);
-	}
+			new ClassLoader[] {_testClassLoader2},
+			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
+			new AggregateClassLoader(_testClassLoader1));
 
-	@Test
-	public void testAddClassLoaderWithClassloaders() {
 		_testAddClassLoader(
-			new AggregateClassLoader(_testClassLoader1), _testClassLoader2,
-			_testClassLoader1, _testClassLoader2);
-	}
-
-	@Test
-	public void testAddClassLoaderWithCollectionClassloaders() {
-		_testAddClassLoader(
-			new AggregateClassLoader(_testClassLoader1),
+			new ClassLoader[] {_testClassLoader2},
 			new ArrayList<ClassLoader>() {
 				{
 					add(_testClassLoader1);
 					add(_testClassLoader2);
 				}
 			},
-			_testClassLoader2);
+			new AggregateClassLoader(_testClassLoader1));
+
+		_testAddClassLoader(
+			new ClassLoader[0],
+			new ClassLoader[] {new AggregateClassLoader(_testClassLoader1)},
+			new AggregateClassLoader(_testClassLoader1));
+
+		_testAddClassLoader(
+			new ClassLoader[] {_testClassLoader2},
+			new ClassLoader[] {
+				AggregateClassLoader.getAggregateClassLoader(
+					_testClassLoader1, _testClassLoader2)
+			},
+			new AggregateClassLoader(_testClassLoader1));
 	}
 
 	@Test
@@ -363,46 +369,41 @@ public class AggregateClassLoaderTest {
 	}
 
 	private void _assertAddClassLoader(
-		AggregateClassLoader aggregateClassLoader,
-		ClassLoader expectedClassLoader) {
+		ClassLoader[] expectedClassLoaders,
+		AggregateClassLoader aggregateClassLoader) {
 
 		List<EqualityWeakReference<ClassLoader>> classLoaderReferences =
 			ReflectionTestUtil.getFieldValue(
 				aggregateClassLoader, "_classLoaderReferences");
 
-		Assert.assertEquals(
-			Collections.singletonList(
-				new EqualityWeakReference<>(expectedClassLoader)),
-			classLoaderReferences);
-	}
+		List<ClassLoader> classLoaders = new ArrayList<>(
+			classLoaderReferences.size());
 
-	private void _testAddClassLoader(
-		AggregateClassLoader aggregateClassLoader,
-		ClassLoader expectedClassLoader, ClassLoader... addedClassLoader) {
+		for (EqualityWeakReference<ClassLoader> classLoaderReference :
+				classLoaderReferences) {
 
-		aggregateClassLoader.addClassLoader(addedClassLoader);
-
-		_assertAddClassLoader(aggregateClassLoader, expectedClassLoader);
-	}
-
-	private void _testAddClassLoader(
-		AggregateClassLoader aggregateClassLoader,
-		ClassLoader[] addedClassLoader, ClassLoader expectedClassLoader) {
-
-		for (ClassLoader classLoader : addedClassLoader) {
-			aggregateClassLoader.addClassLoader(classLoader);
+			classLoaders.add(classLoaderReference.get());
 		}
 
-		_assertAddClassLoader(aggregateClassLoader, expectedClassLoader);
+		Assert.assertArrayEquals(expectedClassLoaders, classLoaders.toArray());
 	}
 
 	private void _testAddClassLoader(
-		AggregateClassLoader aggregateClassLoader,
-		List<ClassLoader> addedClassLoader, ClassLoader expectedClassLoader) {
+		ClassLoader[] expectedClassLoaders, ClassLoader[] classLoaders,
+		AggregateClassLoader aggregateClassLoader) {
 
-		aggregateClassLoader.addClassLoader(addedClassLoader);
+		aggregateClassLoader.addClassLoader(classLoaders);
 
-		_assertAddClassLoader(aggregateClassLoader, expectedClassLoader);
+		_assertAddClassLoader(expectedClassLoaders, aggregateClassLoader);
+	}
+
+	private void _testAddClassLoader(
+		ClassLoader[] expectedClassLoaders, List<ClassLoader> classLoaders,
+		AggregateClassLoader aggregateClassLoader) {
+
+		aggregateClassLoader.addClassLoader(classLoaders);
+
+		_assertAddClassLoader(expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _testGetClassLoaders(
