@@ -46,51 +46,49 @@ public class AggregateClassLoaderTest {
 	@Test
 	public void testAddClassLoaderWithClassloader() {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
-			_testClassLoader);
+			_testClassLoader1);
 
 		_testAddClassLoader(
 			aggregateClassLoader,
-			new ClassLoader[] {
-				_testExceptionClassLoader, _testExceptionClassLoader
-			},
-			_testExceptionClassLoader);
+			new ClassLoader[] {_testClassLoader2, _testClassLoader2},
+			_testClassLoader2);
 
 		_testAddClassLoader(
 			aggregateClassLoader, new ClassLoader[] {aggregateClassLoader},
-			_testExceptionClassLoader);
+			_testClassLoader2);
 
 		_testAddClassLoader(
-			aggregateClassLoader, new ClassLoader[] {_testClassLoader},
-			_testExceptionClassLoader);
+			aggregateClassLoader, new ClassLoader[] {_testClassLoader1},
+			_testClassLoader2);
 	}
 
 	@Test
 	public void testAddClassLoaderWithClassloaders() {
 		_testAddClassLoader(
-			new AggregateClassLoader(_testClassLoader),
-			_testExceptionClassLoader, _testClassLoader,
-			_testExceptionClassLoader);
+			new AggregateClassLoader(_testClassLoader1), _testClassLoader2,
+			_testClassLoader1, _testClassLoader2);
 	}
 
 	@Test
 	public void testAddClassLoaderWithCollectionClassloaders() {
 		_testAddClassLoader(
-			new AggregateClassLoader(_testClassLoader),
+			new AggregateClassLoader(_testClassLoader1),
 			new ArrayList<ClassLoader>() {
 				{
-					add(_testClassLoader);
-					add(_testExceptionClassLoader);
+					add(_testClassLoader1);
+					add(_testClassLoader2);
 				}
 			},
-			_testExceptionClassLoader);
+			_testClassLoader2);
 	}
 
 	@Test
 	public void testConstructor() {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
-			_testClassLoader);
+			_testClassLoader1);
 
-		Assert.assertEquals(_testClassLoader, aggregateClassLoader.getParent());
+		Assert.assertEquals(
+			_testClassLoader1, aggregateClassLoader.getParent());
 	}
 
 	@Test
@@ -105,11 +103,11 @@ public class AggregateClassLoaderTest {
 		Assert.assertFalse(
 			"equals() should be return false if the object is not instance " +
 				"of AggregateClassLoader",
-			aggregateClassLoader1.equals(_testClassLoader));
+			aggregateClassLoader1.equals(_testClassLoader1));
 
 		ClassLoader aggregateClassLoader2 =
 			AggregateClassLoader.getAggregateClassLoader(
-				null, _testClassLoader);
+				null, _testClassLoader1);
 
 		Assert.assertFalse(
 			"equals() should be return false if they contain different " +
@@ -163,7 +161,7 @@ public class AggregateClassLoaderTest {
 				cnfe.getMessage());
 		}
 
-		aggregateClassLoader.addClassLoader(_testClassLoader);
+		aggregateClassLoader.addClassLoader(_testClassLoader1);
 
 		Assert.assertEquals(
 			aggregateClassLoader.findClass(TestClassLoader.class.getName()),
@@ -186,23 +184,23 @@ public class AggregateClassLoaderTest {
 	@Test
 	public void testGetAggregateClassLoaderWithParentClassLoader() {
 		Assert.assertEquals(
-			_testClassLoader,
-			AggregateClassLoader.getAggregateClassLoader(_testClassLoader));
+			_testClassLoader1,
+			AggregateClassLoader.getAggregateClassLoader(_testClassLoader1));
 
 		Assert.assertEquals(
-			new AggregateClassLoader(_testClassLoader),
+			new AggregateClassLoader(_testClassLoader1),
 			AggregateClassLoader.getAggregateClassLoader(
-				new AggregateClassLoader(_testClassLoader),
-				new AggregateClassLoader(_testClassLoader)));
+				new AggregateClassLoader(_testClassLoader1),
+				new AggregateClassLoader(_testClassLoader1)));
 
 		Assert.assertEquals(
 			AggregateClassLoader.getAggregateClassLoader(
-				AggregateClassLoader.class.getClassLoader(), _testClassLoader),
+				AggregateClassLoader.class.getClassLoader(), _testClassLoader1),
 			AggregateClassLoader.getAggregateClassLoader(
 				AggregateClassLoader.getAggregateClassLoader(
 					AggregateClassLoader.class.getClassLoader(),
-					_testClassLoader),
-				_testClassLoader));
+					_testClassLoader1),
+				_testClassLoader1));
 
 		Assert.assertEquals(
 			new AggregateClassLoader(
@@ -226,11 +224,11 @@ public class AggregateClassLoaderTest {
 			null);
 
 		_testGetClassLoaders(
-			aggregateClassLoader, _testClassLoader, new TestClassLoader());
+			aggregateClassLoader, _testClassLoader1, new TestClassLoader());
 
 		GCUtil.gc(true);
 
-		_testGetClassLoaders(aggregateClassLoader, _testClassLoader);
+		_testGetClassLoaders(aggregateClassLoader, _testClassLoader1);
 	}
 
 	@Test
@@ -242,7 +240,7 @@ public class AggregateClassLoaderTest {
 
 		Assert.assertNull(aggregateClassLoader.getResource(""));
 
-		aggregateClassLoader.addClassLoader(_testClassLoader);
+		aggregateClassLoader.addClassLoader(_testClassLoader1);
 
 		File directory = new File(".");
 
@@ -259,14 +257,15 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
 			AggregateClassLoader.class.getClassLoader());
 
-		aggregateClassLoader.addClassLoader(_testClassLoader);
+		aggregateClassLoader.addClassLoader(_testClassLoader1);
 
 		Enumeration<URL> enumeration = aggregateClassLoader.getResources("");
 
 		Assert.assertEquals(
 			new ArrayList<URL>() {
 				{
-					addAll(Collections.list(_testClassLoader.getResources("")));
+					addAll(
+						Collections.list(_testClassLoader1.getResources("")));
 					ClassLoader classLoader =
 						AggregateClassLoader.class.getClassLoader();
 
@@ -321,7 +320,7 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
 
-		aggregateClassLoader.addClassLoader(_testClassLoader);
+		aggregateClassLoader.addClassLoader(_testClassLoader1);
 
 		Assert.assertEquals(
 			aggregateClassLoader.loadClass(
@@ -390,7 +389,8 @@ public class AggregateClassLoaderTest {
 			aggregateClassLoader.getClassLoaders());
 	}
 
-	private final TestClassLoader _testClassLoader = new TestClassLoader();
+	private final TestClassLoader _testClassLoader1 = new TestClassLoader();
+	private final TestClassLoader _testClassLoader2 = new TestClassLoader();
 	private final TestExceptionClassLoader _testExceptionClassLoader =
 		new TestExceptionClassLoader();
 
