@@ -166,6 +166,23 @@ public class AggregateClassLoaderTest {
 		Assert.assertEquals(
 			aggregateClassLoader.findClass(TestClassLoader.class.getName()),
 			TestClassLoader.class);
+
+		Object findClassMethod = ReflectionTestUtil.getAndSetFieldValue(
+			AggregateClassLoader.class, "_FIND_CLASS_METHOD", null);
+
+		try {
+			aggregateClassLoader.findClass(TestClassLoader.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to find class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
+		}
+		finally {
+			ReflectionTestUtil.setFieldValue(
+				AggregateClassLoader.class, "_FIND_CLASS_METHOD",
+				findClassMethod);
+		}
 	}
 
 	@Test
@@ -250,6 +267,18 @@ public class AggregateClassLoaderTest {
 					"file:", directory.getCanonicalPath(),
 					"/portal-kernel/test-coverage/")),
 			aggregateClassLoader.getResource(""));
+
+		Object getResourceMethod = ReflectionTestUtil.getAndSetFieldValue(
+			AggregateClassLoader.class, "_GET_RESOURCE_METHOD", null);
+
+		try {
+			Assert.assertNull(aggregateClassLoader.getResource(""));
+		}
+		finally {
+			ReflectionTestUtil.setFieldValue(
+				AggregateClassLoader.class, "_GET_RESOURCE_METHOD",
+				getResourceMethod);
+		}
 	}
 
 	@Test
