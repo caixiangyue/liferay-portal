@@ -93,8 +93,7 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
 			_testClassLoader1);
 
-		Assert.assertSame(
-			_testClassLoader1, aggregateClassLoader.getParent());
+		Assert.assertSame(_testClassLoader1, aggregateClassLoader.getParent());
 	}
 
 	@Test
@@ -196,12 +195,10 @@ public class AggregateClassLoaderTest {
 		Assert.assertNull(
 			AggregateClassLoader.getAggregateClassLoader(new ClassLoader[0]));
 
-		ClassLoader classLoader = AggregateClassLoader.getAggregateClassLoader(
-			new ClassLoader[] {
-				AggregateClassLoaderTest.class.getClassLoader()
-			});
-
-		Assert.assertEquals(AggregateClassLoader.class, classLoader.getClass());
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[0],
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				new ClassLoader[] {_testClassLoader1}));
 	}
 
 	@Test
@@ -210,37 +207,29 @@ public class AggregateClassLoaderTest {
 			_testClassLoader1,
 			AggregateClassLoader.getAggregateClassLoader(_testClassLoader1));
 
-		// TODO: please apply _assertAggregateClassLoader() here
-
-		Assert.assertEquals(
-			new AggregateClassLoader(_testClassLoader1),
-			AggregateClassLoader.getAggregateClassLoader(
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[0],
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				new AggregateClassLoader(_testClassLoader1),
 				new AggregateClassLoader(_testClassLoader1)));
 
-		Assert.assertEquals(
-			AggregateClassLoader.getAggregateClassLoader(
-				AggregateClassLoader.class.getClassLoader(), _testClassLoader1),
-			AggregateClassLoader.getAggregateClassLoader(
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				AggregateClassLoader.getAggregateClassLoader(
-					AggregateClassLoader.class.getClassLoader(),
-					_testClassLoader1),
+					_testClassLoader1, _testClassLoader2),
+				_testClassLoader2));
+
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[0],
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				new AggregateClassLoader(_testClassLoader1),
 				_testClassLoader1));
 
-		Assert.assertEquals(
-			new AggregateClassLoader(
-				AggregateClassLoader.class.getClassLoader()),
-			AggregateClassLoader.getAggregateClassLoader(
-				new AggregateClassLoader(
-					AggregateClassLoader.class.getClassLoader()),
-				AggregateClassLoader.class.getClassLoader()));
-
-		Assert.assertEquals(
-			new AggregateClassLoader(
-				AggregateClassLoader.class.getClassLoader()),
-			AggregateClassLoader.getAggregateClassLoader(
-				AggregateClassLoader.class.getClassLoader(),
-				AggregateClassLoader.class.getClassLoader()));
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				_testClassLoader1, _testClassLoader2));
 	}
 
 	@Test
@@ -408,7 +397,8 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(classLoaders);
 
-		_assertAggregatedClassLoaders(expectedClassLoaders, aggregateClassLoader);
+		_assertAggregatedClassLoaders(
+			expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _testAddClassLoader(
@@ -417,7 +407,8 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(classLoaders);
 
-		_assertAggregatedClassLoaders(expectedClassLoaders, aggregateClassLoader);
+		_assertAggregatedClassLoaders(
+			expectedClassLoaders, aggregateClassLoader);
 	}
 
 	private void _testGetClassLoaders(
