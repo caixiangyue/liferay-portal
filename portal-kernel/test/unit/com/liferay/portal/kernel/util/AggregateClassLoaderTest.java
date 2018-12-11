@@ -47,37 +47,39 @@ public class AggregateClassLoaderTest {
 	public void testAddClassLoader() {
 		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
+			new ClassLoader[] {_testClassLoader1, _testClassLoader2}, null);
+
+		_testAddClassLoader(
+			new ClassLoader[] {_testClassLoader2},
+			new ClassLoader[] {_testClassLoader2, _testClassLoader2}, null);
+
+		_testAddClassLoader(
+			new ClassLoader[] {_testClassLoader1},
+			new ClassLoader[] {new AggregateClassLoader(_testClassLoader1)},
+			null);
+
+		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
-			new AggregateClassLoader(null));
+			new ClassLoader[] {
+				AggregateClassLoader.getAggregateClassLoader(
+					_testClassLoader1, _testClassLoader2)
+			},
+			null);
+
+		_testAddClassLoader(
+			new ClassLoader[] {_testClassLoader2},
+			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
+			_testClassLoader1);
 
 		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader2},
 			new ClassLoader[] {_testClassLoader2, _testClassLoader2},
-			new AggregateClassLoader(null));
-
-		_testAddClassLoader(
-			new ClassLoader[0], new ClassLoader[] {_testClassLoader1},
-			new AggregateClassLoader(_testClassLoader1));
-
-		_testAddClassLoader(
-			new ClassLoader[] {_testClassLoader2},
-			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
-			new AggregateClassLoader(_testClassLoader1));
-
-		_testAddClassLoader(
-			new ClassLoader[] {_testClassLoader2},
-			new ArrayList<ClassLoader>() {
-				{
-					add(_testClassLoader1);
-					add(_testClassLoader2);
-				}
-			},
-			new AggregateClassLoader(_testClassLoader1));
+			_testClassLoader1);
 
 		_testAddClassLoader(
 			new ClassLoader[0],
 			new ClassLoader[] {new AggregateClassLoader(_testClassLoader1)},
-			new AggregateClassLoader(_testClassLoader1));
+			_testClassLoader1);
 
 		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader2},
@@ -85,7 +87,7 @@ public class AggregateClassLoaderTest {
 				AggregateClassLoader.getAggregateClassLoader(
 					_testClassLoader1, _testClassLoader2)
 			},
-			new AggregateClassLoader(_testClassLoader1));
+			_testClassLoader1);
 	}
 
 	@Test
@@ -393,22 +395,23 @@ public class AggregateClassLoaderTest {
 
 	private void _testAddClassLoader(
 		ClassLoader[] expectedClassLoaders, ClassLoader[] classLoaders,
-		AggregateClassLoader aggregateClassLoader) {
+		ClassLoader parentClassLoader) {
 
-		aggregateClassLoader.addClassLoader(classLoaders);
+		AggregateClassLoader aggregateClassLoader1 = new AggregateClassLoader(
+			parentClassLoader);
 
-		_assertAggregatedClassLoaders(
-			expectedClassLoaders, aggregateClassLoader);
-	}
-
-	private void _testAddClassLoader(
-		ClassLoader[] expectedClassLoaders, List<ClassLoader> classLoaders,
-		AggregateClassLoader aggregateClassLoader) {
-
-		aggregateClassLoader.addClassLoader(classLoaders);
+		aggregateClassLoader1.addClassLoader(classLoaders);
 
 		_assertAggregatedClassLoaders(
-			expectedClassLoaders, aggregateClassLoader);
+			expectedClassLoaders, aggregateClassLoader1);
+
+		AggregateClassLoader aggregateClassLoader2 = new AggregateClassLoader(
+			parentClassLoader);
+
+		aggregateClassLoader2.addClassLoader(Arrays.asList(classLoaders));
+
+		_assertAggregatedClassLoaders(
+			expectedClassLoaders, aggregateClassLoader2);
 	}
 
 	private void _testGetClassLoaders(
