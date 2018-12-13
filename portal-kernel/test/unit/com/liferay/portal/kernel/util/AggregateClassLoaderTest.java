@@ -200,7 +200,10 @@ public class AggregateClassLoaderTest {
 	}
 
 	@Test
-	public void testGetAggregateClassLoaderWithClassLoaders() {
+	public void testGetAggregateClassLoader() {
+
+		// getAggregateClassLoader(ClassLoader[])
+
 		Assert.assertNull(
 			AggregateClassLoader.getAggregateClassLoader(new ClassLoader[0]));
 
@@ -208,19 +211,28 @@ public class AggregateClassLoaderTest {
 			_testClassLoader1, new ClassLoader[0],
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				new ClassLoader[] {_testClassLoader1}));
-	}
 
-	@Test
-	public void testGetAggregateClassLoaderWithParentClassLoader() {
+		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				new ClassLoader[] {_testClassLoader1, _testClassLoader2}));
+
+		// getAggregateClassLoader(ClassLoader, ClassLoader...)
+
 		Assert.assertSame(
 			_testClassLoader1,
 			AggregateClassLoader.getAggregateClassLoader(_testClassLoader1));
 
 		_assertAggregateClassLoader(
+			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				_testClassLoader1, _testClassLoader2));
+
+		_assertAggregateClassLoader(
 			_testClassLoader1, new ClassLoader[0],
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				new AggregateClassLoader(_testClassLoader1),
-				new AggregateClassLoader(_testClassLoader1)));
+				_testClassLoader1));
 
 		_assertAggregateClassLoader(
 			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
@@ -233,12 +245,13 @@ public class AggregateClassLoaderTest {
 			_testClassLoader1, new ClassLoader[0],
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				new AggregateClassLoader(_testClassLoader1),
-				_testClassLoader1));
+				new AggregateClassLoader(_testClassLoader1)));
 
 		_assertAggregateClassLoader(
 			_testClassLoader1, new ClassLoader[] {_testClassLoader2},
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
-				_testClassLoader1, _testClassLoader2));
+				new AggregateClassLoader(_testClassLoader1),
+				new AggregateClassLoader(_testClassLoader2)));
 	}
 
 	@Test
