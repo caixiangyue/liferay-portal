@@ -378,13 +378,13 @@ public class AggregateClassLoaderTest {
 				null, _testClassLoader1);
 
 		Assert.assertSame(
+			TestClassLoader.class,
 			aggregateClassLoader2.loadClass(
-				TestClassLoader.class.getName(), true),
-			TestClassLoader.class);
+				TestClassLoader.class.getName(), true));
 		Assert.assertSame(
+			TestClassLoader.class,
 			aggregateClassLoader2.loadClass(
-				TestClassLoader.class.getName(), false),
-			TestClassLoader.class);
+				TestClassLoader.class.getName(), false));
 	}
 
 	private void _assertAggregateClassLoader(
