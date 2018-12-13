@@ -45,6 +45,9 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testAddClassLoader() {
+
+		// parent class loader is null
+
 		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader1, _testClassLoader2},
 			new ClassLoader[] {_testClassLoader1, _testClassLoader2}, null);
@@ -65,6 +68,8 @@ public class AggregateClassLoaderTest {
 					_testClassLoader1, _testClassLoader2)
 			},
 			null);
+
+		// parent class loader is not null
 
 		_testAddClassLoader(
 			new ClassLoader[] {_testClassLoader2},
@@ -101,7 +106,7 @@ public class AggregateClassLoaderTest {
 	@Test
 	public void testEquals() {
 		AggregateClassLoader aggregateClassLoader1 = new AggregateClassLoader(
-			AggregateClassLoader.class.getClassLoader());
+			_testClassLoader1);
 
 		Assert.assertTrue(
 			"equals() should be return true if they are the same reference",
@@ -110,7 +115,7 @@ public class AggregateClassLoaderTest {
 		Assert.assertFalse(
 			"equals() should be return false if the object is not instance " +
 				"of AggregateClassLoader",
-			aggregateClassLoader1.equals(_testClassLoader1));
+			aggregateClassLoader1.equals(_testClassLoader2));
 
 		ClassLoader aggregateClassLoader2 =
 			AggregateClassLoader.getAggregateClassLoader(
@@ -170,7 +175,7 @@ public class AggregateClassLoaderTest {
 
 		aggregateClassLoader.addClassLoader(_testClassLoader1);
 
-		Assert.assertEquals(
+		Assert.assertSame(
 			aggregateClassLoader.findClass(TestClassLoader.class.getName()),
 			TestClassLoader.class);
 
@@ -205,7 +210,7 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testGetAggregateClassLoaderWithParentClassLoader() {
-		Assert.assertEquals(
+		Assert.assertSame(
 			_testClassLoader1,
 			AggregateClassLoader.getAggregateClassLoader(_testClassLoader1));
 
@@ -252,6 +257,8 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
 			null);
 
+		// trigger InvocationTargetException
+
 		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
 
 		Assert.assertNull(aggregateClassLoader.getResource(""));
@@ -267,6 +274,8 @@ public class AggregateClassLoaderTest {
 					"/portal-kernel/test-coverage/")),
 			aggregateClassLoader.getResource(""));
 
+		// trigger NullPointerException
+
 		Object getResourceMethod = ReflectionTestUtil.getAndSetFieldValue(
 			AggregateClassLoader.class, "_GET_RESOURCE_METHOD", null);
 
@@ -281,26 +290,21 @@ public class AggregateClassLoaderTest {
 	}
 
 	@Test
-	public void testGetResources() throws IOException {
-		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
-			AggregateClassLoader.class.getClassLoader());
-
-		aggregateClassLoader.addClassLoader(_testClassLoader1);
-
-		Enumeration<URL> enumeration = aggregateClassLoader.getResources("");
+	public void testGetResources() throws Exception {
+		AggregateClassLoader aggregateClassLoader =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				_testClassLoader1, _testClassLoader2);
 
 		Assert.assertEquals(
 			new ArrayList<URL>() {
 				{
 					addAll(
 						Collections.list(_testClassLoader1.getResources("")));
-					ClassLoader classLoader =
-						AggregateClassLoader.class.getClassLoader();
-
-					addAll(Collections.list(classLoader.getResources("")));
+					addAll(
+						Collections.list(_testClassLoader2.getResources("")));
 				}
 			},
-			Collections.list(enumeration));
+			Collections.list(aggregateClassLoader.getResources("")));
 
 		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
 
@@ -333,11 +337,11 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testLoadClass() throws Exception {
-		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
+		AggregateClassLoader aggregateClassLoader1 = new AggregateClassLoader(
 			null);
 
 		try {
-			aggregateClassLoader.loadClass(
+			aggregateClassLoader1.loadClass(
 				TestClassLoader.class.getName(), false);
 		}
 		catch (ClassNotFoundException cnfe) {
@@ -346,18 +350,29 @@ public class AggregateClassLoaderTest {
 				cnfe.getMessage());
 		}
 
-		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
+		aggregateClassLoader1.addClassLoader(_testExceptionClassLoader);
 
-		aggregateClassLoader.addClassLoader(_testClassLoader1);
+		try {
+			aggregateClassLoader1.loadClass(
+				TestClassLoader.class.getName(), false);
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to load class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
+		}
 
-		Assert.assertEquals(
-			aggregateClassLoader.loadClass(
-				TestClassLoader.class.getName(), false),
-			TestClassLoader.class);
+		AggregateClassLoader aggregateClassLoader2 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testClassLoader1);
 
-		Assert.assertEquals(
-			aggregateClassLoader.loadClass(
+		Assert.assertSame(
+			aggregateClassLoader2.loadClass(
 				TestClassLoader.class.getName(), true),
+			TestClassLoader.class);
+		Assert.assertSame(
+			aggregateClassLoader2.loadClass(
+				TestClassLoader.class.getName(), false),
 			TestClassLoader.class);
 	}
 
@@ -366,7 +381,7 @@ public class AggregateClassLoaderTest {
 		ClassLoader[] expectedClassLoaders,
 		AggregateClassLoader aggregateClassLoader) {
 
-		Assert.assertEquals(
+		Assert.assertSame(
 			expectedParentClassLoader, aggregateClassLoader.getParent());
 
 		_assertAggregatedClassLoaders(
@@ -418,9 +433,7 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader,
 		ClassLoader... expectedClassLoaders) {
 
-		for (ClassLoader classLoader : expectedClassLoaders) {
-			aggregateClassLoader.addClassLoader(classLoader);
-		}
+		aggregateClassLoader.addClassLoader(expectedClassLoaders);
 
 		Assert.assertEquals(
 			Arrays.asList(expectedClassLoaders),
