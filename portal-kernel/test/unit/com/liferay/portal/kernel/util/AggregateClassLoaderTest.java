@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import java.io.File;
 import java.io.IOException;
 
+import java.lang.ref.WeakReference;
+
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -244,12 +246,21 @@ public class AggregateClassLoaderTest {
 		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
 			null);
 
-		_testGetClassLoaders(
-			aggregateClassLoader, _testClassLoader1, new TestClassLoader());
+		WeakReference<ClassLoader> weakReference = new WeakReference<>(
+			new TestClassLoader());
+
+		aggregateClassLoader.addClassLoader(
+			_testClassLoader1, weakReference.get());
+
+		Assert.assertEquals(
+			Arrays.asList(_testClassLoader1, weakReference.get()),
+			aggregateClassLoader.getClassLoaders());
 
 		GCUtil.gc(true);
 
-		_testGetClassLoaders(aggregateClassLoader, _testClassLoader1);
+		Assert.assertEquals(
+			Arrays.asList(_testClassLoader1),
+			aggregateClassLoader.getClassLoaders());
 	}
 
 	@Test
@@ -427,17 +438,6 @@ public class AggregateClassLoaderTest {
 
 		_assertAggregatedClassLoaders(
 			expectedClassLoaders, aggregateClassLoader2);
-	}
-
-	private void _testGetClassLoaders(
-		AggregateClassLoader aggregateClassLoader,
-		ClassLoader... expectedClassLoaders) {
-
-		aggregateClassLoader.addClassLoader(expectedClassLoaders);
-
-		Assert.assertEquals(
-			Arrays.asList(expectedClassLoaders),
-			aggregateClassLoader.getClassLoaders());
 	}
 
 	private final TestClassLoader _testClassLoader1 = new TestClassLoader();
