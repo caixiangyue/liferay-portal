@@ -154,6 +154,8 @@ public class AggregateClassLoaderTest {
 		try {
 			aggregateClassLoader1.findClass(
 				AggregateClassLoaderTest.class.getName());
+
+			Assert.fail("ClassNotFoundException is not thrown");
 		}
 		catch (ClassNotFoundException cnfe) {
 			Assert.assertEquals(
