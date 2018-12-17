@@ -335,49 +335,36 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testHashCode() {
-		AggregateClassLoader aggregateClassLoader1 = new AggregateClassLoader(
-			null);
-
-		Assert.assertEquals(
-			HashUtil.hash(
-				HashUtil.hash(
-					0,
-					ReflectionTestUtil.getFieldValue(
-						aggregateClassLoader1, "_classLoaderReferences")),
-				aggregateClassLoader1.getParent()),
-			aggregateClassLoader1.hashCode());
+		AggregateClassLoader aggregateClassLoader1 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testClassLoader1);
 
 		AggregateClassLoader aggregateClassLoader2 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
-				null, _testClassLoader1);
+				null, _testClassLoader2);
+
+		Assert.assertNotEquals(
+			"AggregateClassLoader.hashCode() should be different with " +
+				"different aggregated class loaders",
+			aggregateClassLoader1.hashCode(), aggregateClassLoader2.hashCode());
+
 		AggregateClassLoader aggregateClassLoader3 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
-				null, _testClassLoader1);
+				_testClassLoader2, _testClassLoader1);
 
-		Assert.assertEquals(
-			HashUtil.hash(
-				HashUtil.hash(
-					0,
-					ReflectionTestUtil.getFieldValue(
-						aggregateClassLoader2, "_classLoaderReferences")),
-				aggregateClassLoader2.getParent()),
-			aggregateClassLoader3.hashCode());
+		Assert.assertNotEquals(
+			"AggregateClassLoader.hashCode() should be different with " +
+				"different parent class loaders",
+			aggregateClassLoader1.hashCode(), aggregateClassLoader3.hashCode());
 
 		AggregateClassLoader aggregateClassLoader4 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				_testClassLoader1, _testClassLoader2);
-		AggregateClassLoader aggregateClassLoader5 =
-			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
-				_testClassLoader1, _testClassLoader2);
 
-		Assert.assertEquals(
-			HashUtil.hash(
-				HashUtil.hash(
-					0,
-					ReflectionTestUtil.getFieldValue(
-						aggregateClassLoader4, "_classLoaderReferences")),
-				aggregateClassLoader4.getParent()),
-			aggregateClassLoader5.hashCode());
+		Assert.assertNotEquals(
+			"AggregateClassLoader.hashCode() should be different with " +
+				"different parent and aggregated class loaders",
+			aggregateClassLoader1.hashCode(), aggregateClassLoader4.hashCode());
 	}
 
 	@Test
