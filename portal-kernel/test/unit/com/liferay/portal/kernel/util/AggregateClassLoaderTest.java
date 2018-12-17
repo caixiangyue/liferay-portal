@@ -143,40 +143,31 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testFindClass() throws Exception {
-		AggregateClassLoader aggregateClassLoader = new AggregateClassLoader(
-			null);
-
-		try {
-			aggregateClassLoader.findClass(TestClassLoader.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			Assert.assertEquals(
-				"Unable to find class ".concat(TestClassLoader.class.getName()),
-				cnfe.getMessage());
-		}
-
-		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
-
-		try {
-			aggregateClassLoader.findClass(TestClassLoader.class.getName());
-		}
-		catch (ClassNotFoundException cnfe) {
-			Assert.assertEquals(
-				"Unable to find class ".concat(TestClassLoader.class.getName()),
-				cnfe.getMessage());
-		}
-
-		aggregateClassLoader.addClassLoader(_testClassLoader1);
+		AggregateClassLoader aggregateClassLoader1 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testClassLoader1);
 
 		Assert.assertSame(
-			aggregateClassLoader.findClass(TestClassLoader.class.getName()),
-			TestClassLoader.class);
+			TestClassLoader.class,
+			aggregateClassLoader1.findClass(TestClassLoader.class.getName()));
+
+		try {
+			aggregateClassLoader1.findClass(
+				AggregateClassLoaderTest.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to find class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
+		}
+
+		// trigger NullPointerException
 
 		Object findClassMethod = ReflectionTestUtil.getAndSetFieldValue(
 			AggregateClassLoader.class, "_FIND_CLASS_METHOD", null);
 
 		try {
-			aggregateClassLoader.findClass(TestClassLoader.class.getName());
+			aggregateClassLoader1.findClass(TestClassLoader.class.getName());
 		}
 		catch (ClassNotFoundException cnfe) {
 			Assert.assertEquals(
@@ -187,6 +178,21 @@ public class AggregateClassLoaderTest {
 			ReflectionTestUtil.setFieldValue(
 				AggregateClassLoader.class, "_FIND_CLASS_METHOD",
 				findClassMethod);
+		}
+
+		// trigger InvocationTargetException
+
+		AggregateClassLoader aggregateClassLoader3 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testExceptionClassLoader);
+
+		try {
+			aggregateClassLoader3.findClass(TestClassLoader.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to find class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
 		}
 	}
 
@@ -269,19 +275,13 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testGetResource() throws Exception {
-		AggregateClassLoader aggregateClassLoader =
+		AggregateClassLoader aggregateClassLoader1 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
-				null, _testExceptionClassLoader);
-
-		// trigger InvocationTargetException
-
-		Assert.assertNull(aggregateClassLoader.getResource(""));
-
-		aggregateClassLoader.addClassLoader(_testClassLoader1);
+				null, _testClassLoader1);
 
 		Assert.assertEquals(
 			new URL("file:testGetResource"),
-			aggregateClassLoader.getResource(""));
+			aggregateClassLoader1.getResource(""));
 
 		// trigger NullPointerException
 
@@ -289,29 +289,56 @@ public class AggregateClassLoaderTest {
 			AggregateClassLoader.class, "_GET_RESOURCE_METHOD", null);
 
 		try {
-			Assert.assertNull(aggregateClassLoader.getResource(""));
+			Assert.assertNull(aggregateClassLoader1.getResource(""));
 		}
 		finally {
 			ReflectionTestUtil.setFieldValue(
 				AggregateClassLoader.class, "_GET_RESOURCE_METHOD",
 				getResourceMethod);
 		}
+
+		// trigger InvocationTargetException
+
+		AggregateClassLoader aggregateClassLoader2 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testExceptionClassLoader);
+
+		Assert.assertNull(aggregateClassLoader2.getResource(""));
 	}
 
 	@Test
 	public void testGetResources() throws Exception {
-		AggregateClassLoader aggregateClassLoader =
+		AggregateClassLoader aggregateClassLoader1 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				_testClassLoader1, _testClassLoader2);
 
 		Assert.assertEquals(
-			new ArrayList<URL>(),
-			Collections.list(aggregateClassLoader.getResources("")));
+			Collections.emptyList(),
+			Collections.list(aggregateClassLoader1.getResources("")));
 
-		aggregateClassLoader.addClassLoader(_testExceptionClassLoader);
+		// trigger NullPointerException
+
+		AggregateClassLoader aggregateClassLoader2 = new AggregateClassLoader(
+			null);
 
 		try {
-			aggregateClassLoader.getResources("");
+			aggregateClassLoader2.getResources("");
+		}
+		catch (Exception e) {
+			Assert.assertTrue(
+				"getResources() throws NullPointerException if parent class " +
+					"loader was null",
+				e.getCause() instanceof NullPointerException);
+		}
+
+		// trigger InvocationTargetException
+
+		AggregateClassLoader aggregateClassLoader3 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testExceptionClassLoader);
+
+		try {
+			aggregateClassLoader3.getResources("");
 		}
 		catch (Exception e) {
 			Assert.assertTrue(
@@ -320,17 +347,6 @@ public class AggregateClassLoaderTest {
 				e.getCause() instanceof IOException);
 		}
 
-		aggregateClassLoader = new AggregateClassLoader(null);
-
-		try {
-			aggregateClassLoader.getResources("");
-		}
-		catch (Exception e) {
-			Assert.assertTrue(
-				"getResources() throws NullPointerException if parent class " +
-					"loader was null",
-				e.getCause() instanceof NullPointerException);
-		}
 	}
 
 	@Test
@@ -369,43 +385,49 @@ public class AggregateClassLoaderTest {
 
 	@Test
 	public void testLoadClass() throws Exception {
-		AggregateClassLoader aggregateClassLoader1 = new AggregateClassLoader(
-			null);
-
-		try {
-			aggregateClassLoader1.loadClass(
-				TestClassLoader.class.getName(), false);
-		}
-		catch (ClassNotFoundException cnfe) {
-			Assert.assertEquals(
-				"Unable to load class ".concat(TestClassLoader.class.getName()),
-				cnfe.getMessage());
-		}
-
-		aggregateClassLoader1.addClassLoader(_testExceptionClassLoader);
-
-		try {
-			aggregateClassLoader1.loadClass(
-				TestClassLoader.class.getName(), false);
-		}
-		catch (ClassNotFoundException cnfe) {
-			Assert.assertEquals(
-				"Unable to load class ".concat(TestClassLoader.class.getName()),
-				cnfe.getMessage());
-		}
-
-		AggregateClassLoader aggregateClassLoader2 =
+		AggregateClassLoader aggregateClassLoader1 =
 			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
 				null, _testClassLoader1);
 
 		Assert.assertSame(
 			TestClassLoader.class,
-			aggregateClassLoader2.loadClass(
+			aggregateClassLoader1.loadClass(
 				TestClassLoader.class.getName(), true));
 		Assert.assertSame(
 			TestClassLoader.class,
-			aggregateClassLoader2.loadClass(
+			aggregateClassLoader1.loadClass(
 				TestClassLoader.class.getName(), false));
+
+		// trigger NullPointerException
+
+		AggregateClassLoader aggregateClassLoader2 = new AggregateClassLoader(
+			null);
+
+		try {
+			aggregateClassLoader2.loadClass(
+				TestClassLoader.class.getName(), false);
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to load class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
+		}
+
+		// trigger InvocationTargetException
+
+		AggregateClassLoader aggregateClassLoader3 =
+			(AggregateClassLoader)AggregateClassLoader.getAggregateClassLoader(
+				null, _testExceptionClassLoader);
+
+		try {
+			aggregateClassLoader3.loadClass(
+				TestClassLoader.class.getName(), false);
+		}
+		catch (ClassNotFoundException cnfe) {
+			Assert.assertEquals(
+				"Unable to load class ".concat(TestClassLoader.class.getName()),
+				cnfe.getMessage());
+		}
 	}
 
 	private void _assertAggregateClassLoader(
@@ -485,7 +507,11 @@ public class AggregateClassLoaderTest {
 
 		@Override
 		protected Class<?> findClass(String name) {
-			return TestClassLoader.class;
+			if (name.equals(TestClassLoader.class.getName())) {
+				return TestClassLoader.class;
+			}
+
+			return null;
 		}
 
 		@Override
