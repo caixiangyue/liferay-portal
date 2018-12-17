@@ -14,7 +14,6 @@
 
 package com.liferay.portal.kernel.util;
 
-import com.liferay.petra.lang.HashUtil;
 import com.liferay.petra.memory.EqualityWeakReference;
 import com.liferay.portal.kernel.test.GCUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
@@ -117,8 +116,8 @@ public class AggregateClassLoaderTest {
 			aggregateClassLoader.equals(aggregateClassLoader));
 
 		Assert.assertFalse(
-			"equals() should return false for object which is not instance of " +
-				"AggregateClassLoader",
+			"equals() should return false for object which is not instance " +
+				"of AggregateClassLoader",
 			aggregateClassLoader.equals(_testClassLoader2));
 
 		Assert.assertFalse(
@@ -348,7 +347,6 @@ public class AggregateClassLoaderTest {
 					"getResources() throws IOException",
 				e.getCause() instanceof IOException);
 		}
-
 	}
 
 	@Test
@@ -497,8 +495,8 @@ public class AggregateClassLoaderTest {
 			try {
 				return new URL("file:testGetResource");
 			}
-			catch (MalformedURLException e) {
-				throw new RuntimeException(e);
+			catch (MalformedURLException murle) {
+				throw new RuntimeException(murle);
 			}
 		}
 
