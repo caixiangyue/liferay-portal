@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import java.lang.ref.WeakReference;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.ArrayList;
@@ -485,8 +486,8 @@ public class AggregateClassLoaderTest {
 			try {
 				return new URL("file:testGetResource");
 			}
-			catch (Exception e) {
-				throw new RuntimeException(e.getCause());
+			catch (MalformedURLException e) {
+				throw new RuntimeException(e);
 			}
 		}
 
