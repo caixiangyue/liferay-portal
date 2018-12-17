@@ -491,7 +491,7 @@ public class AggregateClassLoaderTest {
 		}
 
 		@Override
-		public Enumeration<URL> getResources(String name) throws IOException {
+		public Enumeration<URL> getResources(String name) {
 			return Collections.emptyEnumeration();
 		}
 
