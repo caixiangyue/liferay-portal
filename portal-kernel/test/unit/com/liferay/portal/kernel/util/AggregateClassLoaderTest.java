@@ -113,28 +113,28 @@ public class AggregateClassLoaderTest {
 				null, _testClassLoader1);
 
 		Assert.assertTrue(
-			"equals() should return true if they are the same reference",
+			"equals() should return true for the same instance",
 			aggregateClassLoader.equals(aggregateClassLoader));
 
 		Assert.assertFalse(
-			"equals() should return false if the object is not instance of " +
+			"equals() should return false for object which is not instance of " +
 				"AggregateClassLoader",
 			_testClassLoader1.equals(_testClassLoader2));
 
 		Assert.assertFalse(
-			"equals() should return false if they contain different " +
-				"_classLoaderReferences",
+			"equals() should return false for AggregateClassLoaders with " +
+				"different aggregated class loaders",
 			aggregateClassLoader.equals(new AggregateClassLoader(null)));
 
 		Assert.assertFalse(
-			"equals() should return false if they have different parent " +
-				"classloader",
+			"equals() should return false for AggregateClassLoaders with " +
+				"different parent class loaders",
 			aggregateClassLoader.equals(
 				AggregateClassLoader.getAggregateClassLoader(
 					_testClassLoader1, _testClassLoader1)));
 
 		Assert.assertTrue(
-			"equals() should return true if they have same " +
+			"equals() should return true for AggregateClassLoaders with " +
 				"_classLoaderReferences and parent classloader",
 			aggregateClassLoader.equals(
 				AggregateClassLoader.getAggregateClassLoader(
