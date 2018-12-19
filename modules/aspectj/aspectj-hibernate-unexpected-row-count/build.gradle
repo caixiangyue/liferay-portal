@@ -21,10 +21,10 @@ configurations {
 }
 
 dependencies {
-	ajc group: "org.aspectj", name: "aspectjtools", version: "1.8.9"
+	ajc group: "org.aspectj", name: "aspectjtools", version: "1.9.2"
 
-	compile group: "org.aspectj", name: "aspectjrt", version: "1.8.9"
-	compile group: "org.aspectj", name: "aspectjweaver", version: "1.8.9"
+	compile group: "org.aspectj", name: "aspectjrt", version: "1.9.2"
+	compile group: "org.aspectj", name: "aspectjweaver", version: "1.9.2"
 
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
 	compileOnly group: "org.hibernate", name: "hibernate-core", version: "3.6.10.Final"
