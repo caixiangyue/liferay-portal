@@ -242,11 +242,12 @@
 		</or>
 	</condition>
 
-	<fail message="Please use Java 1.8.">
+	<fail message="Please use Java 1.8 or 11.">
 		<condition>
 			<not>
 				<or>
 					<equals arg1="${java.specification.version}" arg2="1.8" />
+					<equals arg1="${java.specification.version}" arg2="11" />
 					<isset property="env.JENKINS_HOME" />
 				</or>
 			</not>
@@ -979,6 +980,10 @@ information.
 				</else>
 			</if>
 
+			<condition else="false" property="junit.add.opens.needed">
+				<javaversion exactly="11" />
+			</condition>
+
 			<junit dir="${project.dir}" fork="on" forkmode="@{forkmode}" haltonfailure="${junit.halt.on.failure}" jvm="${junit.jvm}" outputtoformatters="false" printsummary="on" showoutput="true">
 				<sysproperty if:true="${aspectj.weaver.enabled}" key="aspectj.agent" value="${aspectj.agent}" />
 				<sysproperty key="catalina.base" value="." />
@@ -995,6 +1000,7 @@ information.
 				<jvmarg if:true="${junit.code.coverage}" line="-javaagent:${jacoco.agent.jar}${jacoco.agent.configuration}" />
 				<jvmarg if:true="${aspectj.weaver.enabled}" line="${aspectj.agent}" />
 				<jvmarg line="${junit.java.gc}" />
+				<jvmarg if:true="${junit.add.opens.needed}" line="${junit.add.opens}" />
 				<jvmarg line="${whip.agent}" />
 				<jvmarg value="-Xss2m" />
 				<jvmarg value="-Dexternal-properties=${test.properties}" />
