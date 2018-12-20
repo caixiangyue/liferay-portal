@@ -22,6 +22,7 @@ import com.liferay.petra.process.ProcessException;
 import com.liferay.petra.process.ProcessExecutor;
 import com.liferay.petra.process.local.LocalProcessExecutor;
 import com.liferay.petra.process.local.LocalProcessLauncher;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -205,7 +206,7 @@ public class NewEnvTestRule implements TestRule {
 	protected ClassLoader createClassLoader(Description description) {
 		try {
 			return new URLClassLoader(
-				ClassPathUtil.getClassPathURLs(CLASS_PATH), null);
+				ClassPathUtil.getClassPathURLs(CLASS_PATH), PARENT_CLASSLOADER);
 		}
 		catch (MalformedURLException murle) {
 			throw new RuntimeException(murle);
@@ -329,6 +330,8 @@ public class NewEnvTestRule implements TestRule {
 	protected static final String CLASS_PATH = ClassPathUtil.getJVMClassPath(
 		true);
 
+	protected static final ClassLoader PARENT_CLASSLOADER;
+
 	private boolean _isJPDAEnabled() {
 		if (Boolean.getBoolean("jvm.debug")) {
 			return true;
@@ -359,6 +362,22 @@ public class NewEnvTestRule implements TestRule {
 		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
 
 		PortalClassLoaderUtil.setClassLoader(contextClassLoader);
+
+		ClassLoader classLoader = null;
+
+		try {
+			Method getPlatformClassLoaderMethod =
+				ReflectionUtil.getDeclaredMethod(
+					ClassLoader.class, "getPlatformClassLoader", new Class[0]);
+
+			classLoader =
+				(ClassLoader)getPlatformClassLoaderMethod.invoke(
+					null, new Object[0]);
+		}
+		catch (Exception e) {
+		}
+
+		PARENT_CLASSLOADER = classLoader;
 	}
 
 	private static class TestProcessCallable
