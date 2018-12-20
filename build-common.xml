@@ -981,7 +981,7 @@ information.
 			</if>
 
 			<condition else="false" property="junit.add.opens.needed">
-				<javaversion exactly="11" />
+				<equals arg1="${java.specification.version}" arg2="11" />
 			</condition>
 
 			<junit dir="${project.dir}" fork="on" forkmode="@{forkmode}" haltonfailure="${junit.halt.on.failure}" jvm="${junit.jvm}" outputtoformatters="false" printsummary="on" showoutput="true">
