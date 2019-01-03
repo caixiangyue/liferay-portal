@@ -14,65 +14,105 @@
 
 package com.liferay.portal.sanitizer;
 
+import com.liferay.portal.kernel.sanitizer.BaseSanitizer;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
+import com.liferay.portal.kernel.security.membershippolicy.UserGroupMembershipPolicy;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.sanitizer.bundle.sanitizerimpl.TestSanitizer;
+import com.liferay.portal.security.membershippolicy.UserGroupMembershipPolicyFactoryImplTest;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.SyntheticBundleRule;
 import com.liferay.portal.util.test.AtomicState;
+
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceRegistration;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Peter Fellwock
  */
 public class SanitizerUtilTest {
-
+	
 	@ClassRule
 	@Rule
-	public static final AggregateTestRule aggregateTestRule =
-		new AggregateTestRule(
-			new LiferayIntegrationTestRule(),
-			new SyntheticBundleRule("bundle.sanitizerimpl"));
-
+	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
+		new LiferayIntegrationTestRule();
+	
 	@BeforeClass
 	public static void setUpClass() {
-		_atomicState = new AtomicState();
+		TestSanitizer testSanitizer =
+			new TestSanitizer();
+		
+		Registry registry = RegistryUtil.getRegistry();
+		
+		Map<String, Object> properties = new HashMap<>();
+		
+		properties.put("service.ranking", Integer.MAX_VALUE);
+		
+		_serviceRegistration = registry.registerService(
+			Sanitizer.class, testSanitizer,
+			properties);
 	}
-
+	
 	@AfterClass
 	public static void tearDownClass() {
-		_atomicState.close();
+		_serviceRegistration.unregister();
 	}
-
+	
+	@Before
+	public void setUp() {
+		_called = false;
+	}
+	
+	private static boolean _called;
+	private static ServiceRegistration<Sanitizer>
+		_serviceRegistration;
+	private static class TestSanitizer extends BaseSanitizer {
+		
+		@Override
+		public String sanitize(
+			long companyId, long groupId, long userId, String className,
+			long classPK, String contentType, String[] modes, String content,
+			Map<String, Object> options) {
+			
+			_called = true;
+			
+			return companyId + ":" + groupId;
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize1() throws SanitizerException {
-		_atomicState.reset();
 
 		SanitizerUtil.sanitize(
 			1, 1, 1, TestSanitizer.class.getName(), 1, "contentType",
 			"bytes".getBytes());
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize2() throws SanitizerException {
-		_atomicState.reset();
 
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
@@ -84,7 +124,7 @@ public class SanitizerUtilTest {
 			1, 1, 1, TestSanitizer.class.getName(), 1, "contentType",
 			byteArrayInputStream, byteArrayOutputStream);
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@Test
@@ -98,20 +138,20 @@ public class SanitizerUtilTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize4() throws SanitizerException {
-		_atomicState.reset();
+
 
 		SanitizerUtil.sanitize(
 			1, 1, 1, TestSanitizer.class.getName(), 1, "contentType",
 			Sanitizer.MODE_ALL, "bytes".getBytes(),
 			new HashMap<String, Object>());
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize5() throws SanitizerException {
-		_atomicState.reset();
+
 
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
@@ -124,7 +164,7 @@ public class SanitizerUtilTest {
 			Sanitizer.MODE_ALL, byteArrayInputStream, byteArrayOutputStream,
 			new HashMap<String, Object>());
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@Test
@@ -139,20 +179,20 @@ public class SanitizerUtilTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize7() throws SanitizerException {
-		_atomicState.reset();
+		
 
 		SanitizerUtil.sanitize(
 			1, 1, 1, TestSanitizer.class.getName(), 1, "contentType",
 			Sanitizer.MODE_ALL, "bytes".getBytes(),
 			new HashMap<String, Object>());
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSanitize8() throws SanitizerException {
-		_atomicState.reset();
+
 
 		ByteArrayOutputStream byteArrayOutputStream =
 			new ByteArrayOutputStream();
@@ -168,7 +208,7 @@ public class SanitizerUtilTest {
 			byteArrayInputStream, byteArrayOutputStream,
 			new HashMap<String, Object>());
 
-		Assert.assertTrue(_atomicState.isSet());
+		Assert.assertTrue(_called);
 	}
 
 	@Test
@@ -183,6 +223,5 @@ public class SanitizerUtilTest {
 		Assert.assertEquals("1:1", value);
 	}
 
-	private static AtomicState _atomicState;
 
 }
