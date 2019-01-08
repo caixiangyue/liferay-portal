@@ -129,12 +129,14 @@ public class AggregateClassLoaderTest {
 		Assert.assertFalse(
 			"equals() should return false for object which is not instance " +
 				"of AggregateClassLoader",
-			aggregateClassLoader.equals(_testClassLoader2));
+			aggregateClassLoader.equals(_testClassLoader1));
 
 		Assert.assertFalse(
 			"equals() should return false for AggregateClassLoaders with " +
 				"different aggregated class loaders",
-			aggregateClassLoader.equals(new AggregateClassLoader(null)));
+			aggregateClassLoader.equals(
+				AggregateClassLoader.getAggregateClassLoader(
+					null, _testClassLoader2)));
 
 		Assert.assertFalse(
 			"equals() should return false for AggregateClassLoaders with " +
