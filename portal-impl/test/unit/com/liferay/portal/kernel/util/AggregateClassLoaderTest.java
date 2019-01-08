@@ -417,6 +417,7 @@ public class AggregateClassLoaderTest {
 
 			try {
 				Class.forName(AggregateClassLoader.class.getName());
+
 				Assert.fail("LoggedExceptionInInitializerError was not thrown");
 			}
 			catch (LoggedExceptionInInitializerError leiie) {
