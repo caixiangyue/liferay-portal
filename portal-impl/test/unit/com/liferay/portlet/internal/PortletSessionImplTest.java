@@ -26,11 +26,11 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.test.rule.AdviseWith;
-import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 import com.liferay.portal.util.PropsUtil;
 
 import java.io.ObjectInputStream;
@@ -53,9 +53,6 @@ import javax.portlet.PortletSession;
 
 import javax.servlet.http.HttpSession;
 
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -74,7 +71,7 @@ public class PortletSessionImplTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
+			CodeCoverageAssertor.INSTANCE, NewEnvTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws ClassNotFoundException {
@@ -430,7 +427,6 @@ public class PortletSessionImplTest {
 		Assert.assertFalse(enumeration.hasMoreElements());
 	}
 
-	@AdviseWith(adviceClasses = PortalClassLoaderUtilAdvice.class)
 	@Test
 	public void testSerializableHttpSessionWrapper() {
 		PropsUtil.set(PropsKeys.PORTLET_SESSION_REPLICATE_ENABLED, "true");
@@ -465,41 +461,51 @@ public class PortletSessionImplTest {
 
 		Assert.assertSame(httpSessionWrapper, portletSessionImpl.session);
 
-		// Set/get attribute when value class is not loaded by PortalClassLoader
+		ClassLoader portalClassLoader = PortalClassLoaderUtil.getClassLoader();
 
-		String key = "key";
-		String value = "value";
+		try {
 
-		PortalClassLoaderUtilAdvice.setPortalClassLoader(false);
+			// Set/get attribute when value class is not loaded by
+			// PortalClassLoader
 
-		portletSessionImpl.setAttribute(key, value);
+			String key = "key";
+			String value = "value";
 
-		Assert.assertSame(value, portletSessionImpl.getAttribute(key));
-		Assert.assertTrue(
-			_lazySerializableObjectWrapperClass.isInstance(
-				_mockHttpSession.getAttribute(scopePrefix.concat(key))));
+			PortalClassLoaderUtil.setClassLoader(new ClassLoader() {});
 
-		// Set/get non-serializable attribute when value class is not loaded by
-		// PortalClassLoader
+			portletSessionImpl.setAttribute(key, value);
 
-		Object objectValue = new Object();
+			Assert.assertSame(value, portletSessionImpl.getAttribute(key));
+			Assert.assertTrue(
+				_lazySerializableObjectWrapperClass.isInstance(
+					_mockHttpSession.getAttribute(scopePrefix.concat(key))));
 
-		portletSessionImpl.setAttribute(key, objectValue);
+			// Set/get non-serializable attribute when value class is not
+			// loaded by PortalClassLoader
 
-		Assert.assertSame(objectValue, portletSessionImpl.getAttribute(key));
-		Assert.assertSame(
-			objectValue,
-			_mockHttpSession.getAttribute(scopePrefix.concat(key)));
+			Object objectValue = new Object();
 
-		// Set/get attribute when value class is loaded by PortalClassLoader
+			portletSessionImpl.setAttribute(key, objectValue);
 
-		PortalClassLoaderUtilAdvice.setPortalClassLoader(true);
+			Assert.assertSame(
+				objectValue, portletSessionImpl.getAttribute(key));
+			Assert.assertSame(
+				objectValue,
+				_mockHttpSession.getAttribute(scopePrefix.concat(key)));
 
-		portletSessionImpl.setAttribute(key, value);
+			// Set/get attribute when value class is loaded by PortalClassLoader
 
-		Assert.assertSame(value, portletSessionImpl.getAttribute(key));
-		Assert.assertSame(
-			value, _mockHttpSession.getAttribute(scopePrefix.concat(key)));
+			PortalClassLoaderUtil.setClassLoader(String.class.getClassLoader());
+
+			portletSessionImpl.setAttribute(key, value);
+
+			Assert.assertSame(value, portletSessionImpl.getAttribute(key));
+			Assert.assertSame(
+				value, _mockHttpSession.getAttribute(scopePrefix.concat(key)));
+		}
+		finally {
+			PortalClassLoaderUtil.setClassLoader(portalClassLoader);
+		}
 	}
 
 	@Test
@@ -533,26 +539,6 @@ public class PortletSessionImplTest {
 			key8, value8, PortletSession.APPLICATION_SCOPE);
 
 		Assert.assertSame(value8, _mockHttpSession.getAttribute(key8));
-	}
-
-	@Aspect
-	public static class PortalClassLoaderUtilAdvice {
-
-		public static void setPortalClassLoader(boolean portalClassLoader) {
-			_portalClassLoader = portalClassLoader;
-		}
-
-		@Around(
-			"execution(public static boolean com.liferay.portal.kernel.util." +
-				"PortalClassLoaderUtil.isPortalClassLoader(ClassLoader)) && " +
-					"args(classLoader)"
-		)
-		public boolean isPortalClassLoader(ClassLoader classLoader) {
-			return _portalClassLoader;
-		}
-
-		private static boolean _portalClassLoader;
-
 	}
 
 	private Object _getDeserializedObject(Object object) throws Exception {
