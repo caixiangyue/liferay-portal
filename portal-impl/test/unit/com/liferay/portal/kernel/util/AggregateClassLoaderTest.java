@@ -22,14 +22,14 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
-import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
-import com.liferay.portal.test.rule.AdviseWith;
-import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
+import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
 
 import java.io.IOException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import java.security.Permission;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class AggregateClassLoaderTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
+			CodeCoverageAssertor.INSTANCE, NewEnvTestRule.INSTANCE);
 
 	@Test
 	public void testAddClassLoader() {
@@ -356,26 +356,39 @@ public class AggregateClassLoaderTest {
 			aggregateClassLoader1.hashCode(), aggregateClassLoader5.hashCode());
 	}
 
-	@AdviseWith(adviceClasses = ReflectionUtilAdvice.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testInitializationFailure() throws Exception {
-		Exception exception = new Exception();
-
-		ReflectionUtilAdvice.setDeclaredMethodThrowable(exception);
+		SecurityException securityException = new SecurityException();
 
 		try (CaptureHandler captureHandler =
 				JDKLoggerTestUtil.configureJDKLogger(
 					LoggedExceptionInInitializerError.class.getName(),
 					Level.SEVERE)) {
 
+			SecurityManager securityManager = System.getSecurityManager();
+
 			try {
+				System.setSecurityManager(
+					new SecurityManager() {
+
+						@Override
+						public void checkPermission(Permission permission) {
+							if ("suppressAccessChecks".equals(
+									permission.getName())) {
+
+								throw securityException;
+							}
+						}
+
+					});
+
 				Class.forName(AggregateClassLoader.class.getName());
 
 				Assert.fail("LoggedExceptionInInitializerError was not thrown");
 			}
 			catch (LoggedExceptionInInitializerError leiie) {
-				Assert.assertSame(exception, leiie.getCause());
+				Assert.assertSame(securityException, leiie.getCause());
 
 				List<LogRecord> logRecords = captureHandler.getLogRecords();
 
@@ -385,7 +398,10 @@ public class AggregateClassLoaderTest {
 				LogRecord logRecord = logRecords.get(0);
 
 				Assert.assertSame(
-					Exception.class.getName(), logRecord.getMessage());
+					SecurityException.class.getName(), logRecord.getMessage());
+			}
+			finally {
+				System.setSecurityManager(securityManager);
 			}
 		}
 	}
