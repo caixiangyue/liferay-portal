@@ -29,7 +29,7 @@ public class SecurityManagerTestUtil {
 				Class<?> callerClass, RuntimeException exception)
 		throws ClassNotFoundException {
 
-		Class.forName(ReflectionUtil.class.getName());
+		Class.forName(callerClass.getName());
 
 		SwappableSecurityManager swappableSecurityManager =
 			new SwappableSecurityManager() {
