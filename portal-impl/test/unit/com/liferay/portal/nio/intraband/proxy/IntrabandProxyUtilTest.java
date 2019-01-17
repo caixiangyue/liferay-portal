@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.test.util.SecurityManagerTestUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -564,13 +565,15 @@ public class IntrabandProxyUtilTest {
 			IntrabandProxyUtil.getProxyMethodSignatures(TestClass.class));
 	}
 
-	@AdviseWith(adviceClasses = ReflectionUtilAdvice.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testInitializationFailure() throws ClassNotFoundException {
-		Throwable throwable = new Throwable();
+		SecurityException securityException = new SecurityException();
 
-		ReflectionUtilAdvice.setDeclaredMethodThrowable(throwable);
+		SecurityManager securityManager =
+			SecurityManagerTestUtil.
+				getSecurityManagerAndSetDeclaredMethodException(
+					securityException);
 
 		try {
 			new IntrabandProxyUtil();
@@ -578,7 +581,10 @@ public class IntrabandProxyUtilTest {
 			Assert.fail();
 		}
 		catch (ExceptionInInitializerError eiie) {
-			Assert.assertSame(throwable, eiie.getCause());
+			Assert.assertSame(securityException, eiie.getCause());
+		}
+		finally {
+			SecurityManagerTestUtil.setSecutityManager(securityManager);
 		}
 	}
 
