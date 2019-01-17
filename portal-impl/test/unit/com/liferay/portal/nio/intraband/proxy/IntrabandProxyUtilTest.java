@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.nio.intraband.test.MockRegistrationReference;
 import com.liferay.portal.kernel.test.CaptureHandler;
 import com.liferay.portal.kernel.test.JDKLoggerTestUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.SwappableSecurityManager;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
@@ -50,7 +51,6 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.TextFormatter;
-import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
 import com.liferay.portal.test.rule.AdviseWith;
 import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 import com.liferay.portal.util.FileImpl;
@@ -570,21 +570,16 @@ public class IntrabandProxyUtilTest {
 	public void testInitializationFailure() throws ClassNotFoundException {
 		SecurityException securityException = new SecurityException();
 
-		SecurityManager securityManager =
-			SecurityManagerTestUtil.
-				getSecurityManagerAndSetDeclaredMethodException(
-					securityException);
+		try (SwappableSecurityManager swappableSecurityManager =
+				SecurityManagerTestUtil.installSecurityManagerForCaller(
+					ReflectionUtil.class, securityException)) {
 
-		try {
 			new IntrabandProxyUtil();
 
 			Assert.fail();
 		}
 		catch (ExceptionInInitializerError eiie) {
 			Assert.assertSame(securityException, eiie.getCause());
-		}
-		finally {
-			SecurityManagerTestUtil.setSecutityManager(securityManager);
 		}
 	}
 

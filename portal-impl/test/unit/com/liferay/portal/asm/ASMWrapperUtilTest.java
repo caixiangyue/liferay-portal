@@ -14,7 +14,9 @@
 
 package com.liferay.portal.asm;
 
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.SwappableSecurityManager;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
@@ -73,12 +75,10 @@ public class ASMWrapperUtilTest {
 	public void testClassInitializationFailure() throws Exception {
 		SecurityException securityException = new SecurityException();
 
-		SecurityManager securityManager =
-			SecurityManagerTestUtil.
-				getSecurityManagerAndSetDeclaredMethodException(
-					securityException);
+		try (SwappableSecurityManager swappableSecurityManager =
+				SecurityManagerTestUtil.installSecurityManagerForCaller(
+					ReflectionUtil.class, securityException)) {
 
-		try {
 			ASMWrapperUtil.createASMWrapper(
 				TestInterface.class.getClassLoader(), TestInterface.class,
 				new TestDelegate(), new TestDefault());
@@ -87,9 +87,6 @@ public class ASMWrapperUtilTest {
 		}
 		catch (ExceptionInInitializerError eiie) {
 			Assert.assertSame(securityException, eiie.getCause());
-		}
-		finally {
-			SecurityManagerTestUtil.setSecutityManager(securityManager);
 		}
 	}
 

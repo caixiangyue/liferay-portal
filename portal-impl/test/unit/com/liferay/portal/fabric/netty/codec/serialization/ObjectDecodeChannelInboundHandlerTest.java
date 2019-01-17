@@ -14,8 +14,10 @@
 
 package com.liferay.portal.fabric.netty.codec.serialization;
 
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.portal.fabric.netty.util.NettyUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.SwappableSecurityManager;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
@@ -90,21 +92,16 @@ public class ObjectDecodeChannelInboundHandlerTest {
 	public void testClassLoadingFailure() throws Exception {
 		SecurityException securityException = new SecurityException();
 
-		SecurityManager securityManager =
-			SecurityManagerTestUtil.
-				getSecurityManagerAndSetDeclaredMethodException(
-					securityException);
+		try (SwappableSecurityManager swappableSecurityManager =
+				SecurityManagerTestUtil.installSecurityManagerForCaller(
+					ReflectionUtil.class, securityException)) {
 
-		try {
 			new DateChannelHandler();
 
 			Assert.fail();
 		}
 		catch (ExceptionInInitializerError eiie) {
 			Assert.assertSame(securityException, eiie.getCause());
-		}
-		finally {
-			SecurityManagerTestUtil.setSecutityManager(securityManager);
 		}
 	}
 
