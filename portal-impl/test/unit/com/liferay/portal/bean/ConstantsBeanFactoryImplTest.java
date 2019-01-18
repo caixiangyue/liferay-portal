@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
 import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
 import com.liferay.portal.kernel.test.util.SecurityManagerTestUtil;
-import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -98,8 +97,6 @@ public class ConstantsBeanFactoryImplTest {
 		}
 
 		// Normal create
-
-		ReflectionUtilAdvice.setDeclaredMethodThrowable(null);
 
 		Object constantsBean = ConstantsBeanFactoryImpl.createConstantsBean(
 			Constants.class);
