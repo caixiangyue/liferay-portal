@@ -44,6 +44,7 @@ import com.liferay.portal.kernel.test.SwappableSecurityManager;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
 import com.liferay.portal.kernel.test.util.SecurityManagerTestUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.MethodHandler;
@@ -51,8 +52,6 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.TextFormatter;
-import com.liferay.portal.test.rule.AdviseWith;
-import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
 import com.liferay.portal.util.FileImpl;
 import com.liferay.portal.util.PropsValues;
 
@@ -91,10 +90,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -126,7 +121,7 @@ public class IntrabandProxyUtilTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
+			CodeCoverageAssertor.INSTANCE, NewEnvTestRule.INSTANCE);
 
 	@Before
 	public void setUp() {
@@ -1002,60 +997,41 @@ public class IntrabandProxyUtilTest {
 		}
 	}
 
-	@AdviseWith(adviceClasses = DisableProxyClassesDump.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testToClassProxyClassesDumpDisabled()
 		throws FileNotFoundException {
 
+		boolean intrabandProxyDumpClassesEnabled =
+			ReflectionTestUtil.getAndSetFieldValue(
+				PropsValues.class, "INTRABAND_PROXY_DUMP_CLASSES_ENABLED",
+				false);
 		_doTestToClass(false, false);
+		ReflectionTestUtil.setFieldValue(
+			PropsValues.class, "INTRABAND_PROXY_DUMP_CLASSES_ENABLED",
+			intrabandProxyDumpClassesEnabled);
 	}
 
-	@AdviseWith(adviceClasses = EnableProxyClassesDump.class)
 	@NewEnv(type = NewEnv.Type.CLASSLOADER)
 	@Test
 	public void testToClassProxyClassesDumpEnabled()
 		throws FileNotFoundException {
 
+		boolean intrabandProxyDumpClassesEnabled =
+			ReflectionTestUtil.getAndSetFieldValue(
+				PropsValues.class, "INTRABAND_PROXY_DUMP_CLASSES_ENABLED",
+				true);
 		_doTestToClass(true, true);
 		_doTestToClass(true, false);
+		ReflectionTestUtil.setFieldValue(
+			PropsValues.class, "INTRABAND_PROXY_DUMP_CLASSES_ENABLED",
+			intrabandProxyDumpClassesEnabled);
 	}
 
 	@Test
 	public void testValidate() throws Exception {
 		_doTestValidate(true);
 		_doTestValidate(false);
-	}
-
-	@Aspect
-	public static class DisableProxyClassesDump {
-
-		@Around(
-			"set(* com.liferay.portal.util.PropsValues." +
-				"INTRABAND_PROXY_DUMP_CLASSES_ENABLED)"
-		)
-		public Object disableClusterLink(
-				ProceedingJoinPoint proceedingJoinPoint)
-			throws Throwable {
-
-			return proceedingJoinPoint.proceed(new Object[] {Boolean.FALSE});
-		}
-
-	}
-
-	@Aspect
-	public static class EnableProxyClassesDump {
-
-		@Around(
-			"set(* com.liferay.portal.util.PropsValues." +
-				"INTRABAND_PROXY_DUMP_CLASSES_ENABLED)"
-		)
-		public Object enableClusterLink(ProceedingJoinPoint proceedingJoinPoint)
-			throws Throwable {
-
-			return proceedingJoinPoint.proceed(new Object[] {Boolean.TRUE});
-		}
-
 	}
 
 	private static Object _readFromDeserializer(
