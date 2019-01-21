@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-import com.liferay.portal.test.aspects.ReflectionUtilAdvice;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -98,8 +97,6 @@ public class ConstantsBeanFactoryImplTest {
 		}
 
 		// Normal create
-
-		ReflectionUtilAdvice.setDeclaredMethodThrowable(null);
 
 		Object constantsBean = ConstantsBeanFactoryImpl.createConstantsBean(
 			Constants.class);
