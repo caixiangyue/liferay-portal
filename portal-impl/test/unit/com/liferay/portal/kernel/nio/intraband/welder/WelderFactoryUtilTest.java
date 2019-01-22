@@ -16,17 +16,16 @@ package com.liferay.portal.kernel.nio.intraband.welder;
 
 import com.liferay.portal.kernel.nio.intraband.Intraband;
 import com.liferay.portal.kernel.nio.intraband.RegistrationReference;
+import com.liferay.portal.kernel.nio.intraband.welder.fifo.FIFOUtil;
 import com.liferay.portal.kernel.nio.intraband.welder.fifo.FIFOWelder;
 import com.liferay.portal.kernel.nio.intraband.welder.socket.SocketWelder;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.CodeCoverageAssertor;
 import com.liferay.portal.kernel.test.rule.NewEnv;
+import com.liferay.portal.kernel.test.rule.NewEnvTestRule;
+import com.liferay.portal.kernel.util.OSDetector;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.test.rule.AdviseWith;
-import com.liferay.portal.test.rule.AspectJNewEnvTestRule;
-
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -43,7 +42,7 @@ public class WelderFactoryUtilTest {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			AspectJNewEnvTestRule.INSTANCE, CodeCoverageAssertor.INSTANCE);
+			CodeCoverageAssertor.INSTANCE, NewEnvTestRule.INSTANCE);
 
 	@NewEnv(type = NewEnv.Type.NONE)
 	@Test
@@ -116,62 +115,31 @@ public class WelderFactoryUtilTest {
 		}
 	}
 
-	@AdviseWith(adviceClasses = {FIFOUtilAdvice.class, OSDetectorAdvice.class})
 	@Test
 	public void testGetWelderClassOnNonwindowsWithFIFO() {
-		FIFOUtilAdvice._fifoSupported = true;
-		OSDetectorAdvice._windows = false;
+		ReflectionTestUtil.setFieldValue(
+			FIFOUtil.class, "_FIFO_SUPPORTED", true);
+		ReflectionTestUtil.setFieldValue(OSDetector.class, "_windows", false);
 
 		Assert.assertSame(FIFOWelder.class, WelderFactoryUtil.getWelderClass());
 	}
 
-	@AdviseWith(adviceClasses = {FIFOUtilAdvice.class, OSDetectorAdvice.class})
 	@Test
 	public void testGetWelderClassOnnonWindowsWithoutFIFO() {
-		FIFOUtilAdvice._fifoSupported = false;
-		OSDetectorAdvice._windows = false;
+		ReflectionTestUtil.setFieldValue(
+			FIFOUtil.class, "_FIFO_SUPPORTED", false);
+		ReflectionTestUtil.setFieldValue(OSDetector.class, "_windows", false);
 
 		Assert.assertSame(
 			SocketWelder.class, WelderFactoryUtil.getWelderClass());
 	}
 
-	@AdviseWith(adviceClasses = OSDetectorAdvice.class)
 	@Test
 	public void testGetWelderClassOnWindows() {
-		OSDetectorAdvice._windows = true;
+		ReflectionTestUtil.setFieldValue(OSDetector.class, "_windows", true);
 
 		Assert.assertSame(
 			SocketWelder.class, WelderFactoryUtil.getWelderClass());
-	}
-
-	@Aspect
-	public static class FIFOUtilAdvice {
-
-		@Around(
-			"execution(public static boolean com.liferay.portal.kernel.nio." +
-				"intraband.welder.fifo.FIFOUtil.isFIFOSupported())"
-		)
-		public boolean isFIFOSupported() {
-			return _fifoSupported;
-		}
-
-		private static boolean _fifoSupported;
-
-	}
-
-	@Aspect
-	public static class OSDetectorAdvice {
-
-		@Around(
-			"execution(public static boolean com.liferay.portal.kernel.util." +
-				"OSDetector.isWindows())"
-		)
-		public boolean isWindows() {
-			return _windows;
-		}
-
-		private static boolean _windows;
-
 	}
 
 	protected static class MockWelder implements Welder {
